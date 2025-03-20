@@ -1,14 +1,13 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.Security.Request.RegisterRequest;
 import hu.project.smartmealfinderb.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 @RestController
 public class UserController {
@@ -16,16 +15,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/public/auth/signup")
+    @PostMapping("/public/auth/register")
     public ResponseEntity<?> registerUser(@Valid
-                                          @RequestParam String email,
-                                          @RequestParam String username,
-                                          @RequestParam String password,
-                                          @RequestParam Set<String> role
+                                          @RequestBody RegisterRequest registerRequest
     ) {
 
         try {
-            this.userService.registerUser(email, username, password, role);
+            this.userService.registerUser(registerRequest.getEmail(),
+                    registerRequest.getUsername(),
+                    registerRequest.getPassword(),
+                    registerRequest.getRole());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

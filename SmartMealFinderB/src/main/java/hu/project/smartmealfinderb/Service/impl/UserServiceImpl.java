@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -37,22 +36,24 @@ public class UserServiceImpl implements UserService {
 
         User newUser = new User(email, username, passwordEncoder.encode(password));
         Set<String> strRoles = role;
-        Optional<Role> userRole;
+        Role userRole;
 
         if (strRoles == null || strRoles.isEmpty()) {
-            userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER);
+            userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
         } else {
             String roleName = strRoles.iterator().next();
             if (roleName.equals("admin")) {
-                userRole = this.roleRepository.findByRoleName(AppRole.ROLE_ADMIN);
+                userRole = this.roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
             } else if (roleName.equals("user")) {
-                userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER);
+                userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
             } else {
                 throw new RuntimeException("Invalid role");
             }
         }
 
-        //TODO: User Role-hoz rendelése
         newUser.setRole(userRole);
         newUser.setSignUpMethod("email");
 
