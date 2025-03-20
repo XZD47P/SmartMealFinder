@@ -3,6 +3,7 @@ package hu.project.smartmealfinderb.Security;
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
+import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -28,13 +30,14 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((request) ->
-                request.requestMatchers("/public/hello").permitAll()
+                request.requestMatchers("/public/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
+        http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         http.csrf(csrf -> csrf.disable());
-        //http.cors(cors -> cors.disable());
+        http.cors(cors -> cors.disable());
         return http.build();
     }
 
@@ -49,7 +52,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository) {
+    public JwtAuthFilter jwtAuthFilter() {
+        return new JwtAuthFilter();
+    }
+
+    @Bean
+    public CommandLineRunner initData() {
         return args -> {
             Role userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_USER)));

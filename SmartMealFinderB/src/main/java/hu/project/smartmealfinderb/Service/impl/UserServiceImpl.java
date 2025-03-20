@@ -5,6 +5,7 @@ import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Repository.UserRepository;
+import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Override
     public void registerUser(String email, String username, String password, Set<String> role) {
@@ -80,10 +84,12 @@ public class UserServiceImpl implements UserService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+        String jwtToken = this.jwtUtils.generateTokenFromUsername(userDetails);
+
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .toList();
 
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles);
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
 
         return response;
 
