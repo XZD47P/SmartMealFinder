@@ -27,8 +27,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests((reguest) ->
-                reguest.requestMatchers("/public/**").permitAll()
+        http.authorizeHttpRequests((request) ->
+                request.requestMatchers("/public/hello").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
         http.formLogin(withDefaults());
