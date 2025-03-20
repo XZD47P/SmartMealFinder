@@ -1,9 +1,11 @@
 package hu.project.smartmealfinderb.Service;
 
-import org.springframework.http.ResponseEntity;
+import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 
 import java.util.Set;
 
 public interface UserService {
-    ResponseEntity<?> registerUser(String email, String username, String password, Set<String> role);
+    void registerUser(String email, String username, String password, Set<String> role);
+
+    LoginResponse authenticateUser(String username, String password);
 }

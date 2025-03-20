@@ -5,12 +5,19 @@ import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Repository.UserRepository;
+import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -25,8 +32,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
-    public ResponseEntity<?> registerUser(String email, String username, String password, Set<String> role) {
+    public void registerUser(String email, String username, String password, Set<String> role) {
         if (this.userRepository.existsByUserName(username)) {
             throw new RuntimeException("Username is already in use");
         }
@@ -58,7 +68,24 @@ public class UserServiceImpl implements UserService {
         newUser.setSignUpMethod("email");
 
         this.userRepository.save(newUser);
+    }
 
-        return ResponseEntity.ok("User registered successfully!");
+    @Override
+    public LoginResponse authenticateUser(String username, String password) {
+
+        Authentication authentication = this.authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .toList();
+
+        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles);
+
+        return response;
+
     }
 }
