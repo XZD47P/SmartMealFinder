@@ -1,8 +1,9 @@
 package hu.project.smartmealfinderb.Security.JWT;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,7 +59,19 @@ public class JwtUtils {
     }
 
     public boolean validateJwtToken(String authToken) {
-        Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
-        return true;
+        try {
+            Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
+            return true;
+        } catch (MalformedJwtException e) {
+            throw new MalformedJwtException("Invalid JWT token format");
+        } catch (ExpiredJwtException e) {
+            throw new ExpiredJwtException(null, null, "JWT token has expired");
+        } catch (UnsupportedJwtException e) {
+            throw new UnsupportedJwtException("JWT token is unsupported");
+        } catch (SignatureException e) {
+            throw new SignatureException("Invalid JWT signature");
+        } catch (JwtException e) {
+            throw new JwtException("JWT token validation failed");
+        }
     }
 }

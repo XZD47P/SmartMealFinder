@@ -3,6 +3,7 @@ package hu.project.smartmealfinderb.Security;
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
+import hu.project.smartmealfinderb.Security.JWT.AuthEntryPointJwt;
 import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +28,9 @@ public class SecurityConfig {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AuthEntryPointJwt authEntryPointJwt;
+
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
@@ -37,6 +41,7 @@ public class SecurityConfig {
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers("/public/auth/**"));
         http.cors(cors -> cors.disable());
