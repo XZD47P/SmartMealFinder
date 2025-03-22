@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
     private JwtUtils jwtUtils;
 
     @Override
-    public void registerUser(String email, String username, String password, Set<String> role) {
+    public void registerUser(String email, String username, String password, Set<String> role, String firstName, String lastName) {
         if (this.userRepository.existsByUserName(username)) {
             throw new RuntimeException("Username is already in use");
         }
@@ -48,7 +50,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email is already registered");
         }
 
-        User newUser = new User(email, username, passwordEncoder.encode(password));
+        Instant verificationDeadline = Instant.now().plus(15, ChronoUnit.DAYS);
+
+        User newUser = new User(email, username, passwordEncoder.encode(password), firstName, lastName, verificationDeadline);
         Set<String> strRoles = role;
         Role userRole;
 
@@ -94,4 +98,6 @@ public class UserServiceImpl implements UserService {
         return response;
 
     }
+
+
 }

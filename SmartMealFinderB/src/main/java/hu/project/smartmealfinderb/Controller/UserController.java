@@ -27,7 +27,9 @@ public class UserController {
             this.userService.registerUser(registerRequest.getEmail(),
                     registerRequest.getUsername(),
                     registerRequest.getPassword(),
-                    registerRequest.getRole());
+                    registerRequest.getRole(),
+                    registerRequest.getFirstName(),
+                    registerRequest.getLastName());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
@@ -42,4 +44,12 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
+//    @GetMapping("/api/profile")
+//    public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+//
+//
+//    }
+
+
 }

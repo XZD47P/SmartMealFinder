@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -36,7 +37,8 @@ public class SecurityConfig {
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers("/public/auth/**"));
         http.cors(cors -> cors.disable());
         return http.build();
     }
