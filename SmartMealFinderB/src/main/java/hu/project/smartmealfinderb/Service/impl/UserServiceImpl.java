@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.UserInfoResponse;
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
@@ -94,6 +95,24 @@ public class UserServiceImpl implements UserService {
                 .toList();
 
         LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
+
+        return response;
+
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo(UserDetails userDetails) {
+        User user = this.userRepository.findByUserName(userDetails.getUsername()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        UserInfoResponse response = new UserInfoResponse(
+                user.getUserId(),
+                user.getUserName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
 
         return response;
 
