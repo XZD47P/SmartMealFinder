@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.UserDTO;
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.PasswordResetToken;
@@ -169,5 +170,77 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public List<User> getAllUsers() {
+        return this.userRepository.findAll();
+    }
 
+    @Override
+    public void updateUserRole(Long userId, String roleName) {
+        User user = this.userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        AppRole appRole = AppRole.valueOf(roleName);
+        Role role = this.roleRepository.findByRoleName(appRole).orElseThrow(
+                () -> new RuntimeException("Role not found")
+        );
+
+        user.setRole(role);
+        this.userRepository.save(user);
+    }
+
+    @Override
+    public UserDTO getUserById(Long userId) {
+        User user = this.userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        return this.convertToDTO(user);
+    }
+
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(
+                user.getUserId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUserName(),
+                user.getEmail(),
+                user.isAccountNonLocked(),
+                user.isAccountVerified(),
+                user.getVerificationDeadline(),
+                user.getSignUpMethod(),
+                user.getRole(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
+
+    //TODO: Role Service létrehozása
+    @Override
+    public List<Role> getAllRoles() {
+        return this.roleRepository.findAll();
+    }
+
+    @Override
+    public void updateAccountLockedStatus(Long userId, boolean lock) {
+        User user = this.userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+        user.setAccountNonLocked(!lock);
+        this.userRepository.save(user);
+    }
+
+    @Override
+    public void updatePassword(Long userId, String password) {
+        try {
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
+            user.setPassword(this.passwordEncoder.encode(password));
+            this.userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Password update failed");
+        }
+    }
 }
