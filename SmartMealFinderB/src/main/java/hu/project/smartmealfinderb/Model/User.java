@@ -27,11 +27,11 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @NotBlank
+    //@NotBlank
     @Column(name = "first_name")
     private String firstName;
 
-    @NotBlank
+    //@NotBlank
     @Column(name = "last_name")
     private String lastName;
 
@@ -46,7 +46,7 @@ public class User {
     @Column(name = "password")
     @JsonIgnore
     private String password;
-    
+
     private boolean accountNonLocked;
     private boolean accountVerified;
     private Instant verificationDeadline;

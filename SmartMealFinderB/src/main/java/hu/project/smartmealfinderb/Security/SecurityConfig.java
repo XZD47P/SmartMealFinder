@@ -2,6 +2,7 @@ package hu.project.smartmealfinderb.Security;
 
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.Role;
+import hu.project.smartmealfinderb.Oauth2.OAuth2LoginSuccessHandler;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Security.JWT.AuthEntryPointJwt;
 import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,14 +33,22 @@ public class SecurityConfig {
     @Autowired
     private AuthEntryPointJwt authEntryPointJwt;
 
+    @Autowired
+    @Lazy
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((request) ->
-                request.requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/error/**").permitAll()
-                        .anyRequest().authenticated());
+                        request.requestMatchers("/public/**").permitAll()
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/error/**").permitAll()
+                                .requestMatchers("/oauth2/**").permitAll()
+                                .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> {
+                    oauth2.successHandler(oAuth2LoginSuccessHandler);
+                });
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);

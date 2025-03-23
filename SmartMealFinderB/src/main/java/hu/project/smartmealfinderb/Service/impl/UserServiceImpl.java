@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -242,5 +243,20 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new RuntimeException("Password update failed");
         }
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return this.userRepository.findByEmail(email);
+    }
+
+    //Oauth2 user regisztráció
+    @Override
+    public void registerUser(User newUser) {
+        if (newUser.getPassword() != null) {
+            newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
+        }
+
+        this.userRepository.save(newUser);
     }
 }

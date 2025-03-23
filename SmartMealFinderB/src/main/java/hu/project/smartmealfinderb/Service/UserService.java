@@ -8,6 +8,7 @@ import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
@@ -32,4 +33,8 @@ public interface UserService {
     void updateAccountLockedStatus(Long userId, boolean lock);
 
     void updatePassword(Long userId, String password);
+
+    Optional<User> findByEmail(String email);
+
+    void registerUser(User newUser);
 }
