@@ -2,14 +2,18 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
 import hu.project.smartmealfinderb.Model.AppRole;
+import hu.project.smartmealfinderb.Model.PasswordResetToken;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Repository.PasswordResetTokenRepository;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Repository.UserRepository;
 import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
+import hu.project.smartmealfinderb.Service.EmailService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,6 +46,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public void registerUser(String email, String username, String password, Set<String> role, String firstName, String lastName) {
@@ -115,6 +129,43 @@ public class UserServiceImpl implements UserService {
         );
 
         return response;
+
+    }
+
+    @Override
+    public void generatePasswordResetToken(String email) {
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        Instant expiryDate = Instant.now().plus(15, ChronoUnit.MINUTES);
+        PasswordResetToken passwordResetToken = new PasswordResetToken(user, token, expiryDate);
+        this.passwordResetTokenRepository.save(passwordResetToken);
+
+        //Email küldése
+        String resetURL = this.frontendUrl + "/reset-password?token=" + token;
+        this.emailService.sendPasswordResetEmail(user.getUserName(), email, resetURL);
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid password reset token"));
+
+        if (resetToken.isUsed()) {
+            throw new RuntimeException("Password reset token has already been used");
+        }
+
+        if (resetToken.getExpiryDate().isBefore(Instant.now())) {
+            throw new RuntimeException("Password reset token has expired");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(this.passwordEncoder.encode(newPassword));
+        this.userRepository.save(user);
+
+        resetToken.setUsed(true);
+        this.passwordResetTokenRepository.save(resetToken);
 
     }
 

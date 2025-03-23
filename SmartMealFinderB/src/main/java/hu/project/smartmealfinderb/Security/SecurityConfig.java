@@ -37,13 +37,15 @@ public class SecurityConfig {
         http.authorizeHttpRequests((request) ->
                 request.requestMatchers("/public/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/error/**").permitAll()
                         .anyRequest().authenticated());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/public/auth/**"));
+                .ignoringRequestMatchers("/public/auth/**")
+                .ignoringRequestMatchers("/error/**"));
         http.cors(cors -> cors.disable());
         return http.build();
     }

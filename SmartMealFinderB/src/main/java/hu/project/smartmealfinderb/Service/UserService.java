@@ -12,4 +12,8 @@ public interface UserService {
     LoginResponse authenticateUser(String username, String password);
 
     UserInfoResponse getUserInfo(UserDetails userDetails);
+
+    void generatePasswordResetToken(String email);
+
+    void resetPassword(String token, String newPassword);
 }
