@@ -41,9 +41,10 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((request) ->
-                        request.requestMatchers("/public/**").permitAll()
+                        request.requestMatchers("/api/auth/public/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/error/**").permitAll()
+                                .requestMatchers("/api/csrf-token").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {
@@ -54,9 +55,9 @@ public class SecurityConfig {
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/public/auth/**")
+                .ignoringRequestMatchers("/api/auth/public/**")
                 .ignoringRequestMatchers("/error/**"));
-        http.cors(cors -> cors.disable());
+        http.cors(withDefaults());
         return http.build();
     }
 

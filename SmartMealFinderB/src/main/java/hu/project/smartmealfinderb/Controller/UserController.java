@@ -16,12 +16,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/auth")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/public/auth/register")
+    @PostMapping("/public/register")
     public ResponseEntity<?> registerUser(@Valid
                                           @RequestBody RegisterRequest registerRequest
     ) {
@@ -40,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 
-    @PostMapping("/public/auth/login")
+    @PostMapping("/public/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
 
         LoginResponse response = this.userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
@@ -48,7 +49,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/profile")
+    @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
         UserInfoResponse userInfo;
 
