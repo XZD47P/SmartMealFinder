@@ -6,6 +6,8 @@ import Navbar from "./Components/Navbar"
 import ContactPage from "./Components/ContactPage";
 import AboutPage from "./Components/AboutPage";
 import LoginPage from "./Components/Authentication/LoginPage";
+import RegisterPage from "./Components/Authentication/RegisterPage";
+import LandingPage from "./Components/LandingPage";
 
 const App = () => {
     return (
@@ -13,8 +15,9 @@ const App = () => {
             <Navbar/>
             <Toaster position={"bottom-center"} reverseOrder={false}/>
             <Routes>
-                {/*<Route path="/" element={<LandingPage/>}/>*/}
+                <Route path="/" element={<LandingPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/register" element={<RegisterPage/>}/>
                 <Route path="/contact" element={<ContactPage/>}/>
                 <Route path="/about" element={<AboutPage/>}/>
             </Routes>

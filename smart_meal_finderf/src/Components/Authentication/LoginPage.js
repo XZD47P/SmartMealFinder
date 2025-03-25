@@ -13,7 +13,7 @@ import {useMyContext} from "../../Store/ContextApi";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const Login = () => {
+const LoginPage = () => {
     const [jwtToken, setJwtToken] = useState("");
     const [loading, setLoading] = useState(false);
     const {setToken, token} = useMyContext();
@@ -173,4 +173,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginPage;
