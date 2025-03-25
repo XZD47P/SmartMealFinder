@@ -6,6 +6,8 @@ import Buttons from "../Utils/Buttons";
 import InputField from "../Utils/InputField";
 import {FaGithub} from "react-icons/fa";
 import {FcGoogle} from "react-icons/fc";
+import api from "../../Backend/api";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -33,7 +35,7 @@ const RegisterPage = () => {
     });
 
     useEffect(() => {
-        setRole("ROLE_USER");
+        setRole("user");
     }, []);
 
     const onSubmitHandler = async (data) => {
@@ -48,7 +50,13 @@ const RegisterPage = () => {
         };
 
         try {
-
+            setLoading(true);
+            const response = await api.post("/auth/public/register", sendData);
+            toast.success("Registration was successful!");
+            reset();
+            if (response.data) {
+                navigate("/login");
+            }
         } catch (error) {
             //setError(keyword, message) = keyword a mező neve, ahova a hibaüzenetet írom
             if (error?.response?.data?.message === "Error: Username is already taken!") {
