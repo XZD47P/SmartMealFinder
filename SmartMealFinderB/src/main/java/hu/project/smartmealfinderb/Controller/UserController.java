@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/user")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
         UserInfoResponse userInfo;
 

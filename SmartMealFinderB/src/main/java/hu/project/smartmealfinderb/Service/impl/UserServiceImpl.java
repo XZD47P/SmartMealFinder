@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -122,12 +123,20 @@ public class UserServiceImpl implements UserService {
                 () -> new RuntimeException("User not found")
         );
 
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
         UserInfoResponse response = new UserInfoResponse(
                 user.getUserId(),
                 user.getUserName(),
+                user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail()
+                user.isAccountNonLocked(),
+                user.isAccountVerified(),
+                user.getVerificationDeadline(),
+                roles
         );
 
         return response;
