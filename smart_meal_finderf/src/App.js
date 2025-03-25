@@ -1,25 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import React from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {Toaster} from "react-hot-toast";
+import Navbar from "./Components/Navbar"
+import ContactPage from "./Components/ContactPage";
+import AboutPage from "./Components/AboutPage";
+import LoginPage from "./Components/Authentication/LoginPage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    return (
+        <Router>
+            <Navbar/>
+            <Toaster position={"bottom-center"} reverseOrder={false}/>
+            <Routes>
+                {/*<Route path="/" element={<LandingPage/>}/>*/}
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/contact" element={<ContactPage/>}/>
+                <Route path="/about" element={<AboutPage/>}/>
+            </Routes>
+        </Router>
+    )
 }
 
 export default App;
