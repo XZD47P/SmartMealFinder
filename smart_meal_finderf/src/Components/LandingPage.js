@@ -4,7 +4,7 @@ const LandingPage = () => {
     const {token} = useMyContext();
 
     return (
-        <h1>Welcome to Smart Meal Finder!</h1>
+        <h1 className="text-8xl place-self-center">Welcome to Smart Meal Finder!</h1>
     )
 }
 
