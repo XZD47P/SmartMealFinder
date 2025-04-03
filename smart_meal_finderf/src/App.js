@@ -9,6 +9,9 @@ import LoginPage from "./Components/Authentication/LoginPage";
 import RegisterPage from "./Components/Authentication/RegisterPage";
 import LandingPage from "./Components/LandingPage";
 import OAuth2RedirectHandler from "./Components/Authentication/OAuth2RedirectHandler";
+import ForgotPassword from "./Components/Authentication/ForgotPassword";
+import ResetPassword from "./Components/Authentication/ResetPassword";
+import AccessDenied from "./Components/Authentication/AccessDenied";
 
 const App = () => {
     return (
@@ -22,6 +25,10 @@ const App = () => {
                 <Route path="/contact" element={<ContactPage/>}/>
                 <Route path="/about" element={<AboutPage/>}/>
                 <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler/>}/>
+                <Route path="/forgot-password" element={<ForgotPassword/>}/>
+                <Route path="/reset-password" element={<ResetPassword/>}/>
+                <Route path="/access-denied" element={<AccessDenied/>}/>
+                
             </Routes>
         </Router>
     )
