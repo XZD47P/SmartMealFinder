@@ -12,6 +12,8 @@ import OAuth2RedirectHandler from "./Components/Authentication/OAuth2RedirectHan
 import ForgotPassword from "./Components/Authentication/ForgotPassword";
 import ResetPassword from "./Components/Authentication/ResetPassword";
 import AccessDenied from "./Components/Authentication/AccessDenied";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import UserProfile from "./Components/Authentication/UserProfile";
 
 const App = () => {
     return (
@@ -28,7 +30,14 @@ const App = () => {
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/access-denied" element={<AccessDenied/>}/>
-                
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <UserProfile/>
+                        </ProtectedRoute>
+                    }
+                />
             </Routes>
         </Router>
     )

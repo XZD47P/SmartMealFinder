@@ -1,21 +1,22 @@
 import React from "react";
-import {Navigate} from 'react-router-dom';
+import {Navigate} from "react-router-dom";
 import {useMyContext} from "../Store/ContextApi";
 
-const ProtectedRoute = (children, adminPage) => {
-    //JWT token és Admin jog ellenőrzése a ContextProviderből
+const ProtectedRoute = ({children, adminPage}) => {
+    // Access the token and isAdmin state by using the useMyContext hook from the ContextProvider
     const {token, isAdmin} = useMyContext();
 
-    //Átirányítás a LoginPage-re, ha nincs bejelentkezett felhasználó
+    //navigate to login page to an unauthenticated
     if (!token) {
-        return <Navigate to="/login"/>
+        return <Navigate to="/login"/>;
     }
 
-    //Hozzáférés megtagadva, ha nem Admin
+    //navigate to access-denied page if a user try to access the admin page
     if (token && adminPage && !isAdmin) {
-        return <Navigate to="/access-denied"/>
+        return <Navigate to="/access-denied"/>;
     }
+
     return children;
-}
+};
 
 export default ProtectedRoute;
