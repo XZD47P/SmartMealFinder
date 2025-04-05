@@ -37,4 +37,6 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     void registerUser(User newUser);
+
+    void changePassword(String jwtToken, String oldPassword, String newPassword);
 }

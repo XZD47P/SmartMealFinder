@@ -268,4 +268,24 @@ public class UserServiceImpl implements UserService {
 
         this.userRepository.save(newUser);
     }
+
+    @Override
+    public void changePassword(String jwtToken, String oldPassword, String newPassword) {
+
+
+        String username = this.jwtUtils.getUserNameFromJwtToken(jwtToken);
+
+        User user = this.userRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+//        String encodedOldPassword = this.passwordEncoder.encode(oldPassword);
+
+        if (!this.passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("Old password does not match");
+        }
+        String encodedNewPassword = this.passwordEncoder.encode(newPassword);
+
+        user.setPassword(encodedNewPassword);
+        this.userRepository.save(user);
+    }
 }

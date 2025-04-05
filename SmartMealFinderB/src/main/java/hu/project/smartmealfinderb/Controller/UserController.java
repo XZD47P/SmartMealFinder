@@ -86,4 +86,18 @@ public class UserController {
                     .body(new MessageResponse(e.getMessage()));
         }
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestParam String token,
+                                            @RequestParam String oldPassword,
+                                            @RequestParam String newPassword) {
+        try {
+            this.userService.changePassword(token, oldPassword, newPassword);
+            return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(e.getMessage()));
+        }
+    }
+
 }

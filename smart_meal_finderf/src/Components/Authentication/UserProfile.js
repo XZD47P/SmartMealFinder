@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import moment from "moment";
 import {jwtDecode} from "jwt-decode";
 import Errors from "../Errors";
-import {Accordion, AccordionDetails, AccordionSummary, Switch} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary} from "@mui/material";
 import Buttons from "../Utils/Buttons";
 import InputField from "../Utils/InputField";
 import Avatar from "@mui/material/Avatar";
@@ -30,44 +30,50 @@ const UserProfile = () => {
     const [loading, setLoading] = useState(false);
     const [pageLoader, setPageLoader] = useState(false);
 
+
     const {
         register,
         handleSubmit,
         setValue,
+        getValues,
+        trigger,
+        watch,
         formState: {errors},
     } = useForm({
         defaultValues: {
-            username: currentUser?.username,
-            email: currentUser?.email,
-            password: "",
+            oldPassword: "",
+            newPassword: "",
+            newPassword2: ""
         },
         mode: "onTouched",
     });
 
-    const handleUpdateCredential = async (data) => {
-        const newUsername = data.username;
-        const newPassword = data.password;
+    const handleChangePassword = async (data) => {
+        const oldPassword = data.oldPassword;
+        const newPassword = data.newPassword;
+        const newPassword2 = data.newPassword2;
 
         try {
             setLoading(true);
             const formData = new URLSearchParams();
             formData.append("token", token);
-            formData.append("newUsername", newUsername);
+            formData.append("oldPassword", oldPassword);
             formData.append("newPassword", newPassword);
-            await api.post("/auth/update-credentials", formData, {
+            formData.append("newPassword2", newPassword2);
+            await api.post("/auth/change-password", formData, {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 }
             });
-            toast.success("Credentials saved!")
+            toast.success("Password changed successfully!")
         } catch (error) {
-            toast.error("Saving failed!");
+            toast.error("Password change failed!");
         } finally {
             setLoading(false);
         }
     };
 
-    //A jelenlegi felhasználó adatainak betöltése
+    //A jelenlegi felhasználó adatainak betöltése az input fieldekbe
     useEffect(() => {
         if (currentUser?.id) {
             setValue("username", currentUser.username);
@@ -80,6 +86,7 @@ const UserProfile = () => {
         }
     }, [currentUser, setValue]);
 
+
     useEffect(() => {
         if (token) {
             const decodedToken = jwtDecode(token);
@@ -89,28 +96,28 @@ const UserProfile = () => {
         }
     }, [token]);
 
-    const handleAccountLockStatus = async (event) => {
-        setAccountLocked(event.target.checked);
-
-        try {
-            const formData = new URLSearchParams();
-            formData.append("token", token);
-            formData.append("lock", event.target.checked);
-
-            await api.put("/auth/update-lock-status", formData, {
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-            });
-
-            //fetchUser();
-            toast.success("Update Account Lock Status");
-        } catch (error) {
-            toast.error("Update Account Lock status failed");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const handleAccountLockStatus = async (event) => {
+    //     setAccountLocked(event.target.checked);
+    //
+    //     try {
+    //         const formData = new URLSearchParams();
+    //         formData.append("token", token);
+    //         formData.append("lock", event.target.checked);
+    //
+    //         await api.put("/auth/update-lock-status", formData, {
+    //             headers: {
+    //                 "Content-Type": "application/x-www-form-urlencoded",
+    //             },
+    //         });
+    //
+    //         //fetchUser();
+    //         toast.success("Update Account Lock Status");
+    //     } catch (error) {
+    //         toast.error("Update Account Lock status failed");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     //Hibakezelés
     if (pageError) {
@@ -186,40 +193,28 @@ const UserProfile = () => {
                                             id="panel1-header"
                                         >
                                             <h3 className="text-slate-800 text-lg font-semibold ">
-                                                Update User Credentials
+                                                Update your login credentials
                                             </h3>
                                         </AccordionSummary>
                                         <AccordionDetails className="shadow-md shadow-gray-300">
                                             <form
                                                 className=" flex flex-col gap-3"
-                                                onSubmit={handleSubmit(handleUpdateCredential)}
+                                                onSubmit={handleSubmit(handleChangePassword)}
                                             >
                                                 <InputField
-                                                    label="UserName"
+                                                    label="Old password"
                                                     required
-                                                    id="username"
+                                                    id="oldPassword"
                                                     className="text-sm"
-                                                    type="text"
-                                                    message="*Username is required"
+                                                    type="password"
+                                                    message="*Old password is required"
                                                     placeholder="Enter your username"
                                                     register={register}
                                                     errors={errors}
                                                 />{" "}
                                                 <InputField
-                                                    label="Email"
-                                                    required
-                                                    id="email"
-                                                    className="text-sm"
-                                                    type="email"
-                                                    message="*Email is required"
-                                                    placeholder="Enter your email"
-                                                    register={register}
-                                                    errors={errors}
-                                                    readOnly
-                                                />{" "}
-                                                <InputField
                                                     label="Enter New Password"
-                                                    id="password"
+                                                    id="newPassword"
                                                     className="text-sm"
                                                     type="password"
                                                     message="*Password is required"
@@ -227,6 +222,21 @@ const UserProfile = () => {
                                                     register={register}
                                                     errors={errors}
                                                     min={6}
+                                                />{" "}
+                                                <InputField
+                                                    label="Enter new password again"
+                                                    id="newPassword2"
+                                                    className="text-sm"
+                                                    type="password"
+                                                    message="*Password is required"
+                                                    placeholder="type your password"
+                                                    register={register}
+                                                    errors={errors}
+                                                    min={6}
+                                                    validation={{
+                                                        validate: (value) =>
+                                                            value === getValues("newPassword") || "*Passwords do not match",
+                                                    }}
                                                 />
                                                 <Buttons
                                                     disabled={loading}
@@ -252,16 +262,7 @@ const UserProfile = () => {
                                                 </h3>
                                             </AccordionSummary>
                                             <AccordionDetails className="shadow-md shadow-gray-300">
-                                                <div>
-                                                    <h3 className="text-slate-700 font-customWeight text-sm ">
-                                                        Account Locked
-                                                    </h3>
-                                                    <Switch
-                                                        checked={accountLocked}
-                                                        onChange={handleAccountLockStatus}
-                                                        inputProps={{"aria-label": "controlled"}}
-                                                    />
-                                                </div>
+
                                             </AccordionDetails>
                                         </Accordion>
                                     </div>
