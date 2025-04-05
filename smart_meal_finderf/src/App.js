@@ -14,6 +14,7 @@ import ResetPassword from "./Components/Authentication/ResetPassword";
 import AccessDenied from "./Components/Authentication/AccessDenied";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/Authentication/UserProfile";
+import Admin from "./Components/Admin/Admin";
 
 const App = () => {
     return (
@@ -35,6 +36,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <UserProfile/>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/*"
+                    element={
+                        <ProtectedRoute adminPage={true}>
+                            <Admin/>
                         </ProtectedRoute>
                     }
                 />

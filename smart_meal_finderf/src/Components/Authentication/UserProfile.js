@@ -36,8 +36,6 @@ const UserProfile = () => {
         handleSubmit,
         setValue,
         getValues,
-        trigger,
-        watch,
         formState: {errors},
     } = useForm({
         defaultValues: {
