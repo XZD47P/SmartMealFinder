@@ -47,8 +47,8 @@ public class User {
     @JsonIgnore
     private String password;
 
-    private boolean accountNonLocked;
-    private boolean accountVerified;
+    private boolean accountNonLocked = true;
+    private boolean accountVerified = false;
     private Instant verificationDeadline;
     private String signUpMethod;
 
@@ -77,8 +77,6 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.accountNonLocked = true;
-        this.accountVerified = false;
         this.verificationDeadline = verificationDeadline;
     }
 }

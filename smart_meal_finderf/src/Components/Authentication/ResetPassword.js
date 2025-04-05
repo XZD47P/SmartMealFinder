@@ -67,7 +67,7 @@ const ResetPassword = () => {
                     <InputField
                         label="Password"
                         required
-                        id="password"
+                        id="newPassword"
                         type="password"
                         message="*Password is required"
                         placeholder="enter your Password"
