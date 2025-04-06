@@ -26,4 +26,17 @@ public class EmailServiceImpl implements EmailService {
 
         this.mailSender.send(message);
     }
+
+    @Override
+    public void sendVerificationEmail(String userName, String to, String verificationURL) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Smart Meal Finder: Verification Request");
+        message.setText("Dear " + userName + "!\n" +
+                "Your requested a password change on Smart Meal Finder.\n" +
+                "Please click the link below to reset your password:\n" + verificationURL + "\n\n" +
+                "Your link will be active for 15 days! If you dont activate your account, it will be deleted!");
+
+        this.mailSender.send(message);
+    }
 }

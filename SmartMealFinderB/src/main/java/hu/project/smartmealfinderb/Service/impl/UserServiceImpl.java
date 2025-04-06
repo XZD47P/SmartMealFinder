@@ -2,13 +2,11 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.UserDTO;
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
-import hu.project.smartmealfinderb.Model.AppRole;
-import hu.project.smartmealfinderb.Model.PasswordResetToken;
-import hu.project.smartmealfinderb.Model.Role;
-import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Model.*;
 import hu.project.smartmealfinderb.Repository.PasswordResetTokenRepository;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Repository.UserRepository;
+import hu.project.smartmealfinderb.Repository.VerificationTokenRepository;
 import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Service.EmailService;
@@ -58,6 +56,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private VerificationTokenRepository verificationTokenRepository;
 
     @Override
     public void registerUser(String email, String username, String password, Set<String> role, String firstName, String lastName) {
@@ -287,5 +288,38 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(encodedNewPassword);
         this.userRepository.save(user);
+    }
+
+    @Override
+    public void generateVerificationToken(String email) {
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        Instant expiryDate = user.getVerificationDeadline();
+        VerificationToken verificationToken = new VerificationToken(user, token, expiryDate);
+
+        this.verificationTokenRepository.save(verificationToken);
+
+        //Email küldése
+        String verificationURL = this.frontendUrl + "/verification?token=" + token;
+        this.emailService.sendVerificationEmail(user.getUserName(), email, verificationURL);
+    }
+
+    @Override
+    public void verifyUser(String token) {
+        VerificationToken verificationToken = this.verificationTokenRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
+
+        if (verificationToken.isUsed()) {
+            throw new RuntimeException("User already verified");
+        }
+
+        User user = verificationToken.getUser();
+        user.setAccountVerified(true);
+        this.userRepository.save(user);
+
+        verificationToken.setUsed(true);
+        this.verificationTokenRepository.save(verificationToken);
     }
 }

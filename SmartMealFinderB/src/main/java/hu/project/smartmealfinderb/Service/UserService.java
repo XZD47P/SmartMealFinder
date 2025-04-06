@@ -39,4 +39,8 @@ public interface UserService {
     void registerUser(User newUser);
 
     void changePassword(String jwtToken, String oldPassword, String newPassword);
+
+    void generateVerificationToken(String email);
+
+    void verifyUser(String token);
 }

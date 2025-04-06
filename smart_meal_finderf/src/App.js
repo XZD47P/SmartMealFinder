@@ -15,6 +15,7 @@ import AccessDenied from "./Components/Authentication/AccessDenied";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/Authentication/UserProfile";
 import Admin from "./Components/Admin/Admin";
+import VerificationPage from "./Components/Authentication/VerificationPage";
 
 const App = () => {
     return (
@@ -31,6 +32,7 @@ const App = () => {
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/access-denied" element={<AccessDenied/>}/>
+                <Route path="/verification" element={<VerificationPage/>}/>
                 <Route
                     path="/profile"
                     element={

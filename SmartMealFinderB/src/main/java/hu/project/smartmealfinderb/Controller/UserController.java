@@ -34,6 +34,8 @@ public class UserController {
                     registerRequest.getRole(),
                     registerRequest.getFirstName(),
                     registerRequest.getLastName());
+
+            this.userService.generateVerificationToken(registerRequest.getEmail());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
@@ -98,6 +100,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponse(e.getMessage()));
         }
+    }
+
+    @PostMapping("/public/verify-user")
+    public ResponseEntity<?> verifyUser(@RequestParam String token) {
+        try {
+            this.userService.verifyUser(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(e.getMessage()));
+        }
+        return ResponseEntity.ok(new MessageResponse("User verified successfully"));
     }
 
 }
