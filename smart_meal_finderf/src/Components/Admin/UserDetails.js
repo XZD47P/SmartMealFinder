@@ -85,7 +85,7 @@ const UserDetails = () => {
         try {
             const formData = new URLSearchParams();
             formData.append("userId", userId);
-            formData.append("roleName", selectedRole);
+            formData.append("role", selectedRole);
 
             await api.put("/admin/update-role", formData, {
                 headers: {
@@ -316,48 +316,15 @@ const UserDetails = () => {
                             <div className="flex items-center gap-2">
                                 <label className="text-slate-600 text-sm font-semibold uppercase">
                                     {" "}
-                                    Account Expiry
+                                    Account Verified
                                 </label>
                                 <input
                                     className="text-14 w-5 h-5"
                                     type="checkbox"
-                                    name="expire"
-                                    checked={!user?.accountNonExpired}
-                                    onChange={(e) =>
-                                        handleCheckboxChange(e, "/admin/update-expiry-status")
-                                    }
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <label className="text-slate-600 text-sm font-semibold uppercase">
-                                    {" "}
-                                    Account Enabled
-                                </label>
-                                <input
-                                    className="text-14 w-5 h-5"
-                                    type="checkbox"
-                                    name="enabled"
-                                    checked={user?.enabled}
+                                    name="verify"
+                                    checked={user?.accountVerified}
                                     onChange={(e) =>
                                         handleCheckboxChange(e, "/admin/update-enabled-status")
-                                    }
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <label className="text-slate-600 text-sm font-semibold uppercase">
-                                    {" "}
-                                    Credentials Expired
-                                </label>
-                                <input
-                                    className="text-14 w-5 h-5"
-                                    type="checkbox"
-                                    name="credentialsExpire"
-                                    checked={!user?.credentialsNonExpired}
-                                    onChange={(e) =>
-                                        handleCheckboxChange(
-                                            e,
-                                            `/admin/update-credentials-expiry-status?userId=${userId}&expire=${user?.credentialsNonExpired}`
-                                        )
                                     }
                                 />
                             </div>

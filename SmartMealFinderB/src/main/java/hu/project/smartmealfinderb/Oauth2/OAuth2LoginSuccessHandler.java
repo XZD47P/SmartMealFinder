@@ -136,6 +136,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 email,
                 null,
                 true,
+                true,
                 authorities
         );
 
