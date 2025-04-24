@@ -66,8 +66,8 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     private void gainWeight(float weight, float weightGoal, int days) {
 
-        if (weightGoal == 0 || days == 0) {
-            throw new RuntimeException("WeightGoal and days are missing!");
+        if (weightGoal == 0 || days == 0 || weightGoal < weight) {
+            throw new RuntimeException("Weight goal, days to reach goal or weight is invalid!");
         }
 
         double deltaWeight = weightGoal - weight;
@@ -77,8 +77,8 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     private void loseWeight(float weight, float weightGoal, int days) {
 
-        if (weightGoal == 0 || days == 0) {
-            throw new RuntimeException("WeightGoal and days are missing!");
+        if (weightGoal == 0 || days == 0 || weight < weightGoal) {
+            throw new RuntimeException("Weight goal, days to reach goal or weight is invalid!");
         }
 
         double deltaWeight = weight - weightGoal;
