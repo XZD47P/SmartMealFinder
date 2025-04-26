@@ -1,6 +1,8 @@
 package hu.project.smartmealfinderb.Service;
 
+import hu.project.smartmealfinderb.Model.User;
+
 public interface DietPlanService {
 
-    double calculateDietPlan(String sex, float weight, float height, int age, int activityLevel, int goalType, float weightGoal, int daysToReachGoal);
+    void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal, int daysToReachGoal);
 }

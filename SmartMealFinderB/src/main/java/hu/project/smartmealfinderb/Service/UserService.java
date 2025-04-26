@@ -43,4 +43,6 @@ public interface UserService {
     void generateVerificationToken(String email);
 
     void verifyUser(String token);
+
+    User findByUsername(String username);
 }

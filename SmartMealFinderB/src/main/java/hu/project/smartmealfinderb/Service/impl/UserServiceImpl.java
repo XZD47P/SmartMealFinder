@@ -322,4 +322,11 @@ public class UserServiceImpl implements UserService {
         verificationToken.setUsed(true);
         this.verificationTokenRepository.save(verificationToken);
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return this.userRepository.findByUserName(username).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+    }
 }

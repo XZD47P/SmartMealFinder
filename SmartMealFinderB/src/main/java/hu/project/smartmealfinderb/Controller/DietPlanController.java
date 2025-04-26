@@ -1,11 +1,16 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Request.DietPlanRequest;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DietPlanService;
+import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +23,18 @@ public class DietPlanController {
     @Autowired
     private DietPlanService dietPlanService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/create")
-    public ResponseEntity<?> createDietPlan(@RequestBody DietPlanRequest dietPlanRequest) {
-        double response;
+    public ResponseEntity<?> createDietPlan(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestBody DietPlanRequest dietPlanRequest) {
+
 
         try {
-            response = this.dietPlanService.calculateDietPlan(dietPlanRequest.getSex(),
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            this.dietPlanService.calculateDietPlan(user,
+                    dietPlanRequest.getSex(),
                     dietPlanRequest.getWeight(),
                     dietPlanRequest.getHeight(),
                     dietPlanRequest.getAge(),
@@ -32,12 +43,15 @@ public class DietPlanController {
                     dietPlanRequest.getWeightGoal(),
                     dietPlanRequest.getDaysToReachGoal()
             );
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Could not save diet plan"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponse(e.getMessage()));
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(response);
+                .body(new MessageResponse("Diet Plan created successfully"));
     }
 }
