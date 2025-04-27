@@ -12,18 +12,19 @@ const Plan = () => {
     const [dietPlan, setDietPlan] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const fetchDietPlan = async () => {
+        try {
+            const response = await api.get("/plan");
+            setDietPlan(response.data);
+        } catch (error) {
+            console.error("No diet plan found", error);
+            setDietPlan(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchDietPlan = async () => {
-            try {
-                const response = await api.get("/plan");
-                setDietPlan(response.data);
-            } catch (error) {
-                console.error("No diet plan found", error);
-                setDietPlan(null);
-            } finally {
-                setLoading(false);
-            }
-        };
 
         fetchDietPlan()
     }, [currentUser]);
@@ -67,6 +68,7 @@ const Plan = () => {
             const response = await api.post("/plan/create", formData);
             toast.success("Diet plan successfully created!");
             reset();
+            await fetchDietPlan();
         } catch (error) {
             toast.error("Something went wrong! Please try again!");
             console.log(error.message);
