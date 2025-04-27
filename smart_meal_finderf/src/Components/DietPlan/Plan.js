@@ -7,6 +7,7 @@ import Buttons from "../Utils/Buttons";
 import toast from "react-hot-toast";
 import SelectField from "../Utils/SelectField";
 import {ClockLoader} from "react-spinners";
+import GoalTile from "../Utils/GoalTile";
 
 const Plan = () => {
     const {currentUser, token} = useMyContext();
@@ -97,12 +98,14 @@ const Plan = () => {
                     {dietPlan ? (
                         <div className="bg-green-100 p-4 rounded-md shadow-md">
                             <h2 className="text-xl font-semibold mb-2">Your Current Goals:</h2>
-                            <p><strong>Goal Weight:</strong> {dietPlan.goalWeight} kg</p>
-                            <p><strong>Goal Date:</strong> {dietPlan.goalDate}</p>
-                            <p><strong>Goal Calories:</strong> {dietPlan.goalCalorie} kcal/day</p>
-                            <p><strong>Goal Proteins:</strong> {dietPlan.goalProtein} g/day</p>
-                            <p><strong>Goal Carbs:</strong> {dietPlan.goalCarbohydrate} g/day</p>
-                            <p><strong>Goal Fats:</strong> {dietPlan.goalFat} g/day</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <GoalTile title="Goal Weight" value={`${dietPlan.goalWeight} kg`}/>
+                                <GoalTile title="Goal Date" value={dietPlan.goalDate}/>
+                                <GoalTile title="Goal Calories" value={`${dietPlan.goalCalorie} kcal/day`}/>
+                                <GoalTile title="Goal Proteins" value={`${dietPlan.goalProtein} g/day`}/>
+                                <GoalTile title="Goal Carbs" value={`${dietPlan.goalCarbohydrate} g/day`}/>
+                                <GoalTile title="Goal Fats" value={`${dietPlan.goalFat} g/day`}/>
+                            </div>
                         </div>
 
                     ) : (
