@@ -16,6 +16,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import UserProfile from "./Components/Authentication/UserProfile";
 import Admin from "./Components/Admin/Admin";
 import VerificationPage from "./Components/Authentication/VerificationPage";
+import Plan from "./Components/DietPlan/Plan";
 
 const App = () => {
     return (
@@ -40,6 +41,12 @@ const App = () => {
                             <UserProfile/>
                         </ProtectedRoute>
                     }
+                />
+                <Route path="/plan" element={
+                    <ProtectedRoute>
+                        <Plan/>
+                    </ProtectedRoute>
+                }
                 />
                 <Route
                     path="/admin/*"
