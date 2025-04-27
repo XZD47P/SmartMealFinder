@@ -109,13 +109,14 @@ const UserDetails = () => {
         const newPassword = data.password;
 
         try {
-            const formData = new URLSearchParams();
-            formData.append("userId", userId);
-            formData.append("password", newPassword);
+            const formData = {
+                userId,
+                password: newPassword,
+            };
 
             await api.put("/admin/update-password", formData, {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/json",
                 }
             });
             setIsEditingPassword(false);

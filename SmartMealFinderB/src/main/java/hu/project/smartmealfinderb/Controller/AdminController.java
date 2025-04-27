@@ -3,6 +3,7 @@ package hu.project.smartmealfinderb.Controller;
 import hu.project.smartmealfinderb.DTO.UserDTO;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Request.AdminPwChangeReq;
 import hu.project.smartmealfinderb.Request.RoleUpdateReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
@@ -50,10 +51,9 @@ public class AdminController {
     }
 
     @PutMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestParam Long userId,
-                                            @RequestParam String password) {
+    public ResponseEntity<?> updatePassword(@RequestBody AdminPwChangeReq adminPwChangeReq) {
         try {
-            this.userService.updatePassword(userId, password);
+            this.userService.updatePassword(adminPwChangeReq.getUserId(), adminPwChangeReq.getPassword());
             return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
