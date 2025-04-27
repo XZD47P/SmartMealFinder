@@ -29,13 +29,13 @@ const ResetPassword = () => {
         setLoading(true);
 
         try {
-            const formData = new URLSearchParams();
-
-            formData.append("token", token);
-            formData.append("newPassword", newPassword);
+            const formData = {
+                token,
+                newPassword
+            };
             await api.post("/auth/public/reset-password", formData, {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
                 },
             });
 

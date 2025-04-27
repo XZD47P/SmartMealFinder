@@ -2,13 +2,13 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
 import hu.project.smartmealfinderb.Request.ChangePasswordRequest;
+import hu.project.smartmealfinderb.Request.ResetPasswordChangeReq;
 import hu.project.smartmealfinderb.Security.Request.LoginRequest;
 import hu.project.smartmealfinderb.Security.Request.RegisterRequest;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,12 +77,9 @@ public class UserController {
     }
 
     @PostMapping("/public/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String token,
-                                           @Valid
-                                           @Size(min = 6)
-                                           @RequestParam String newPassword) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordChangeReq resetPasswordChangeReq) {
         try {
-            this.userService.resetPassword(token, newPassword);
+            this.userService.resetPassword(resetPasswordChangeReq.getToken(), resetPasswordChangeReq.getNewPassword());
             return ResponseEntity.ok(new MessageResponse("Password reset successful"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
