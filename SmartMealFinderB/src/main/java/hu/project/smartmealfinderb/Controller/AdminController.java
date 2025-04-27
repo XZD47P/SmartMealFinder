@@ -3,6 +3,7 @@ package hu.project.smartmealfinderb.Controller;
 import hu.project.smartmealfinderb.DTO.UserDTO;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Request.RoleUpdateReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,8 @@ public class AdminController {
     }
 
     @PutMapping("/update-role")
-    public ResponseEntity<?> updateUserRole(@RequestParam Long userId,
-                                            @RequestParam String role) {
-        this.userService.updateUserRole(userId, role);
+    public ResponseEntity<?> updateUserRole(@RequestBody RoleUpdateReq roleUpdateReq) {
+        this.userService.updateUserRole(roleUpdateReq.getUserId(), roleUpdateReq.getRole());
         return ResponseEntity.ok(new MessageResponse("User role updated successfully"));
     }
 

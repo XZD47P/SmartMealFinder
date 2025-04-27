@@ -83,13 +83,14 @@ const UserDetails = () => {
     const handleUpdateRole = async () => {
         setUpdateRoleLoader(true);
         try {
-            const formData = new URLSearchParams();
-            formData.append("userId", userId);
-            formData.append("role", selectedRole);
+            const formData = {
+                userId,
+                role: selectedRole,
+            }
 
             await api.put("/admin/update-role", formData, {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/json",
                 },
             });
 
