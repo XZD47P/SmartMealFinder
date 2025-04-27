@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class DietPlanServiceImpl implements DietPlanService {
 
     private static final int KGTOCALORIE = 7700; //1kg zsír nagyjából 7700 kalória
+
     @Autowired
     private DietPlanRepository dietPlanRepository;
     private double tdee;//Total Daily Energy Expenditure = Az a kalóriaszám, amire a testünknek szüksége van az aktivitási szinthez képest
@@ -79,6 +80,13 @@ public class DietPlanServiceImpl implements DietPlanService {
 
         DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
         dietPlanRepository.save(dietPlan);
+    }
+
+    @Override
+    public DietPlan getUserDietPlan(User user) {
+        return this.dietPlanRepository.findByUserId(user).orElseThrow(
+                () -> new RuntimeException("User has no diet plan!")
+        );
     }
 
     private double calculateCarbsNeeds(double tdee, int goalType) {

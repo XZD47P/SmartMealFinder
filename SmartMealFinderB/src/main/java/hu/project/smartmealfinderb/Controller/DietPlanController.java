@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Request.DietPlanRequest;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/plan")
@@ -53,5 +51,22 @@ public class DietPlanController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new MessageResponse("Diet Plan created successfully"));
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
+
+        DietPlan userDietPlan;
+
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            userDietPlan = this.dietPlanService.getUserDietPlan(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(e.getMessage()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userDietPlan);
     }
 }

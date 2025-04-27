@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class DietPlan {
 
     @Nullable
     private LocalDate goalDate;
-    
+
     private double startWeight;
     private double goalWeight;
     private int activityLevel;
@@ -33,6 +34,7 @@ public class DietPlan {
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
+    @JsonIgnore
     private User userId;
     private int fitnessId;
 
