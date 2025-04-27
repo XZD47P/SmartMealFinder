@@ -1,6 +1,7 @@
 package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
+import hu.project.smartmealfinderb.Request.ChangePasswordRequest;
 import hu.project.smartmealfinderb.Security.Request.LoginRequest;
 import hu.project.smartmealfinderb.Security.Request.RegisterRequest;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
@@ -90,11 +91,11 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestParam String token,
-                                            @RequestParam String oldPassword,
-                                            @RequestParam String newPassword) {
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
-            this.userService.changePassword(token, oldPassword, newPassword);
+            this.userService.changePassword(request.getToken(),
+                    request.getOldPassword(),
+                    request.getNewPassword());
             return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

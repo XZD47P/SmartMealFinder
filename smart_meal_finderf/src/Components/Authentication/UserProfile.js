@@ -53,14 +53,20 @@ const UserProfile = () => {
 
         try {
             setLoading(true);
-            const formData = new URLSearchParams();
-            formData.append("token", token);
-            formData.append("oldPassword", oldPassword);
-            formData.append("newPassword", newPassword);
-            formData.append("newPassword2", newPassword2);
+            // const formData = new URLSearchParams();
+            // formData.append("token", token);
+            // formData.append("oldPassword", oldPassword);
+            // formData.append("newPassword", newPassword);
+            // formData.append("newPassword2", newPassword2);
+            const formData = {
+                token,
+                oldPassword,
+                newPassword,
+                newPassword2
+            }
             await api.post("/auth/change-password", formData, {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/json",
                 }
             });
             toast.success("Password changed successfully!")
@@ -206,7 +212,7 @@ const UserProfile = () => {
                                                     className="text-sm"
                                                     type="password"
                                                     message="*Old password is required"
-                                                    placeholder="Enter your username"
+                                                    placeholder="Enter your current password"
                                                     register={register}
                                                     errors={errors}
                                                 />{" "}
