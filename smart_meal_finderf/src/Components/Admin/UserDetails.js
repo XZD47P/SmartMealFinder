@@ -141,13 +141,14 @@ const UserDetails = () => {
         }
 
         try {
-            const formData = new URLSearchParams();
-            formData.append("userId", userId);
-            formData.append(name, checked);
+            const formData = {
+                userId,
+                name: checked,
+            };
 
             await api.put(updateUrl, formData, {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/json",
                 }
             })
             fetchUserDetails();
