@@ -31,5 +31,15 @@ public class DailyProgress {
 
     private String comment;
 
-
+    public DailyProgress(User userId, DietPlan dietPlan, LocalDate date, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
+        this.userId = userId;
+        this.dietPlan = dietPlan;
+        this.date = date;
+        this.weight = weight;
+        this.caloriesConsumed = caloriesConsumed;
+        this.proteinConsumed = proteinConsumed;
+        this.carbsConsumed = carbsConsumed;
+        this.fatsConsumed = fatsConsumed;
+        this.comment = comment;
+    }
 }

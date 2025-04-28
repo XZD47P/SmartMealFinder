@@ -13,29 +13,35 @@ import java.time.LocalDate;
 @Service
 public class DailyProgressServiceImpl implements DailyProgressService {
 
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     @Autowired
     private DailyProgressRepository dailyProgressRepository;
 
     @Override
-    public boolean existsTodayProgress(User user) {
-        return this.dailyProgressRepository.existsByUserIdAndDate(user, date);
+    public DailyProgress findTodayProgress(User user) {
+        date = LocalDate.now();
+        return this.dailyProgressRepository.findByUserIdAndDate(user, date).orElse(null);
     }
 
     @Override
     public void createTodayProgress(User user, DietPlan plan, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
-        DailyProgress dailyProgress = new DailyProgress();
-        dailyProgress.setUserId(user);
-        dailyProgress.setDietPlan(plan);
-        dailyProgress.setDate(date);
-        dailyProgress.setWeight(weight);
-        dailyProgress.setCaloriesConsumed(caloriesConsumed);
-        dailyProgress.setProteinConsumed(proteinConsumed);
-        dailyProgress.setCarbsConsumed(carbsConsumed);
-        dailyProgress.setFatsConsumed(fatsConsumed);
-        dailyProgress.setComment(comment);
+        date = LocalDate.now();
+        DailyProgress dailyProgress = new DailyProgress(user, plan, date, weight, caloriesConsumed, proteinConsumed, carbsConsumed, fatsConsumed, comment);
+
         this.dailyProgressRepository.save(dailyProgress);
 
+    }
+
+    @Override
+    public void updateTodayProgress(DailyProgress existingProgress, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
+
+        existingProgress.setWeight(weight);
+        existingProgress.setCaloriesConsumed(caloriesConsumed);
+        existingProgress.setProteinConsumed(proteinConsumed);
+        existingProgress.setCarbsConsumed(carbsConsumed);
+        existingProgress.setFatsConsumed(fatsConsumed);
+        existingProgress.setComment(comment);
+        this.dailyProgressRepository.save(existingProgress);
     }
 }

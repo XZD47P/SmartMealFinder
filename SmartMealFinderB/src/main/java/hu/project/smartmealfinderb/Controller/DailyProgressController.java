@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Request.DailyProgressPostReq;
@@ -37,13 +38,10 @@ public class DailyProgressController {
             User user = this.userService.findByUsername(userDetails.getUsername());
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
 
-            boolean exists = this.dailyProgressService.existsTodayProgress(user);
+            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
 
-            if (exists) {
-//                this.dailyProgressService.updateTodayProgress();
-                System.out.println(exists);
-            } else {
+            if (dailyProgress == null) {
                 this.dailyProgressService.createTodayProgress(user,
                         dietPlan,
                         dailyProgressPostReq.getWeight(),
@@ -52,12 +50,19 @@ public class DailyProgressController {
                         dailyProgressPostReq.getCarbsConsumed(),
                         dailyProgressPostReq.getFatsConsumed(),
                         dailyProgressPostReq.getComment());
-                System.out.println(exists);
+            } else {
+                this.dailyProgressService.updateTodayProgress(dailyProgress,
+                        dailyProgressPostReq.getWeight(),
+                        dailyProgressPostReq.getCaloriesConsumed(),
+                        dailyProgressPostReq.getProteinConsumed(),
+                        dailyProgressPostReq.getCarbsConsumed(),
+                        dailyProgressPostReq.getFatsConsumed(),
+                        dailyProgressPostReq.getComment());
             }
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse("Could not save progress"));
+                    .body(new MessageResponse(e.getMessage()));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Daily progress successfully saved."));
