@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,5 +67,20 @@ public class DailyProgressController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Daily progress successfully saved."));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getProgress(@AuthenticationPrincipal UserDetails userDetails) {
+
+        DailyProgress dailyProgress;
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            dailyProgress = this.dailyProgressService.findTodayProgress(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse(e.getMessage()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
     }
 }

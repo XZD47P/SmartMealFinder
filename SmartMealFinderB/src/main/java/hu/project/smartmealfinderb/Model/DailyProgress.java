@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,12 @@ public class DailyProgress {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User userId;
+    
     @ManyToOne
     @JoinColumn(name = "plan_id")
+    @JsonIgnore
     private DietPlan dietPlan;
 
     private LocalDate date;
