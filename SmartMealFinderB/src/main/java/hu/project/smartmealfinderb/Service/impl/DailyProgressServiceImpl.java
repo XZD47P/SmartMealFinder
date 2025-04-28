@@ -25,7 +25,7 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     }
 
     @Override
-    public void createTodayProgress(User user, DietPlan plan, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
+    public void createTodayProgress(User user, DietPlan plan, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment) {
         date = LocalDate.now();
         DailyProgress dailyProgress = new DailyProgress(user, plan, date, weight, caloriesConsumed, proteinConsumed, carbsConsumed, fatsConsumed, comment);
 
@@ -34,7 +34,7 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     }
 
     @Override
-    public void updateTodayProgress(DailyProgress existingProgress, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
+    public void updateTodayProgress(DailyProgress existingProgress, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment) {
 
         existingProgress.setWeight(weight);
         existingProgress.setCaloriesConsumed(caloriesConsumed);

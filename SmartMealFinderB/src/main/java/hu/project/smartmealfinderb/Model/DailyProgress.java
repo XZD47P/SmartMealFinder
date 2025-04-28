@@ -20,22 +20,22 @@ public class DailyProgress {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User userId;
-    
+
     @ManyToOne
     @JoinColumn(name = "plan_id")
     @JsonIgnore
     private DietPlan dietPlan;
 
     private LocalDate date;
-    private float weight;
-    private int caloriesConsumed;
-    private int proteinConsumed;
-    private int carbsConsumed;
-    private int fatsConsumed;
+    private double weight;
+    private double caloriesConsumed;
+    private double proteinConsumed;
+    private double carbsConsumed;
+    private double fatsConsumed;
 
     private String comment;
 
-    public DailyProgress(User userId, DietPlan dietPlan, LocalDate date, float weight, int caloriesConsumed, int proteinConsumed, int carbsConsumed, int fatsConsumed, String comment) {
+    public DailyProgress(User userId, DietPlan dietPlan, LocalDate date, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment) {
         this.userId = userId;
         this.dietPlan = dietPlan;
         this.date = date;
