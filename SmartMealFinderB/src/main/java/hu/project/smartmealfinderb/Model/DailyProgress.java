@@ -16,8 +16,10 @@ public class DailyProgress {
     private Long id;
 
     @ManyToOne
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User userId;
     @ManyToOne
+    @JoinColumn(name = "plan_id")
     private DietPlan dietPlan;
 
     private LocalDate date;

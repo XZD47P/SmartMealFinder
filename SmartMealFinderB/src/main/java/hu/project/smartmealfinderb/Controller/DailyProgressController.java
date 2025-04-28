@@ -1,7 +1,12 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.Model.DietPlan;
+import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Request.DailyProgressPostReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
+import hu.project.smartmealfinderb.Service.DietPlanService;
+import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -18,8 +24,41 @@ public class DailyProgressController {
     @Autowired
     private DailyProgressService dailyProgressService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DietPlanService dietPlanService;
+
     @PostMapping("/save")
-    public ResponseEntity<?> postProgress(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> postProgress(@AuthenticationPrincipal UserDetails userDetails,
+                                          @RequestBody DailyProgressPostReq dailyProgressPostReq) {
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
+
+            boolean exists = this.dailyProgressService.existsTodayProgress(user);
+
+
+            if (exists) {
+//                this.dailyProgressService.updateTodayProgress();
+                System.out.println(exists);
+            } else {
+                this.dailyProgressService.createTodayProgress(user,
+                        dietPlan,
+                        dailyProgressPostReq.getWeight(),
+                        dailyProgressPostReq.getCaloriesConsumed(),
+                        dailyProgressPostReq.getProteinConsumed(),
+                        dailyProgressPostReq.getCarbsConsumed(),
+                        dailyProgressPostReq.getFatsConsumed(),
+                        dailyProgressPostReq.getComment());
+                System.out.println(exists);
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Could not save progress"));
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Daily progress successfully saved."));
     }
