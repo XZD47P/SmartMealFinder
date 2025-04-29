@@ -13,6 +13,7 @@ const InputField = ({
                         placeholder,
                         readOnly,
                         validation = {},
+                        step
                     }) => {
     return (
         <div className={`flex flex-col gap-1 ${className}`}>
@@ -37,6 +38,7 @@ const InputField = ({
                     ...validation,
                 })}
                 readOnly={readOnly}
+                step={step}
             />
 
             {errors[id]?.message && (

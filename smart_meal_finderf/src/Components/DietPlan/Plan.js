@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import SelectField from "../Utils/SelectField";
 import {ClockLoader} from "react-spinners";
 import GoalTile from "../Utils/GoalTile";
+import DailyProgressForm from "./DailyProgressForm";
 
 const Plan = () => {
     const {currentUser, token} = useMyContext();
@@ -19,7 +20,7 @@ const Plan = () => {
             const response = await api.get("/plan");
             setDietPlan(response.data);
         } catch (error) {
-            console.error("No diet plan found", error);
+            toast.error("Something went wrong, please try again!");
             setDietPlan(null);
         } finally {
             setLoading(false);
@@ -67,7 +68,11 @@ const Plan = () => {
 
         try {
             setLoading(true);
-            const response = await api.post("/plan/create", formData);
+            const response = await api.post("/plan/create", formData, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
             toast.success("Diet plan successfully created!");
             reset();
             await fetchDietPlan();
@@ -106,6 +111,7 @@ const Plan = () => {
                                 <GoalTile title="Goal Carbs" value={`${dietPlan.goalCarbohydrate} g/day`}/>
                                 <GoalTile title="Goal Fats" value={`${dietPlan.goalFat} g/day`}/>
                             </div>
+                            <DailyProgressForm/>
                         </div>
 
                     ) : (
