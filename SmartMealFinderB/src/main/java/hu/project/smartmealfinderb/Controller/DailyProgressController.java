@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/progress")
 public class DailyProgressController {
@@ -82,5 +84,18 @@ public class DailyProgressController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getProgressHistory(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            List<DailyProgress> progressHistoryList = this.dailyProgressService.findAll(user);
+
+            return ResponseEntity.status(HttpStatus.OK).body(progressHistoryList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Something went wrong, please try again later."));
+        }
     }
 }
