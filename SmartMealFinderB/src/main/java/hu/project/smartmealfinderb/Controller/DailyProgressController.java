@@ -74,16 +74,15 @@ public class DailyProgressController {
     @GetMapping
     public ResponseEntity<?> getProgress(@AuthenticationPrincipal UserDetails userDetails) {
 
-        DailyProgress dailyProgress;
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
-            dailyProgress = this.dailyProgressService.findTodayProgress(user);
+            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+
+            return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponse(e.getMessage()));
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
     }
 
     @GetMapping("/all")
