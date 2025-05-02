@@ -9,6 +9,7 @@ import SelectField from "../Utils/SelectField";
 import {ClockLoader} from "react-spinners";
 import GoalTile from "../Utils/GoalTile";
 import DailyProgressForm from "./DailyProgressForm";
+import ProgressChart from "./ProgressChart";
 
 const Plan = () => {
     const {currentUser, token} = useMyContext();
@@ -112,6 +113,7 @@ const Plan = () => {
                                 <GoalTile title="Goal Fats" value={`${dietPlan.goalFat} g/day`}/>
                             </div>
                             <DailyProgressForm/>
+                            <ProgressChart/>
                         </div>
 
                     ) : (
