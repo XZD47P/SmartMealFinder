@@ -7,6 +7,8 @@ import hu.project.smartmealfinderb.Service.DietPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Service
@@ -78,7 +80,21 @@ public class DietPlanServiceImpl implements DietPlanService {
         fatGram = this.calculateFatNeeds(tdee, goalType);
         carbsGram = this.calculateCarbsNeeds(tdee, goalType);
 
-        DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
+        //DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
+        DietPlan dietPlan = new DietPlan();
+        dietPlan.setSex(sex);
+        dietPlan.setHeight(height);
+        dietPlan.setAge(age);
+        dietPlan.setGoalDate(goalDate);
+        dietPlan.setStartWeight(weight);
+        dietPlan.setGoalWeight(roundUp(weightGoal));
+        dietPlan.setActivityLevel(activityLevel);
+        dietPlan.setGoalCalorie(roundUp(this.tdee));
+        dietPlan.setGoalProtein(roundUp(proteinGram));
+        dietPlan.setGoalCarbohydrate(roundUp(carbsGram));
+        dietPlan.setGoalFat(roundUp(fatGram));
+        dietPlan.setUserId(user);
+        dietPlan.setFitnessId(goalType);
         dietPlanRepository.save(dietPlan);
     }
 
@@ -87,6 +103,13 @@ public class DietPlanServiceImpl implements DietPlanService {
         return this.dietPlanRepository.findByUserId(user).orElseThrow(
                 () -> new RuntimeException("User has no diet plan!")
         );
+    }
+
+    //Kerekítés
+    private double roundUp(double value) {
+        return new BigDecimal(value)
+                .setScale(2, RoundingMode.CEILING)
+                .doubleValue();
     }
 
     private double calculateCarbsNeeds(double tdee, int goalType) {
