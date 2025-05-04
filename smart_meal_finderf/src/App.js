@@ -17,6 +17,7 @@ import UserProfile from "./Components/Authentication/UserProfile";
 import Admin from "./Components/Admin/Admin";
 import VerificationPage from "./Components/Authentication/VerificationPage";
 import Plan from "./Components/DietPlan/Plan";
+import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
 
 const App = () => {
     return (
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/reset-password" element={<ResetPassword/>}/>
                 <Route path="/access-denied" element={<AccessDenied/>}/>
                 <Route path="/verification" element={<VerificationPage/>}/>
+                <Route path="/recipes/:id" element={<RecipeDetailPage/>}/>
                 <Route
                     path="/profile"
                     element={

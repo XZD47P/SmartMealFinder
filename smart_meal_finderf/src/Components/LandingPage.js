@@ -1,11 +1,48 @@
 import {useMyContext} from "../Store/ContextApi";
+import {useState} from "react";
+import {searchRecipes} from "../Service/recipeService";
+import toast from "react-hot-toast";
+import RecipeTile from "./Recipe/RecipeTile";
 
 const LandingPage = () => {
     const {token} = useMyContext();
+    const [query, setQuery] = useState("");
+    const [recipes, setRecipes] = useState([]);
+
+    const handleSearch = async () => {
+        try {
+            const result = await searchRecipes(query);
+            setRecipes(result);
+        } catch (error) {
+            toast.error("Failed to search recipes.");
+        }
+    };
 
     return (
-        <h1 className="text-8xl place-self-center">Welcome to Smart Meal Finder!</h1>
-    )
+        <div className="p-4 max-w-2xl mx-auto">
+            <h1 className="text-4xl font-bold mb-4 text-center">Smart Meal Finder</h1>
+            <div className="flex gap-2 mb-4">
+                <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="flex-1 border px-4 py-2 rounded"
+                    placeholder="Search for a recipe..."
+                />
+                <button
+                    onClick={handleSearch}
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                    Search
+                </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {recipes.map((r) => (
+                    <RecipeTile key={r.id} recipe={r}/>
+                ))}
+            </div>
+        </div>
+    );
 }
 
 export default LandingPage;
