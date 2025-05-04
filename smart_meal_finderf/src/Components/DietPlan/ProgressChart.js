@@ -4,7 +4,7 @@ import api from "../../Backend/api";
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
 
-const ProgressChart = () => {
+const ProgressChart = ({refreshTrigger}) => {
     const [data, setData] = useState([]);
     const [metric, setMetric] = useState("weight");
 
@@ -30,7 +30,7 @@ const ProgressChart = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [refreshTrigger]);
 
     const metricInfo = metrics.find(m => m.key === setMetric);
 

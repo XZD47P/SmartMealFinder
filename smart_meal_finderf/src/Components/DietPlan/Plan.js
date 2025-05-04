@@ -15,6 +15,8 @@ const Plan = () => {
     const {currentUser, token} = useMyContext();
     const [dietPlan, setDietPlan] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [refreshChart, setRefreshChart] = useState(false);
+
 
     const fetchDietPlan = async () => {
         try {
@@ -85,6 +87,9 @@ const Plan = () => {
         }
     }
 
+    const triggerChartRefresh = () => {
+        setRefreshChart(refresh => !refresh);
+    };
 
     return (
         <div className="p-4">
@@ -112,8 +117,8 @@ const Plan = () => {
                                 <GoalTile title="Goal Carbs" value={`${dietPlan.goalCarbohydrate} g/day`}/>
                                 <GoalTile title="Goal Fats" value={`${dietPlan.goalFat} g/day`}/>
                             </div>
-                            <DailyProgressForm/>
-                            <ProgressChart/>
+                            <DailyProgressForm onSuccess={triggerChartRefresh}/>
+                            <ProgressChart refreshTrigger={refreshChart}/>
                         </div>
 
                     ) : (

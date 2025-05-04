@@ -6,7 +6,7 @@ import api from "../../Backend/api";
 import {useEffect, useState} from "react";
 import {useMyContext} from "../../Store/ContextApi";
 
-const DailyProgressForm = () => {
+const DailyProgressForm = ({onSuccess}) => {
 
     const [loading, setLoading] = useState(false);
     const {currentUser} = useMyContext();
@@ -88,6 +88,7 @@ const DailyProgressForm = () => {
                 }
             });
             toast.success("Progress saved successfully!");
+            onSuccess();
         } catch (error) {
             console.error(error);
             toast.error("Failed to save progress.");
