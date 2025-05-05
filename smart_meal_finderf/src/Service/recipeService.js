@@ -31,3 +31,18 @@ export const findRecipesByIngredients = async (ingredients = []) => {
         return [];
     }
 };
+
+export const autocompleteIngredients = async (query) => {
+    try {
+        const response = await spoonacular.get("/food/ingredients/autocomplete", {
+            params: {
+                query,
+                number: 3,
+            },
+        });
+        return response.data; // Egy arrayt ad vissza
+    } catch (error) {
+        console.error("Error fetching ingredient suggestions:", error);
+        return [];
+    }
+};

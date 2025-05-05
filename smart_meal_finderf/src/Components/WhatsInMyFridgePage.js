@@ -1,22 +1,42 @@
-import {useState} from "react";
-import {findRecipesByIngredients} from "../Service/recipeService";
+import {useEffect, useState} from "react";
+import {autocompleteIngredients, findRecipesByIngredients} from "../Service/recipeService";
 import RecipeTile from "./Recipe/RecipeTile";
+import useDebounce from "../Hooks/useDebounce";
+import toast from "react-hot-toast";
 import Select from "react-select";
 
-const ingredientOptions = [
-    {value: "egg", label: "Egg"},
-    {value: "milk", label: "Milk"},
-    {value: "cheese", label: "Cheese"},
-    {value: "tomato", label: "Tomato"},
-    {value: "chicken", label: "Chicken"},
-    {value: "onion", label: "Onion"},
-    {value: "flour", label: "Flour"},
-    {value: "butter", label: "Butter"},
-];
 
 const WhatsInMyFridgePage = () => {
     const [selectedIngredients, setSelectedIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
+    const [inputValue, setInputValue] = useState(""); //A felhasználó által adott input
+    const [ingredientOptions, setIngredientOptions] = useState([]); //Api által javasolt hozzávalók selecthez adása
+
+    const debouncedInput = useDebounce(inputValue, 500);
+
+    useEffect(() => {
+        const fetchIngredients = async () => {
+            if (!debouncedInput) {
+                setIngredientOptions([]);
+                return;
+            }
+
+            try {
+                const suggestions = await autocompleteIngredients(debouncedInput);
+                const options = suggestions.map((item) => ({
+                    label: item.name,
+                    value: item.name,
+                }));
+                setIngredientOptions(options);
+            } catch (error) {
+                toast.error("Failed to fetch ingredients");
+                console.error("Error fetching ingredients:", error);
+                setIngredientOptions([]);
+            }
+        };
+
+        fetchIngredients();
+    }, [debouncedInput]);
 
     const handleSearch = async () => {
         const ingridients = selectedIngredients.map((ingredient) => ingredient.value);
@@ -33,10 +53,11 @@ const WhatsInMyFridgePage = () => {
                 <Select
                     isMulti
                     options={ingredientOptions}
-                    value={selectedIngredients}
                     onChange={setSelectedIngredients}
+                    onInputChange={setInputValue}
+                    inputValue={inputValue}
+                    placeholder="Type to search ingredients..."
                     className="mt-2"
-                    placeholder="Search or select ingredients..."
                 />
             </div>
 
