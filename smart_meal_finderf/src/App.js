@@ -18,6 +18,7 @@ import Admin from "./Components/Admin/Admin";
 import VerificationPage from "./Components/Authentication/VerificationPage";
 import Plan from "./Components/DietPlan/Plan";
 import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
+import WhatsInMyFridgePage from "./Components/WhatsInMyFridgePage";
 
 const App = () => {
     return (
@@ -36,6 +37,7 @@ const App = () => {
                 <Route path="/access-denied" element={<AccessDenied/>}/>
                 <Route path="/verification" element={<VerificationPage/>}/>
                 <Route path="/recipes/:id" element={<RecipeDetailPage/>}/>
+                <Route path="/whats-in-my-fridge" element={<WhatsInMyFridgePage/>}/>
                 <Route
                     path="/profile"
                     element={
