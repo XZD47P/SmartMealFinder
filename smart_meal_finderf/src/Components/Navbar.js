@@ -34,7 +34,7 @@ const Navbar = () => {
                         <h3 className={"font-dancingScript text-logoText"}>Smart Meal Finder</h3>
                     </Link>
                     <Link className={`py-2 cursor-pointer hover:text-white ${
-                        pathName === "/plan" ? "font-semibold " : ""}`}
+                        pathName === "/whats-in-my-fridge" ? "font-semibold " : ""}`}
                           to="/whats-in-my-fridge">
                         {" "}
                         What's in my fridge
