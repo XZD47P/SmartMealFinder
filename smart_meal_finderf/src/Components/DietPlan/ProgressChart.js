@@ -32,7 +32,7 @@ const ProgressChart = ({refreshTrigger}) => {
         fetchData();
     }, [refreshTrigger]);
 
-    const metricInfo = metrics.find(m => m.key === setMetric);
+    const metricInfo = metrics.find(m => m.key === metric);
 
     return (
         <div className="bg-white rounded-lg shadow-md p-4 mt-6">
