@@ -30,6 +30,20 @@ const Plan = () => {
         }
     };
 
+    const deleteDietPlan = async () => {
+        try {
+            setLoading(true);
+            if (window.confirm("Are you sure you want to delete this plan?")) {
+                await api.delete("/plan");
+                toast.success("Diet plan deleted successfully!");
+            }
+        } catch (error) {
+            toast.error("Failed to delete diet plan, please try again later!");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
 
         fetchDietPlan()
@@ -71,7 +85,7 @@ const Plan = () => {
 
         try {
             setLoading(true);
-            const response = await api.post("/plan/create", formData, {
+            await api.post("/plan/create", formData, {
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -116,6 +130,9 @@ const Plan = () => {
                                 <GoalTile title="Goal Proteins" value={`${dietPlan.goalProtein} g/day`}/>
                                 <GoalTile title="Goal Carbs" value={`${dietPlan.goalCarbohydrate} g/day`}/>
                                 <GoalTile title="Goal Fats" value={`${dietPlan.goalFat} g/day`}/>
+                                <Buttons disabled={loading}
+                                         className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                                         onClickhandler={deleteDietPlan}>{loading ? "Loading..." : "Delete plan"}</Buttons>
                             </div>
                             <DailyProgressForm onSuccess={triggerChartRefresh}/>
                             <ProgressChart refreshTrigger={refreshChart}/>

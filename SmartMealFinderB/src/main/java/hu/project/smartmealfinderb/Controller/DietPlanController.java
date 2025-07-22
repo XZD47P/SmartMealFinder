@@ -53,7 +53,7 @@ public class DietPlanController {
                 .body(new MessageResponse("Diet Plan created successfully"));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
 
         DietPlan userDietPlan;
@@ -68,5 +68,17 @@ public class DietPlanController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userDietPlan);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            this.dietPlanService.deleteUserDietPlan(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet Plan deleted successfully"));
     }
 }

@@ -6,6 +6,7 @@ import hu.project.smartmealfinderb.Repository.DietPlanRepository;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -103,6 +104,12 @@ public class DietPlanServiceImpl implements DietPlanService {
         return this.dietPlanRepository.findByUserId(user).orElseThrow(
                 () -> new RuntimeException("User has no diet plan!")
         );
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserDietPlan(User user) {
+        this.dietPlanRepository.deleteByUserId(user);
     }
 
     //Kerekítés

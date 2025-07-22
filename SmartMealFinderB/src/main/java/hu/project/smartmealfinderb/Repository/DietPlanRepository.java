@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface DietPlanRepository extends JpaRepository<DietPlan, Long> {
 
     Optional<DietPlan> findByUserId(User userId);
+
+    void deleteByUserId(User user);
 }
