@@ -23,7 +23,6 @@ const Plan = () => {
             const response = await api.get("/plan");
             setDietPlan(response.data);
         } catch (error) {
-            toast.error("Something went wrong, please try again!");
             setDietPlan(null);
         } finally {
             setLoading(false);
@@ -36,6 +35,7 @@ const Plan = () => {
             if (window.confirm("Are you sure you want to delete this plan?")) {
                 await api.delete("/plan");
                 toast.success("Diet plan deleted successfully!");
+                window.location.reload();
             }
         } catch (error) {
             toast.error("Failed to delete diet plan, please try again later!");

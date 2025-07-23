@@ -15,4 +15,6 @@ public interface DailyProgressService {
     void updateTodayProgress(DailyProgress existingProgress, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment);
 
     List<DailyProgress> findAll(User user);
+
+    void deleteUserProgression(User user);
 }

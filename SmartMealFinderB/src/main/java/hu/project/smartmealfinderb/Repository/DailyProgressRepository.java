@@ -14,4 +14,6 @@ public interface DailyProgressRepository extends JpaRepository<DailyProgress, Lo
     Optional<DailyProgress> findByUserIdAndDate(User userId, LocalDate date);
 
     List<DailyProgress> findAllByUserId(User userId);
+
+    void deleteByUserId(User userId);
 }

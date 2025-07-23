@@ -50,4 +50,9 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     public List<DailyProgress> findAll(User user) {
         return this.dailyProgressRepository.findAllByUserId(user);
     }
+
+    @Override
+    public void deleteUserProgression(User user) {
+        this.dailyProgressRepository.deleteByUserId(user);
+    }
 }

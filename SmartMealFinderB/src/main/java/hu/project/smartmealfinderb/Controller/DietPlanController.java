@@ -4,6 +4,7 @@ import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Request.DietPlanRequest;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
+import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +25,9 @@ public class DietPlanController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DailyProgressService dailyProgressService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createDietPlan(@AuthenticationPrincipal UserDetails userDetails,
@@ -71,9 +76,11 @@ public class DietPlanController {
     }
 
     @DeleteMapping
+    @Transactional
     public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
+            this.dailyProgressService.deleteUserProgression(user);
             this.dietPlanService.deleteUserDietPlan(user);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
