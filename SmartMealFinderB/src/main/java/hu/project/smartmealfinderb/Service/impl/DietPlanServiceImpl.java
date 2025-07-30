@@ -21,7 +21,7 @@ public class DietPlanServiceImpl implements DietPlanService {
     private double tdee;//Total Daily Energy Expenditure = Az a kalóriaszám, amire a testünknek szüksége van az aktivitási szinthez képest
 
     @Override
-    public void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal, int daysToReachGoal) {
+    public void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal) {
 
         double proteinGram, fatGram, carbsGram = 0;
         LocalDate goalDate = LocalDate.now();
@@ -61,15 +61,21 @@ public class DietPlanServiceImpl implements DietPlanService {
         }
 
         switch (goalType) {
-            case 1:
+            case 1: //0.5kg vesztése hetente
+                loseWeight(weight, weightGoal, 0.5);
                 break;
-            case 2:
-                loseWeight(weight, weightGoal, daysToReachGoal);
-                goalDate = goalDate.plusDays(daysToReachGoal);
+            case 2: //0.25kg vesztése hetente
+                loseWeight(weight, weightGoal, 0.25);
+                //goalDate = goalDate.plusDays(daysToReachGoal);
                 break;
-            case 3:
-                gainWeight(weight, weightGoal, daysToReachGoal);
-                goalDate = goalDate.plusDays(daysToReachGoal);
+            case 3: //súlyfenntartás
+                break;
+            case 4: //0.25kg tömegnövelés hetente
+                gainWeight(weight, weightGoal, 0.25);
+                //goalDate = goalDate.plusDays(daysToReachGoal);
+                break;
+            case 5: //0.5kg tömegnövelés hetente
+                gainWeight(weight, weightGoal, 0.5);
                 break;
             default:
                 throw new RuntimeException("GoalType is invalid!");
@@ -121,17 +127,15 @@ public class DietPlanServiceImpl implements DietPlanService {
         double carbsCal;
 
         switch (goalType) {
-            case 1:
+            case 1, 2, 4, 5 -> {
+                carbsCal = tdee * 0.45;
+            }
+            case 3 -> {
                 carbsCal = tdee * 0.5;
-                break;
-            case 2:
-                carbsCal = tdee * 0.45;
-                break;
-            case 3:
-                carbsCal = tdee * 0.45;
-                break;
-            default:
+            }
+            default -> {
                 throw new RuntimeException("GoalType is invalid!");
+            }
         }
 
         return carbsCal / 4;
@@ -141,17 +145,18 @@ public class DietPlanServiceImpl implements DietPlanService {
         double fatCal;
 
         switch (goalType) {
-            case 1:
-                fatCal = tdee * 0.2;
-                break;
-            case 2:
+            case 1, 2 -> {
                 fatCal = tdee * 0.3;
-                break;
-            case 3:
+            }
+            case 3 -> {
+                fatCal = tdee * 0.2;
+            }
+            case 4, 5 -> {
                 fatCal = tdee * 0.25;
-                break;
-            default:
+            }
+            default -> {
                 throw new RuntimeException("GoalType is invalid!");
+            }
         }
 
         return fatCal / 9;
@@ -161,40 +166,43 @@ public class DietPlanServiceImpl implements DietPlanService {
         double proteinCal;
 
         switch (goalType) {
-            case 1:
-                proteinCal = tdee * 0.3;
-                break;
-            case 2:
+            case 1, 2 -> {
                 proteinCal = tdee * 0.25;
-                break;
-            case 3:
+            }
+            case 3 -> {
                 proteinCal = tdee * 0.3;
-                break;
-            default:
+            }
+            case 4, 5 -> {
+                proteinCal = tdee * 0.3;
+            }
+            default -> {
                 throw new RuntimeException("GoalType is invalid!");
+            }
         }
 
         return proteinCal / 4;
     }
 
-    private void gainWeight(double weight, double weightGoal, int days) {
+    private void gainWeight(double weight, double weightGoal, double deltaWeightPerWeek) {
 
-        if (weightGoal == 0 || days == 0 || weightGoal < weight) {
+        if (weightGoal == 0 || weightGoal < weight) {
             throw new RuntimeException("Weight goal, days to reach goal or weight is invalid!");
         }
 
         double deltaWeight = weightGoal - weight;
+        double days = (deltaWeight / deltaWeightPerWeek) * 7;
         double deltaCalorie = deltaWeight * KGTOCALORIE / days;
         this.tdee += deltaCalorie;
     }
 
-    private void loseWeight(double weight, double weightGoal, int days) {
+    private void loseWeight(double weight, double weightGoal, double deltaWeightPerWeek) {
 
-        if (weightGoal == 0 || days == 0 || weight < weightGoal) {
-            throw new RuntimeException("Weight goal, days to reach goal or weight is invalid!");
+        if (weightGoal == 0 || weight < weightGoal) {
+            throw new RuntimeException("Goal weight is invalid!");
         }
 
         double deltaWeight = weight - weightGoal;
+        double days = (deltaWeight / deltaWeightPerWeek) * 7; //7-es szorzó a napokra váltás miatt, mivel alapvetőleg ez a hetet adná vissza
         double deltaCalorie = deltaWeight * KGTOCALORIE / days;
         this.tdee -= deltaCalorie;
     }

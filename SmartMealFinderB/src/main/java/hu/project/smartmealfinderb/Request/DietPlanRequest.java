@@ -12,6 +12,5 @@ public class DietPlanRequest {
     private int activityLevel;
     private int goalType;
     private float weightGoal;
-    private int daysToReachGoal;
 
 }

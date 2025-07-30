@@ -43,9 +43,7 @@ public class DietPlanController {
                     dietPlanRequest.getAge(),
                     dietPlanRequest.getActivityLevel(),
                     dietPlanRequest.getGoalType(),
-                    dietPlanRequest.getWeightGoal(),
-                    dietPlanRequest.getDaysToReachGoal()
-            );
+                    dietPlanRequest.getWeightGoal());
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new MessageResponse("Could not save diet plan"));

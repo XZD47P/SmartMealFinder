@@ -71,7 +71,7 @@ const Plan = () => {
     });
 
     const onSubmitHandler = async (data) => {
-        const {sex, weight, height, age, activityLevel, goalType, weightGoal, daysToReachGoal} = data;
+        const {sex, weight, height, age, activityLevel, goalType, weightGoal} = data;
         const formData = {
             sex,
             weight,
@@ -79,8 +79,7 @@ const Plan = () => {
             age,
             activityLevel,
             goalType,
-            weightGoal,
-            daysToReachGoal,
+            weightGoal
         }
 
         try {
@@ -206,9 +205,11 @@ const Plan = () => {
                                         register={register}
                                         errors={errors}
                                         options={[
-                                            {value: 1, label: "Maintain weight"},
-                                            {value: 2, label: "Lose weight"},
-                                            {value: 3, label: "Gain weight"},
+                                            {value: 1, label: "Lose 0.5kg a week"},
+                                            {value: 2, label: "Lose 0.25kg a week"},
+                                            {value: 3, label: "Maintain weight"},
+                                            {value: 4, label: "Gain 0.25kg a week"},
+                                            {value: 5, label: "Gain 0.5kg a week"}
                                         ]}
                                     />
                                     <InputField
@@ -218,16 +219,6 @@ const Plan = () => {
                                         type="number"
                                         message="*Goal weight is required"
                                         placeholder="type your goal weight"
-                                        register={register}
-                                        errors={errors}
-                                    />
-                                    <InputField
-                                        label="Days to reach goal"
-                                        required
-                                        id="daysToReachGoal"
-                                        type="number"
-                                        message="*Days to reach goal is required"
-                                        placeholder="How many days do you want to reach your goal?"
                                         register={register}
                                         errors={errors}
                                     />
