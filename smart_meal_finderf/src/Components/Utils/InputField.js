@@ -19,6 +19,7 @@ const InputField = ({
         <div className={`flex flex-col gap-1 ${className}`}>
             <label htmlFor={id} className={` font-semibold text-md text-slate-800 `}>
                 {label}
+                {required && <span className="text-red-500"> *</span>}
             </label>
 
             <input
@@ -27,7 +28,7 @@ const InputField = ({
                 placeholder={placeholder}
                 className={` px-2 py-2 border  ${
                     autoFocus ? "border-2" : ""
-                }   outline-none bg-transparent  text-slate-700 rounded-md ${
+                }   outline-none bg-white  text-slate-700 rounded-md ${
                     errors[id]?.message ? "border-red-500" : "border-slate-700"
                 }`}
                 {...register(id, {

@@ -138,7 +138,7 @@ const Plan = () => {
                         </div>
 
                     ) : (
-                        <div className="bg-blue-100 p-4 rounded-md shadow-md">
+                        <div className="bg-blue-100 p-4 rounded-md shadow-md w-1/2 m-auto">
                             <h2 className="text-xl font-semibold mb-2">You don't have a diet plan yet</h2>
                             <p>Create a new diet plan below:</p>
                             <form onSubmit={handleSubmit(onSubmitHandler)}>

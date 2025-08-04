@@ -19,12 +19,13 @@ public class DietPlanServiceImpl implements DietPlanService {
     @Autowired
     private DietPlanRepository dietPlanRepository;
     private double tdee;//Total Daily Energy Expenditure = Az a kalóriaszám, amire a testünknek szüksége van az aktivitási szinthez képest
+    private LocalDate goalDate;
 
     @Override
     public void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal) {
 
         double proteinGram, fatGram, carbsGram = 0;
-        LocalDate goalDate = LocalDate.now();
+        goalDate = LocalDate.now();
 
         if (sex.isBlank() || weight == 0 || height == 0 || age == 0 || activityLevel == 0 || goalType == 0) {
             throw new RuntimeException("One or more parameters are missing!");
@@ -192,6 +193,7 @@ public class DietPlanServiceImpl implements DietPlanService {
         double deltaWeight = weightGoal - weight;
         double days = (deltaWeight / deltaWeightPerWeek) * 7;
         double deltaCalorie = deltaWeight * KGTOCALORIE / days;
+        this.goalDate = goalDate.plusDays((long) days);
         this.tdee += deltaCalorie;
     }
 
@@ -204,6 +206,7 @@ public class DietPlanServiceImpl implements DietPlanService {
         double deltaWeight = weight - weightGoal;
         double days = (deltaWeight / deltaWeightPerWeek) * 7; //7-es szorzó a napokra váltás miatt, mivel alapvetőleg ez a hetet adná vissza
         double deltaCalorie = deltaWeight * KGTOCALORIE / days;
+        this.goalDate = goalDate.plusDays((long) days);
         this.tdee -= deltaCalorie;
     }
 
