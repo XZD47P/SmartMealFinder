@@ -15,17 +15,18 @@ export const searchRecipes = async (query, filters = {}) => {
     }
 };
 
-export const findRecipesByIngredients = async (ingredients = []) => {
+export const findRecipesByIngredients = async (ingredients = [], diets = []) => {
     try {
-        const response = await spoonacular.get("/recipes/findByIngredients", {
+        const response = await spoonacular.get("/recipes/complexSearch", {
             params: {
-                ingredients: ingredients.join(","),
+                includeIngredients: ingredients.join(","),
                 number: 10,
                 ranking: 1,  //1: Maximalizálja a használt hozzávalókat;2: Minimalizálja a hiányzókat
                 ignorePantry: true, //Hagyja ki ezek közül az átlag dolgokat mint liszt, só, víz stb.
+                diet: diets.join(","),
             },
         });
-        return response.data;
+        return response.data.results;
     } catch (error) {
         console.error("Error searching by fridge ingredients:", error);
         return [];

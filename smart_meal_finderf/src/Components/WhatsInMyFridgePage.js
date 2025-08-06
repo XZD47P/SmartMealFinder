@@ -8,11 +8,26 @@ import Select from "react-select";
 
 const WhatsInMyFridgePage = () => {
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    const [selectedDiet, setSelectedDiet] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [inputValue, setInputValue] = useState(""); //A felhasználó által adott input
     const [ingredientOptions, setIngredientOptions] = useState([]); //Api által javasolt hozzávalók selecthez adása
 
     const debouncedInput = useDebounce(inputValue, 500);
+
+    const dietOptions = [
+        {label: "Gluten Free", value: "gluten free"},
+        {label: "Ketogenic", value: "ketogenic"},
+        {label: "Vegetarian", value: "vegetarian"},
+        {label: "Lacto-Vegetarian", value: "lacto-vegetarian"},
+        {label: "Ovo-Vegetarian", value: "ovo-vegetarian"},
+        {label: "Vegan", value: "vegan"},
+        {label: "Pescetarian", value: "pescetarian"},
+        {label: "Paleo", value: "paleo"},
+        {label: "Primal", value: "primal"},
+        {label: "Low FODMAP", value: "low FODMAP"},
+        {label: "Whole30", value: "whole30"},
+    ];
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -40,8 +55,19 @@ const WhatsInMyFridgePage = () => {
 
     const handleSearch = async () => {
         const ingridients = selectedIngredients.map((ingredient) => ingredient.value);
-        const data = await findRecipesByIngredients(ingridients);
-        setRecipes(data)
+        let diets = [];
+
+        if (selectedDiet) {
+            diets = selectedDiet.map((diet) => diet.value);
+        }
+
+        try {
+            const data = await findRecipesByIngredients(ingridients, diets);
+            setRecipes(data)
+        } catch (error) {
+            toast.error("Failed to search for recipes");
+        }
+
     };
 
     return (
@@ -57,6 +83,17 @@ const WhatsInMyFridgePage = () => {
                     onInputChange={setInputValue}
                     inputValue={inputValue}
                     placeholder="Type to search ingredients..."
+                    className="mt-2"
+                />
+            </div>
+            <div className="mb-4">
+                <label className="font-medium">Do you have any dietary restrictions?</label>
+                <Select
+                    isMulti
+                    options={dietOptions}
+                    onChange={setSelectedDiet}
+                    value={selectedDiet}
+                    placeholder="Select a diet (optional)"
                     className="mt-2"
                 />
             </div>
