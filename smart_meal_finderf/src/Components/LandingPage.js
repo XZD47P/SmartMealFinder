@@ -26,6 +26,12 @@ const LandingPage = () => {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleSearch();
+                        }
+                    }}
                     className="flex-1 border px-4 py-2 rounded"
                     placeholder="Search for a recipe..."
                 />
