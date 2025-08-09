@@ -1,8 +1,10 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.Model.DietGoal;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.DietPlanRepository;
+import hu.project.smartmealfinderb.Service.DietGoalService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ import java.time.LocalDate;
 public class DietPlanServiceImpl implements DietPlanService {
 
     private static final int KGTOCALORIE = 7700; //1kg zsír nagyjából 7700 kalória
+
+    @Autowired
+    private DietGoalService dietGoalService;
 
     @Autowired
     private DietPlanRepository dietPlanRepository;
@@ -61,31 +66,26 @@ public class DietPlanServiceImpl implements DietPlanService {
                 throw new RuntimeException("ActivityLevel is invalid!");
         }
 
-        switch (goalType) {
-            case 1: //0.5kg vesztése hetente
-                loseWeight(weight, weightGoal, 0.5);
-                break;
-            case 2: //0.25kg vesztése hetente
-                loseWeight(weight, weightGoal, 0.25);
-                //goalDate = goalDate.plusDays(daysToReachGoal);
+        DietGoal dietGoal = this.dietGoalService.findById(goalType);
+
+        switch (dietGoal.getId()) {
+            case 1, 2: //0.5kg vesztése hetente
+                loseWeight(weight, weightGoal, dietGoal.getDeltaWeight());
                 break;
             case 3: //súlyfenntartás
                 break;
-            case 4: //0.25kg tömegnövelés hetente
-                gainWeight(weight, weightGoal, 0.25);
+            case 4, 5: //0.25kg tömegnövelés hetente
+                gainWeight(weight, weightGoal, dietGoal.getDeltaWeight());
                 //goalDate = goalDate.plusDays(daysToReachGoal);
                 break;
-            case 5: //0.5kg tömegnövelés hetente
-                gainWeight(weight, weightGoal, 0.5);
-                break;
             default:
-                throw new RuntimeException("GoalType is invalid!");
+                throw new RuntimeException("DietGoal is invalid!");
         }
 
         //Forrás: https://carbonperformance.com/macros-101-how-to-gain-lose-weight-or-maintain/
-        proteinGram = this.calculateProteinNeeds(tdee, goalType);
-        fatGram = this.calculateFatNeeds(tdee, goalType);
-        carbsGram = this.calculateCarbsNeeds(tdee, goalType);
+        proteinGram = this.calculateProteinNeeds(tdee, dietGoal.getId());
+        fatGram = this.calculateFatNeeds(tdee, dietGoal.getId());
+        carbsGram = this.calculateCarbsNeeds(tdee, dietGoal.getId());
 
         //DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
         DietPlan dietPlan = new DietPlan();
@@ -101,7 +101,7 @@ public class DietPlanServiceImpl implements DietPlanService {
         dietPlan.setGoalCarbohydrate(roundUp(carbsGram));
         dietPlan.setGoalFat(roundUp(fatGram));
         dietPlan.setUserId(user);
-        dietPlan.setFitnessId(goalType);
+        dietPlan.setDietGoalId(dietGoal);
         dietPlanRepository.save(dietPlan);
     }
 

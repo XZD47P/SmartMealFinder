@@ -36,9 +36,12 @@ public class DietPlan {
     @JoinColumn(name = "user_id", unique = true)
     @JsonIgnore
     private User userId;
-    private int fitnessId;
 
-    public DietPlan(String sex, double height, int age, LocalDate goalDate, double startWeight, double goalWeight, int activityLevel, double goalCalorie, double goalProtein, double goalCarbohydrate, double goalFat, User userId, int fitnessId) {
+    @ManyToOne()
+    @JoinColumn(name = "diet_goal_id")
+    private DietGoal dietGoalId;
+
+    public DietPlan(String sex, double height, int age, LocalDate goalDate, double startWeight, double goalWeight, int activityLevel, double goalCalorie, double goalProtein, double goalCarbohydrate, double goalFat, User userId, DietGoal dietGoalId) {
         this.sex = sex;
         this.height = height;
         this.age = age;
@@ -51,6 +54,6 @@ public class DietPlan {
         this.goalCarbohydrate = goalCarbohydrate;
         this.goalFat = goalFat;
         this.userId = userId;
-        this.fitnessId = fitnessId;
+        this.dietGoalId = dietGoalId;
     }
 }
