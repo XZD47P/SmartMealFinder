@@ -45,4 +45,6 @@ public interface UserService {
     void verifyUser(String token);
 
     User findByUsername(String username);
+
+    long count();
 }

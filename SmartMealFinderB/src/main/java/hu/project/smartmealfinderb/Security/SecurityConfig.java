@@ -1,13 +1,10 @@
 package hu.project.smartmealfinderb.Security;
 
-import hu.project.smartmealfinderb.Model.AppRole;
-import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Oauth2.OAuth2LoginSuccessHandler;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Security.JWT.AuthEntryPointJwt;
 import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -74,16 +71,5 @@ public class SecurityConfig {
     @Bean
     public JwtAuthFilter jwtAuthFilter() {
         return new JwtAuthFilter();
-    }
-
-    @Bean
-    public CommandLineRunner initData() {
-        return args -> {
-            Role userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
-                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_USER)));
-
-            Role adminRole = this.roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
-                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ROLE_ADMIN)));
-        };
     }
 }

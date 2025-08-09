@@ -329,4 +329,9 @@ public class UserServiceImpl implements UserService {
                 () -> new RuntimeException("User not found")
         );
     }
+
+    @Override
+    public long count() {
+        return this.userRepository.count();
+    }
 }
