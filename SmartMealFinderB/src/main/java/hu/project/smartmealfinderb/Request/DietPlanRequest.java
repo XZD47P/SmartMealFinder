@@ -6,8 +6,8 @@ import lombok.Data;
 public class DietPlanRequest {
 
     private String sex;
-    private float weight;
-    private float height;
+    private double weight;
+    private double height;
     private int age;
     private int activityLevel;
     private int goalType;

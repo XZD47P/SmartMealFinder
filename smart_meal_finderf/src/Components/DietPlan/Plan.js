@@ -16,6 +16,7 @@ const Plan = () => {
     const [dietPlan, setDietPlan] = useState(null);
     const [loading, setLoading] = useState(false);
     const [refreshChart, setRefreshChart] = useState(false);
+    const [goalOptions, setGoalOptions] = useState([]);
 
 
     const fetchDietPlan = async () => {
@@ -44,9 +45,24 @@ const Plan = () => {
         }
     }
 
+    const fetchGoals = async () => {
+        try {
+            const response = await api.get("/dietgoal/all");
+            const mappedGoals = response.data.map(data => ({
+                value: data.id,
+                label: `${data.goal} ${data.deltaWeight}kg a week`,
+            }));
+            setGoalOptions(mappedGoals);
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to load goals");
+        }
+    }
+
     useEffect(() => {
 
-        fetchDietPlan()
+        fetchDietPlan();
+        fetchGoals();
     }, [currentUser]);
 
     //Form létrehozása
@@ -204,13 +220,7 @@ const Plan = () => {
                                         id="goalType"
                                         register={register}
                                         errors={errors}
-                                        options={[
-                                            {value: 1, label: "Lose 0.5kg a week"},
-                                            {value: 2, label: "Lose 0.25kg a week"},
-                                            {value: 3, label: "Maintain weight"},
-                                            {value: 4, label: "Gain 0.25kg a week"},
-                                            {value: 5, label: "Gain 0.5kg a week"}
-                                        ]}
+                                        options={goalOptions}
                                     />
                                     <InputField
                                         label="Goal weight"

@@ -6,6 +6,8 @@ import hu.project.smartmealfinderb.Service.DietGoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DietGoalServiceImpl implements DietGoalService {
 
@@ -15,5 +17,10 @@ public class DietGoalServiceImpl implements DietGoalService {
     @Override
     public DietGoal findById(int goalType) {
         return this.dietGoalRepository.findById(goalType).orElseThrow(() -> new RuntimeException("DietGoal not found!"));
+    }
+
+    @Override
+    public List<DietGoal> findAll() {
+        return this.dietGoalRepository.findAll();
     }
 }

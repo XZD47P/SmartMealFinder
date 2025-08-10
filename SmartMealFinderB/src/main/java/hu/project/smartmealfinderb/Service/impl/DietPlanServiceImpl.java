@@ -68,13 +68,13 @@ public class DietPlanServiceImpl implements DietPlanService {
 
         DietGoal dietGoal = this.dietGoalService.findById(goalType);
 
-        switch (dietGoal.getId()) {
-            case 1, 2: //0.5kg vesztése hetente
+        switch (dietGoal.getGoal().toLowerCase()) {
+            case "lose": //0.5kg vesztése hetente
                 loseWeight(weight, weightGoal, dietGoal.getDeltaWeight());
                 break;
-            case 3: //súlyfenntartás
+            case "maintain": //súlyfenntartás
                 break;
-            case 4, 5: //0.25kg tömegnövelés hetente
+            case "gain": //0.25kg tömegnövelés hetente
                 gainWeight(weight, weightGoal, dietGoal.getDeltaWeight());
                 //goalDate = goalDate.plusDays(daysToReachGoal);
                 break;
@@ -83,9 +83,9 @@ public class DietPlanServiceImpl implements DietPlanService {
         }
 
         //Forrás: https://carbonperformance.com/macros-101-how-to-gain-lose-weight-or-maintain/
-        proteinGram = this.calculateProteinNeeds(tdee, dietGoal.getId());
-        fatGram = this.calculateFatNeeds(tdee, dietGoal.getId());
-        carbsGram = this.calculateCarbsNeeds(tdee, dietGoal.getId());
+        proteinGram = this.calculateProteinNeeds(tdee, dietGoal.getGoal().toLowerCase());
+        fatGram = this.calculateFatNeeds(tdee, dietGoal.getGoal().toLowerCase());
+        carbsGram = this.calculateCarbsNeeds(tdee, dietGoal.getGoal().toLowerCase());
 
         //DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
         DietPlan dietPlan = new DietPlan();
@@ -124,61 +124,61 @@ public class DietPlanServiceImpl implements DietPlanService {
                 .doubleValue();
     }
 
-    private double calculateCarbsNeeds(double tdee, int goalType) {
+    private double calculateCarbsNeeds(double tdee, String goalType) {
         double carbsCal;
 
         switch (goalType) {
-            case 1, 2, 4, 5 -> {
+            case "lose":
                 carbsCal = tdee * 0.45;
-            }
-            case 3 -> {
+                break;
+            case "maintain":
                 carbsCal = tdee * 0.5;
-            }
-            default -> {
+                break;
+            case "gain":
+                carbsCal = tdee * 0.45;
+                break;
+            default:
                 throw new RuntimeException("GoalType is invalid!");
-            }
         }
 
         return carbsCal / 4;
     }
 
-    private double calculateFatNeeds(double tdee, int goalType) {
+    private double calculateFatNeeds(double tdee, String goalType) {
         double fatCal;
 
         switch (goalType) {
-            case 1, 2 -> {
+            case "lose":
                 fatCal = tdee * 0.3;
-            }
-            case 3 -> {
+                break;
+            case "maintain":
                 fatCal = tdee * 0.2;
-            }
-            case 4, 5 -> {
+                break;
+            case "gain":
                 fatCal = tdee * 0.25;
-            }
-            default -> {
+                break;
+            default:
                 throw new RuntimeException("GoalType is invalid!");
-            }
         }
 
         return fatCal / 9;
     }
 
-    private double calculateProteinNeeds(double tdee, int goalType) {
+    private double calculateProteinNeeds(double tdee, String goalType) {
         double proteinCal;
 
         switch (goalType) {
-            case 1, 2 -> {
+            case "lose":
                 proteinCal = tdee * 0.25;
-            }
-            case 3 -> {
+                break;
+            case "maintain":
                 proteinCal = tdee * 0.3;
-            }
-            case 4, 5 -> {
+                break;
+            case "gain":
                 proteinCal = tdee * 0.3;
-            }
-            default -> {
+                break;
+            default:
                 throw new RuntimeException("GoalType is invalid!");
-            }
         }
 
         return proteinCal / 4;
