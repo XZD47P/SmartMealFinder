@@ -37,7 +37,7 @@ public class DefaultDataInitializer implements CommandLineRunner {
 
             if (this.userService.count() == 0) {
                 this.userService.registerUser("test@email.com", "test", "test123", Collections.singleton("user"), "User", "Test");
-                this.userService.registerUser("adming@emal.com", "admin", "admin123", Collections.singleton("admin"), "User", "Admin");
+                this.userService.registerUser("admin@emal.com", "admin", "admin123", Collections.singleton("admin"), "User", "Admin");
             }
 
             if (this.dietGoalRepository.count() == 0) {
