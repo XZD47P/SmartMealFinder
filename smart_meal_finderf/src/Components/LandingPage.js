@@ -11,7 +11,7 @@ const LandingPage = () => {
 
     const handleSearch = async () => {
         try {
-            const result = await searchRecipes(query);
+            const result = await searchRecipes({query});
             setRecipes(result);
         } catch (error) {
             toast.error("Failed to search recipes.");

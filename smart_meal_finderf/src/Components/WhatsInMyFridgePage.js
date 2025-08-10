@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {autocompleteIngredients, findRecipesByIngredients} from "../Service/recipeService";
+import {autocompleteIngredients, searchRecipes} from "../Service/recipeService";
 import RecipeTile from "./Recipe/RecipeTile";
 import useDebounce from "../Hooks/useDebounce";
 import toast from "react-hot-toast";
@@ -54,7 +54,7 @@ const WhatsInMyFridgePage = () => {
     }, [debouncedInput]);
 
     const handleSearch = async () => {
-        const ingridients = selectedIngredients.map((ingredient) => ingredient.value);
+        const ingredients = selectedIngredients.map((ingredient) => ingredient.value);
         let diets = [];
 
         if (selectedDiet) {
@@ -62,7 +62,11 @@ const WhatsInMyFridgePage = () => {
         }
 
         try {
-            const data = await findRecipesByIngredients(ingridients, diets);
+            const data = await searchRecipes({
+                includeIngredients: ingredients.join(","),
+                ignorePantry: true,
+                diet: diets.join(","),
+            });
             setRecipes(data)
         } catch (error) {
             toast.error("Failed to search for recipes");
