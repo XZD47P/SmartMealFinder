@@ -35,7 +35,7 @@ public class DailyProgressController {
     private DietPlanService dietPlanService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> postProgress(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<?> saveProgress(@AuthenticationPrincipal UserDetails userDetails,
                                           @RequestBody DailyProgressPostReq dailyProgressPostReq) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
