@@ -10,6 +10,11 @@ import java.time.LocalDate;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(
+        indexes = {
+                @Index(name = "idx_dailyprogress_user_date", columnList = "user_id,date")
+        }
+)
 public class DailyProgress {
 
     @Id
