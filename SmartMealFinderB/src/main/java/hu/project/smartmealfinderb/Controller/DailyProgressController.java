@@ -1,9 +1,9 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.DTO.Request.DailyProgressSaveReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Request.DailyProgressSaveReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;

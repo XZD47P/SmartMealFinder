@@ -1,4 +1,4 @@
-package hu.project.smartmealfinderb.Request;
+package hu.project.smartmealfinderb.DTO.Request;
 
 import jakarta.validation.constraints.Size;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
-import hu.project.smartmealfinderb.Request.SaveFoodEntryReq;
+import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.FoodTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;

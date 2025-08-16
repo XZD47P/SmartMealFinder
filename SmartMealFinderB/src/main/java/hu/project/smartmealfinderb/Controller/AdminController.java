@@ -1,11 +1,11 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.DTO.Request.AdminCheckboxReq;
+import hu.project.smartmealfinderb.DTO.Request.AdminPwChangeReq;
+import hu.project.smartmealfinderb.DTO.Request.RoleUpdateReq;
 import hu.project.smartmealfinderb.DTO.UserDTO;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Request.AdminCheckboxReq;
-import hu.project.smartmealfinderb.Request.AdminPwChangeReq;
-import hu.project.smartmealfinderb.Request.RoleUpdateReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.DTO.Request.ChangePasswordRequest;
+import hu.project.smartmealfinderb.DTO.Request.ResetPasswordChangeReq;
 import hu.project.smartmealfinderb.DTO.UserInfoResponse;
-import hu.project.smartmealfinderb.Request.ChangePasswordRequest;
-import hu.project.smartmealfinderb.Request.ResetPasswordChangeReq;
 import hu.project.smartmealfinderb.Security.Request.LoginRequest;
 import hu.project.smartmealfinderb.Security.Request.RegisterRequest;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;

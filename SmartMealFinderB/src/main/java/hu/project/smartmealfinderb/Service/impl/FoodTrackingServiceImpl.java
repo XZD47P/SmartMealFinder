@@ -1,9 +1,9 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
