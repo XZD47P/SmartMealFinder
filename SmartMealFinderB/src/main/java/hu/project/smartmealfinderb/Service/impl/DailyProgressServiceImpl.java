@@ -26,23 +26,21 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     }
 
     @Override
-    public void createTodayProgress(User user, DietPlan plan, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment) {
+    public void createTodayProgress(User user, DietPlan plan, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed) {
         date = LocalDate.now();
-        DailyProgress dailyProgress = new DailyProgress(user, plan, date, weight, caloriesConsumed, proteinConsumed, carbsConsumed, fatsConsumed, comment);
+        DailyProgress dailyProgress = new DailyProgress(user, plan, date, caloriesConsumed, proteinConsumed, carbsConsumed, fatsConsumed);
 
         this.dailyProgressRepository.save(dailyProgress);
 
     }
 
     @Override
-    public void updateTodayProgress(DailyProgress existingProgress, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment) {
+    public void updateTodayProgress(DailyProgress existingProgress, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed) {
 
-        existingProgress.setWeight(existingProgress.getWeight() + weight);
         existingProgress.setCaloriesConsumed(existingProgress.getCaloriesConsumed() + caloriesConsumed);
         existingProgress.setProteinConsumed(existingProgress.getProteinConsumed() + proteinConsumed);
         existingProgress.setCarbsConsumed(existingProgress.getCarbsConsumed() + carbsConsumed);
         existingProgress.setFatsConsumed(existingProgress.getFatsConsumed() + fatsConsumed);
-        existingProgress.setComment(comment);
         this.dailyProgressRepository.save(existingProgress);
     }
 
@@ -54,5 +52,26 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     @Override
     public void deleteUserProgression(User user) {
         this.dailyProgressRepository.deleteByUserId(user);
+    }
+
+    @Override
+    public void saveWeight(User user, DietPlan dietPlan, double weight, String comment) {
+        DailyProgress dailyProgress = findTodayProgress(user);
+
+        if (dailyProgress == null) {
+            DailyProgress newDailyProgress = new DailyProgress();
+
+            newDailyProgress.setDate(this.date);
+            newDailyProgress.setDietPlan(dietPlan);
+            newDailyProgress.setUserId(user);
+            newDailyProgress.setWeight(weight);
+            newDailyProgress.setComment(comment);
+
+            this.dailyProgressRepository.save(newDailyProgress);
+        } else {
+            dailyProgress.setWeight(weight);
+            dailyProgress.setComment(comment);
+            this.dailyProgressRepository.save(dailyProgress);
+        }
     }
 }

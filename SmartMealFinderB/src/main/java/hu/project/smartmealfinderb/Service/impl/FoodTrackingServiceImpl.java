@@ -34,20 +34,16 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
         if (dailyProgress == null) {
             this.dailyProgressService.createTodayProgress(user,
                     dietPlan,
-                    0,
                     newFoodEntry.getCalories(),
                     newFoodEntry.getProtein(),
                     newFoodEntry.getCarbs(),
-                    newFoodEntry.getFats(),
-                    "new");
+                    newFoodEntry.getFats());
         } else {
             this.dailyProgressService.updateTodayProgress(dailyProgress,
-                    dailyProgress.getWeight(),
                     newFoodEntry.getCalories(),
                     newFoodEntry.getProtein(),
                     newFoodEntry.getCarbs(),
-                    newFoodEntry.getFats(),
-                    dailyProgress.getComment());
+                    newFoodEntry.getFats());
         }
 
         this.foodEntryService.addFoodEntry(user,

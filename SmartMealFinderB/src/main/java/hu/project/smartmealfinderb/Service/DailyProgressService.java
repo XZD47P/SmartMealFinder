@@ -10,11 +10,13 @@ public interface DailyProgressService {
 
     DailyProgress findTodayProgress(User userId);
 
-    void createTodayProgress(User user, DietPlan plan, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment);
+    void createTodayProgress(User user, DietPlan plan, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed);
 
-    void updateTodayProgress(DailyProgress existingProgress, double weight, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed, String comment);
+    void updateTodayProgress(DailyProgress existingProgress, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed);
 
     List<DailyProgress> findAll(User user);
 
     void deleteUserProgression(User user);
+
+    void saveWeight(User user, DietPlan dietPlan, double weight, String comment);
 }

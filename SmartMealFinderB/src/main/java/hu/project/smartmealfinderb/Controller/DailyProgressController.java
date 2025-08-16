@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
-import hu.project.smartmealfinderb.DTO.Request.DailyProgressSaveReq;
+import hu.project.smartmealfinderb.DTO.Request.WeightLogReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
@@ -34,34 +34,16 @@ public class DailyProgressController {
     @Autowired
     private DietPlanService dietPlanService;
 
-    @PostMapping("/save")
-    public ResponseEntity<?> saveProgress(@AuthenticationPrincipal UserDetails userDetails,
-                                          @RequestBody DailyProgressSaveReq dailyProgressSaveReq) {
+    @PostMapping("/weight/save")
+    public ResponseEntity<?> saveWeightProgress(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestBody WeightLogReq weightLogReq) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
-
-            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
-
-
-            if (dailyProgress == null) {
-                this.dailyProgressService.createTodayProgress(user,
-                        dietPlan,
-                        dailyProgressSaveReq.getWeight(),
-                        dailyProgressSaveReq.getCaloriesConsumed(),
-                        dailyProgressSaveReq.getProteinConsumed(),
-                        dailyProgressSaveReq.getCarbsConsumed(),
-                        dailyProgressSaveReq.getFatsConsumed(),
-                        dailyProgressSaveReq.getComment());
-            } else {
-                this.dailyProgressService.updateTodayProgress(dailyProgress,
-                        dailyProgressSaveReq.getWeight(),
-                        dailyProgressSaveReq.getCaloriesConsumed(),
-                        dailyProgressSaveReq.getProteinConsumed(),
-                        dailyProgressSaveReq.getCarbsConsumed(),
-                        dailyProgressSaveReq.getFatsConsumed(),
-                        dailyProgressSaveReq.getComment());
-            }
+            this.dailyProgressService.saveWeight(user,
+                    dietPlan,
+                    weightLogReq.getWeight(),
+                    weightLogReq.getComment());
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
