@@ -3,7 +3,7 @@ package hu.project.smartmealfinderb.Controller;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Request.DailyProgressPostReq;
+import hu.project.smartmealfinderb.Request.DailyProgressSaveReq;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
@@ -36,7 +36,7 @@ public class DailyProgressController {
 
     @PostMapping("/save")
     public ResponseEntity<?> saveProgress(@AuthenticationPrincipal UserDetails userDetails,
-                                          @RequestBody DailyProgressPostReq dailyProgressPostReq) {
+                                          @RequestBody DailyProgressSaveReq dailyProgressSaveReq) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
@@ -47,20 +47,20 @@ public class DailyProgressController {
             if (dailyProgress == null) {
                 this.dailyProgressService.createTodayProgress(user,
                         dietPlan,
-                        dailyProgressPostReq.getWeight(),
-                        dailyProgressPostReq.getCaloriesConsumed(),
-                        dailyProgressPostReq.getProteinConsumed(),
-                        dailyProgressPostReq.getCarbsConsumed(),
-                        dailyProgressPostReq.getFatsConsumed(),
-                        dailyProgressPostReq.getComment());
+                        dailyProgressSaveReq.getWeight(),
+                        dailyProgressSaveReq.getCaloriesConsumed(),
+                        dailyProgressSaveReq.getProteinConsumed(),
+                        dailyProgressSaveReq.getCarbsConsumed(),
+                        dailyProgressSaveReq.getFatsConsumed(),
+                        dailyProgressSaveReq.getComment());
             } else {
                 this.dailyProgressService.updateTodayProgress(dailyProgress,
-                        dailyProgressPostReq.getWeight(),
-                        dailyProgressPostReq.getCaloriesConsumed(),
-                        dailyProgressPostReq.getProteinConsumed(),
-                        dailyProgressPostReq.getCarbsConsumed(),
-                        dailyProgressPostReq.getFatsConsumed(),
-                        dailyProgressPostReq.getComment());
+                        dailyProgressSaveReq.getWeight(),
+                        dailyProgressSaveReq.getCaloriesConsumed(),
+                        dailyProgressSaveReq.getProteinConsumed(),
+                        dailyProgressSaveReq.getCarbsConsumed(),
+                        dailyProgressSaveReq.getFatsConsumed(),
+                        dailyProgressSaveReq.getComment());
             }
 
         } catch (Exception e) {

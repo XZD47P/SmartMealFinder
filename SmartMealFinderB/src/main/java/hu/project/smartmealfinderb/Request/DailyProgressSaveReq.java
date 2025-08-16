@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 @Data
-public class DailyProgressPostReq {
+public class DailyProgressSaveReq {
 
     private double weight;
     private double caloriesConsumed;
