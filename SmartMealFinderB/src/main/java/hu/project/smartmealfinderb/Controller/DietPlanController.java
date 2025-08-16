@@ -6,6 +6,7 @@ import hu.project.smartmealfinderb.Request.DietPlanRequest;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
+import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +29,9 @@ public class DietPlanController {
 
     @Autowired
     private DailyProgressService dailyProgressService;
+
+    @Autowired
+    private FoodEntryService foodEntryService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createDietPlan(@AuthenticationPrincipal UserDetails userDetails,
@@ -78,6 +82,7 @@ public class DietPlanController {
     public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
+            this.foodEntryService.deleteUserFoodEntries(user);
             this.dailyProgressService.deleteUserProgression(user);
             this.dietPlanService.deleteUserDietPlan(user);
         } catch (Exception e) {

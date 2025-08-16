@@ -27,4 +27,9 @@ public class FoodEntryServiceImpl implements FoodEntryService {
         foodEntry.setUser(user);
         this.foodEntryRepository.save(foodEntry);
     }
+
+    @Override
+    public void deleteUserFoodEntries(User user) {
+        this.foodEntryRepository.deleteByUser(user);
+    }
 }
