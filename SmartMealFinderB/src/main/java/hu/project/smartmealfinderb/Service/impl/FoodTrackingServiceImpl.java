@@ -30,7 +30,6 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
         DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
         DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
-        //TODO: Szétszedni a súlyfelkövetést és a kommentet, összeadást átvinni a servicebe
         if (dailyProgress == null) {
             this.dailyProgressService.createTodayProgress(user,
                     dietPlan,
