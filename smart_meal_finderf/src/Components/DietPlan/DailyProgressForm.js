@@ -20,10 +20,6 @@ const DailyProgressForm = ({onSuccess}) => {
     } = useForm({
         defaultValues: {
             weight: "",
-            caloriesConsumed: "",
-            proteinConsumed: "",
-            carbsConsumed: "",
-            fatsConsumed: "",
             comment: "",
         },
         mode: "onTouched",
@@ -61,33 +57,26 @@ const DailyProgressForm = ({onSuccess}) => {
     const loadDailyProgress = () => {
         reset({
             weight: dailyProgress.weight,
-            caloriesConsumed: dailyProgress.caloriesConsumed,
-            proteinConsumed: dailyProgress.proteinConsumed,
-            carbsConsumed: dailyProgress.carbsConsumed,
-            fatsConsumed: dailyProgress.fatsConsumed,
             comment: dailyProgress.comment,
         })
     }
 
     const onSubmit = async (data) => {
-        const {weight, caloriesConsumed, proteinConsumed, carbsConsumed, fatsConsumed, comment} = data;
+        const {weight, comment} = data;
         const formData = {
             weight,
-            caloriesConsumed,
-            proteinConsumed,
-            carbsConsumed,
-            fatsConsumed,
             comment
         }
 
         try {
             setLoading(true);
-            await api.post("/progress/save", formData, {
+            await api.post("/progress/weight/save", formData, {
                 headers: {
                     "Content-Type": "application/json",
                 }
             });
             toast.success("Progress saved successfully!");
+            await fetchDailyProgress();
             onSuccess();
         } catch (error) {
             console.error(error);
@@ -113,46 +102,6 @@ const DailyProgressForm = ({onSuccess}) => {
                         message="*Weight is required"
                     />
                     <InputField
-                        label="Calories Consumed"
-                        required
-                        id="caloriesConsumed"
-                        type="number"
-                        step="0.01"
-                        register={register}
-                        errors={errors}
-                        message="*Calories are required"
-                    />
-                    <InputField
-                        label="Proteins Consumed (g)"
-                        required
-                        id="proteinConsumed"
-                        type="number"
-                        step="0.01"
-                        register={register}
-                        errors={errors}
-                        message="*Proteins are required"
-                    />
-                    <InputField
-                        label="Carbs Consumed (g)"
-                        required
-                        id="carbsConsumed"
-                        type="number"
-                        step="0.01"
-                        register={register}
-                        errors={errors}
-                        message="*Carbs are required"
-                    />
-                    <InputField
-                        label="Fats Consumed (g)"
-                        required
-                        id="fatsConsumed"
-                        type="number"
-                        step="0.01"
-                        register={register}
-                        errors={errors}
-                        message="*Fats are required"
-                    />
-                    <InputField
                         label="Comment"
                         id="comment"
                         type="text"
@@ -161,7 +110,6 @@ const DailyProgressForm = ({onSuccess}) => {
                         placeholder="Optional comment"
                     />
                 </div>
-
                 <Buttons
                     disabled={loading}
                     type="submit"
@@ -170,6 +118,26 @@ const DailyProgressForm = ({onSuccess}) => {
                     {loading ? "Submitting..." : "Submit Progress"}
                 </Buttons>
             </form>
+            {dailyProgress && ( //Azért szükséges ez a forma, mert máskülönben nem tudja a nullokat renderelni a program
+                <>
+                    <div>
+                        <label className="block font-medium">Calories Consumed</label>
+                        <p>{dailyProgress.caloriesConsumed} kcal</p>
+                    </div>
+                    <div>
+                        <label className="block font-medium">Proteins Consumed</label>
+                        <p>{dailyProgress.proteinConsumed} g</p>
+                    </div>
+                    <div>
+                        <label className="block font-medium">Carbs Consumed</label>
+                        <p>{dailyProgress.carbsConsumed} g</p>
+                    </div>
+                    <div>
+                        <label className="block font-medium">Fats Consumed</label>
+                        <p>{dailyProgress.fatsConsumed} g</p>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
