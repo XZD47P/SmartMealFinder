@@ -37,10 +37,10 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     @Override
     public void updateTodayProgress(DailyProgress existingProgress, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed) {
 
-        existingProgress.setCaloriesConsumed(existingProgress.getCaloriesConsumed() + caloriesConsumed);
-        existingProgress.setProteinConsumed(existingProgress.getProteinConsumed() + proteinConsumed);
-        existingProgress.setCarbsConsumed(existingProgress.getCarbsConsumed() + carbsConsumed);
-        existingProgress.setFatsConsumed(existingProgress.getFatsConsumed() + fatsConsumed);
+        existingProgress.setCaloriesConsumed(caloriesConsumed);
+        existingProgress.setProteinConsumed(proteinConsumed);
+        existingProgress.setCarbsConsumed(carbsConsumed);
+        existingProgress.setFatsConsumed(fatsConsumed);
         this.dailyProgressRepository.save(existingProgress);
     }
 
