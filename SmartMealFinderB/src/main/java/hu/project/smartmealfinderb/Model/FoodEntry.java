@@ -1,11 +1,12 @@
 package hu.project.smartmealfinderb.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -33,9 +34,11 @@ public class FoodEntry {
     private double carbs;
     private double fats;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
 

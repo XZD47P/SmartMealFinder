@@ -44,7 +44,7 @@ public class FoodEntryController {
 
     }
 
-    @GetMapping("/get")
+    @GetMapping("/list")
     public ResponseEntity<?> getTodayEntries(@AuthenticationPrincipal UserDetails userDetails) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());

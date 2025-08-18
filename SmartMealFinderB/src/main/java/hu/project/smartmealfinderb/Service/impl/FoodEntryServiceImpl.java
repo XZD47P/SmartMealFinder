@@ -8,7 +8,7 @@ import hu.project.smartmealfinderb.Service.FoodEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -38,7 +38,7 @@ public class FoodEntryServiceImpl implements FoodEntryService {
 
     @Override
     public List<FoodEntry> findAllTodayEntryByUser(User user) {
-        LocalDateTime date = LocalDateTime.now();
+        LocalDate date = LocalDate.now();
         return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
     }
 
