@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "../../Backend/api";
 import {useEffect, useState} from "react";
 import {useMyContext} from "../../Store/ContextApi";
+import ProductSearch from "./ProductSearch";
 
 const DailyProgressForm = ({onSuccess}) => {
 
@@ -138,6 +139,9 @@ const DailyProgressForm = ({onSuccess}) => {
                     </div>
                 </>
             )}
+            <div>
+                <ProductSearch onSuccess={fetchDailyProgress}/>
+            </div>
         </div>
     );
 };

@@ -1,8 +1,9 @@
 import {useState} from "react";
 import spoonacular from "../../Backend/spoonacular";
 import toast from "react-hot-toast";
+import api from "../../Backend/api";
 
-const ProductSearch = ({onAddProduct}) => {
+const ProductSearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -30,19 +31,23 @@ const ProductSearch = ({onAddProduct}) => {
             const response = await spoonacular.get(`/food/products/${productId}`);
 
             const productData = {
-                id: productId,
-                name: response.data.title,
-                nutrients: {
-                    calories: response.data.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount,
-                    protein: response.data.nutrition.nutrients.find(n => n.name === "Protein")?.amount,
-                    carbs: response.data.nutrition.nutrients.find(n => n.name === "Carbohydrates")?.amount,
-                    fat: response.data.nutrition.nutrients.find(n => n.name === "Fat")?.amount
-                }
+                spoonacularId: productId,
+                name: name,
+                calories: response.data.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount,
+                protein: response.data.nutrition.nutrients.find(n => n.name === "Protein")?.amount,
+                carbs: response.data.nutrition.nutrients.find(n => n.name === "Carbohydrates")?.amount,
+                fats: response.data.nutrition.nutrients.find(n => n.name === "Fat")?.amount
+
             };
 
-            onAddProduct(productData);
+            await api.post("/food-entry/save", productData, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
             setQuery("")
             setResults([]);
+            onSuccess();
             toast.success("Product Added");
         } catch (error) {
             console.log(error);
