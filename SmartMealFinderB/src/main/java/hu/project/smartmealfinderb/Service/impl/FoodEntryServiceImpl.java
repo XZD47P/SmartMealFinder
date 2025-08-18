@@ -8,6 +8,9 @@ import hu.project.smartmealfinderb.Service.FoodEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class FoodEntryServiceImpl implements FoodEntryService {
 
@@ -29,7 +32,24 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     }
 
     @Override
-    public void deleteUserFoodEntries(User user) {
-        this.foodEntryRepository.deleteByUser(user);
+    public void deleteAllUserFoodEntries(User user) {
+        this.foodEntryRepository.deleteAllByUser(user);
+    }
+
+    @Override
+    public List<FoodEntry> findAllTodayEntryByUser(User user) {
+        LocalDateTime date = LocalDateTime.now();
+        return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
+    }
+
+    @Override
+    public FoodEntry findById(Long foodIntakeId) {
+        return this.foodEntryRepository.findById(foodIntakeId).orElseThrow(
+                () -> new RuntimeException("Food entry not found with id " + foodIntakeId));
+    }
+
+    @Override
+    public void deleteById(Long foodIntakeId) {
+        this.foodEntryRepository.deleteById(foodIntakeId);
     }
 }

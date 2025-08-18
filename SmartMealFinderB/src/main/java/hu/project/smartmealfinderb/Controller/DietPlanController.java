@@ -82,7 +82,7 @@ public class DietPlanController {
     public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
-            this.foodEntryService.deleteUserFoodEntries(user);
+            this.foodEntryService.deleteAllUserFoodEntries(user);
             this.dailyProgressService.deleteUserProgression(user);
             this.dietPlanService.deleteUserDietPlan(user);
         } catch (Exception e) {

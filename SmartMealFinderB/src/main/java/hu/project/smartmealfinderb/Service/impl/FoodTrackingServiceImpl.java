@@ -3,6 +3,7 @@ package hu.project.smartmealfinderb.Service.impl;
 import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
+import hu.project.smartmealfinderb.Model.FoodEntry;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,4 +55,24 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                 newFoodEntry.getCarbs(),
                 newFoodEntry.getFats());
     }
+
+    @Override
+    public void deleteFoodEntry(User user, Long foodIntakeId) {
+        FoodEntry foodEntry = this.foodEntryService.findById(foodIntakeId);
+
+        if (!foodEntry.getUser().equals(user)) {
+            throw new RuntimeException("The entry is not owned by the user");
+        }
+
+        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+        this.dailyProgressService.updateTodayProgress(dailyProgress,
+                dailyProgress.getCaloriesConsumed() - foodEntry.getCalories(),
+                dailyProgress.getProteinConsumed() - foodEntry.getProtein(),
+                dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
+                dailyProgress.getFatsConsumed() - foodEntry.getFats());
+
+        this.foodEntryService.deleteById(foodIntakeId);
+    }
+
+
 }
