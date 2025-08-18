@@ -37,6 +37,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     newFoodEntry.getProtein(),
                     newFoodEntry.getCarbs(),
                     newFoodEntry.getFats());
+            dailyProgress = this.dailyProgressService.findTodayProgress(user);
         } else {
             this.dailyProgressService.updateTodayProgress(dailyProgress,
                     dailyProgress.getCaloriesConsumed() + newFoodEntry.getCalories(),
@@ -56,8 +57,8 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     }
 
     @Override
-    public void deleteFoodEntry(User user, Long foodIntakeId) {
-        FoodEntry foodEntry = this.foodEntryService.findById(foodIntakeId);
+    public void deleteFoodEntry(User user, Long foodEntryId) {
+        FoodEntry foodEntry = this.foodEntryService.findById(foodEntryId);
 
         if (!foodEntry.getUser().equals(user)) {
             throw new RuntimeException("The entry is not owned by the user");
@@ -70,7 +71,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                 dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
                 dailyProgress.getFatsConsumed() - foodEntry.getFats());
 
-        this.foodEntryService.deleteById(foodIntakeId);
+        this.foodEntryService.deleteById(foodEntryId);
     }
 
 

@@ -13,7 +13,7 @@ public interface FoodEntryService {
 
     List<FoodEntry> findAllTodayEntryByUser(User user);
 
-    FoodEntry findById(Long foodIntakeId);
+    FoodEntry findById(Long foodEntryId);
 
-    void deleteById(Long foodIntakeId);
+    void deleteById(Long foodEntryId);
 }

@@ -57,12 +57,12 @@ public class FoodEntryController {
         }
     }
 
-    @DeleteMapping("/delete/{foodIntakeId}")
+    @DeleteMapping("/delete/{foodEntryId}")
     public ResponseEntity<?> deleteFoodEntry(@AuthenticationPrincipal UserDetails userDetails,
-                                             @PathVariable Long foodIntakeId) {
+                                             @PathVariable Long foodEntryId) {
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
-            this.foodTrackingService.deleteFoodEntry(user, foodIntakeId);
+            this.foodTrackingService.deleteFoodEntry(user, foodEntryId);
 
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Deleted Successfully"));
         } catch (Exception e) {

@@ -43,13 +43,13 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     }
 
     @Override
-    public FoodEntry findById(Long foodIntakeId) {
-        return this.foodEntryRepository.findById(foodIntakeId).orElseThrow(
-                () -> new RuntimeException("Food entry not found with id " + foodIntakeId));
+    public FoodEntry findById(Long foodEntryId) {
+        return this.foodEntryRepository.findById(foodEntryId).orElseThrow(
+                () -> new RuntimeException("Food entry not found with id " + foodEntryId));
     }
 
     @Override
-    public void deleteById(Long foodIntakeId) {
-        this.foodEntryRepository.deleteById(foodIntakeId);
+    public void deleteById(Long foodEntryId) {
+        this.foodEntryRepository.deleteById(foodEntryId);
     }
 }
