@@ -5,7 +5,10 @@ import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.FoodEntry;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Service.*;
+import hu.project.smartmealfinderb.Service.DailyProgressService;
+import hu.project.smartmealfinderb.Service.DietPlanService;
+import hu.project.smartmealfinderb.Service.FoodEntryService;
+import hu.project.smartmealfinderb.Service.FoodTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +19,14 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     private FoodEntryService foodEntryService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private DailyProgressService dailyProgressService;
 
     @Autowired
     private DietPlanService dietPlanService;
 
     @Override
-    public void saveFoodEntry(String username, SaveFoodEntryReq newFoodEntry) {
+    public void saveFoodEntry(User user, SaveFoodEntryReq newFoodEntry) {
 
-        User user = this.userService.findByUsername(username);
         DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
         DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 

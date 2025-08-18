@@ -34,8 +34,8 @@ public class FoodEntryController {
     public ResponseEntity<?> saveFoodEntry(@AuthenticationPrincipal UserDetails userDetails,
                                            @RequestBody SaveFoodEntryReq newFoodEntry) {
         try {
-
-            this.foodTrackingService.saveFoodEntry(userDetails.getUsername(), newFoodEntry);
+            User user = userService.findByUsername(userDetails.getUsername());
+            this.foodTrackingService.saveFoodEntry(user, newFoodEntry);
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Saved Successfully"));
         } catch (Exception e) {
             System.err.println("There was an error saving your food entry: " + e.getMessage());

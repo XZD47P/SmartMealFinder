@@ -4,7 +4,7 @@ import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Model.User;
 
 public interface FoodTrackingService {
-    void saveFoodEntry(String username, SaveFoodEntryReq newFoodEntry);
+    void saveFoodEntry(User user, SaveFoodEntryReq newFoodEntry);
 
     void deleteFoodEntry(User user, Long foodIntakeId);
 }
