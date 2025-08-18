@@ -12,6 +12,7 @@ const DailyProgressForm = ({onSuccess}) => {
     const [loading, setLoading] = useState(false);
     const {currentUser} = useMyContext();
     const [dailyProgress, setDailyProgress] = useState(null);
+    const [foodEntries, setFoodEntries] = useState([]);
 
     const {
         register,
@@ -35,6 +36,7 @@ const DailyProgressForm = ({onSuccess}) => {
             } else {
                 setDailyProgress(null);
             }
+            await fetchFoodEntries();
         } catch (error) {
             toast.error("Daily progress could not be loaded!");
             setLoading(false);
@@ -86,6 +88,33 @@ const DailyProgressForm = ({onSuccess}) => {
             setLoading(false);
         }
     };
+
+    const fetchFoodEntries = async () => {
+        try {
+            const response = await api.get("/food-entry/list");
+            if (response.data) {
+                setFoodEntries(response.data);
+            } else {
+                setFoodEntries([]);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Could not load food entries");
+        }
+    };
+
+    const handleDeleteFoodEntry = async (foodEntryId) => {
+        try {
+            await api.delete(`/food-entry/delete/${foodEntryId}`);
+            toast.success("Food entry removed!");
+            await fetchDailyProgress();
+            onSuccess();
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to delete food entry");
+        }
+    };
+
 
     return (
         <div className="bg-yellow-100 p-4 rounded-md shadow-md mt-6">
@@ -141,6 +170,30 @@ const DailyProgressForm = ({onSuccess}) => {
             )}
             <div>
                 <ProductSearch onSuccess={fetchDailyProgress}/>
+            </div>
+            <div>
+                <ul className="divide-y border rounded bg-white">
+                    {foodEntries.map(entry => (
+                        <li key={entry.id} className="flex justify-between items-center p-2">
+                            <div>
+                                <p className="font-medium">{entry.name}</p>
+                                <p className="text-sm text-gray-600">
+                                    {entry.calories} kcal | {entry.protein} g protein | {entry.carbs} g carbs
+                                    | {entry.fats} g fat
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs text-gray-500">{entry.createdAt}</span>
+                                <button
+                                    onClick={() => handleDeleteFoodEntry(entry.id)}
+                                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import {useState} from "react";
 import spoonacular from "../../Backend/spoonacular";
 import toast from "react-hot-toast";
 import api from "../../Backend/api";
+import Buttons from "../Utils/Buttons";
 
 const ProductSearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
@@ -72,14 +73,10 @@ const ProductSearch = ({onSuccess}) => {
                     onKeyDown={handleKeyDown}
                     placeholder="Search for a product..."
                     className="flex-1 border px-3 py-2 rounded"/>
-                <button
-                    type="button"
-                    onClick={searchProducts}
-                    disabled={loading}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                    Search
-                </button>
+                <Buttons disabled={loading} type="button" onClickhandler={searchProducts}
+                         className={"bg-blue-500 text-white px-4 py-2 rounded"}>
+                    {loading ? "Searching..." : "Search"}
+                </Buttons>
             </div>
 
             {results.length > 0 && (
@@ -87,13 +84,12 @@ const ProductSearch = ({onSuccess}) => {
                     {results.map(item => (
                         <li key={item.id} className="flex justify-between items-center p-2">
                             <span>{item.title}</span>
-                            <button
-                                type="button"
-                                onClick={() => handleAdd(item.id, item.title)}
-                                className="bg-green-500 text-white px-2 py-1 rounded"
+                            <Buttons type={"button"}
+                                     onClickhandler={() => handleAdd(item.id, item.title)}
+                                     className={"bg-green-500 text-white px-2 py-1 rounded"}
                             >
                                 Add
-                            </button>
+                            </Buttons>
                         </li>
                     ))}
                 </ul>
