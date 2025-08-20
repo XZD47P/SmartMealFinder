@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import api from "../../Backend/api";
 import Buttons from "../Utils/Buttons";
 
-const ProductSearch = ({onSuccess}) => {
+const FoodIntakeSearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -12,13 +12,28 @@ const ProductSearch = ({onSuccess}) => {
     const searchProducts = async () => {
         setLoading(true);
         try {
-            const response = await spoonacular.get("/food/products/search", {
-                params: {
-                    query,
-                    number: 5
-                }
-            });
-            setResults(response.data.products || []);
+            const [productRes, ingredientRes] = await Promise.all([
+                spoonacular.get("/food/products/search", {
+                    params: {query, number: 5}
+                }),
+                spoonacular.get("/food/ingredients/search", {
+                    params: {query, number: 5}
+                })
+            ]);
+
+            const products = (productRes.data.products || []).map(p => ({
+                id: p.id,
+                name: p.title,
+                type: "product"
+            }));
+
+            const ingredients = (ingredientRes.data.results || []).map(i => ({
+                id: i.id,
+                name: i.name,
+                type: "ingredient"
+            }));
+
+            setResults([...products, ...ingredients]);
         } catch (error) {
             console.log(error);
             toast.error("Error while searching products");
@@ -27,13 +42,21 @@ const ProductSearch = ({onSuccess}) => {
         }
     }
 
-    const handleAdd = async (productId, name) => {
+    const handleAdd = async (item) => {
         try {
-            const response = await spoonacular.get(`/food/products/${productId}`);
+            let response;
+            if (item.type === "product") {
+                response = await spoonacular.get(`/food/products/${item.id}`);
 
-            const productData = {
-                spoonacularId: productId,
-                name: name,
+            } else if (item.type === "ingredient") {
+                response = await spoonacular.get(`/food/ingredients/${item.id}/information`, {
+                    params: {amount: 100, unit: "g"}
+                });
+            }
+
+            const spoonacularData = {
+                spoonacularId: item.id,
+                name: item.name,
                 calories: response.data.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount,
                 protein: response.data.nutrition.nutrients.find(n => n.name === "Protein")?.amount,
                 carbs: response.data.nutrition.nutrients.find(n => n.name === "Carbohydrates")?.amount,
@@ -41,11 +64,12 @@ const ProductSearch = ({onSuccess}) => {
 
             };
 
-            await api.post("/food-entry/save", productData, {
+            await api.post("/food-entry/save", spoonacularData, {
                 headers: {
                     "Content-Type": "application/json"
                 }
             });
+
             setQuery("")
             setResults([]);
             onSuccess();
@@ -83,9 +107,9 @@ const ProductSearch = ({onSuccess}) => {
                 <ul className="mt-2 border rounded divide-y">
                     {results.map(item => (
                         <li key={item.id} className="flex justify-between items-center p-2">
-                            <span>{item.title}</span>
+                            <span>{item.name}</span>
                             <Buttons type={"button"}
-                                     onClickhandler={() => handleAdd(item.id, item.title)}
+                                     onClickhandler={() => handleAdd(item)}
                                      className={"bg-green-500 text-white px-2 py-1 rounded"}
                             >
                                 Add
@@ -98,4 +122,4 @@ const ProductSearch = ({onSuccess}) => {
     )
 }
 
-export default ProductSearch;
+export default FoodIntakeSearch;

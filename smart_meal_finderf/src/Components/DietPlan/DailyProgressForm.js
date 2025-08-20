@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import api from "../../Backend/api";
 import {useEffect, useState} from "react";
 import {useMyContext} from "../../Store/ContextApi";
-import ProductSearch from "./ProductSearch";
+import FoodIntakeSearch from "./FoodIntakeSearch";
 
 const DailyProgressForm = ({onSuccess}) => {
 
@@ -37,6 +37,7 @@ const DailyProgressForm = ({onSuccess}) => {
                 setDailyProgress(null);
             }
             await fetchFoodEntries();
+            onSuccess();
         } catch (error) {
             toast.error("Daily progress could not be loaded!");
             setLoading(false);
@@ -80,7 +81,6 @@ const DailyProgressForm = ({onSuccess}) => {
             });
             toast.success("Progress saved successfully!");
             await fetchDailyProgress();
-            onSuccess();
         } catch (error) {
             console.error(error);
             toast.error("Failed to save progress.");
@@ -108,7 +108,6 @@ const DailyProgressForm = ({onSuccess}) => {
             await api.delete(`/food-entry/delete/${foodEntryId}`);
             toast.success("Food entry removed!");
             await fetchDailyProgress();
-            onSuccess();
         } catch (error) {
             console.error(error);
             toast.error("Failed to delete food entry");
@@ -169,7 +168,7 @@ const DailyProgressForm = ({onSuccess}) => {
                 </>
             )}
             <div>
-                <ProductSearch onSuccess={fetchDailyProgress}/>
+                <FoodIntakeSearch onSuccess={fetchDailyProgress}/>
             </div>
             <div>
                 <ul className="divide-y border rounded bg-white">
