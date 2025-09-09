@@ -1,15 +1,19 @@
-import {useMyContext} from "../../Store/ContextApi";
 import {Link, useLocation} from "react-router-dom";
 import {FaArrowLeft, FaArrowRight, FaUser} from "react-icons/fa";
 import {Tooltip} from "@mui/material";
 import {LiaBlogSolid} from "react-icons/lia";
+import {useEffect, useState} from "react";
 
 
 const AdminAreaSidebar = () => {
-    const {openSidebar, setOpenSidebar} = useMyContext();
+    const [openSidebar, setOpenSidebar] = useState(false);
 
     //Jelenlegi helyzet megszerzése
     const pathName = useLocation().pathname;
+
+    useEffect(() => {
+        setOpenSidebar(false);
+    }, [pathName]);
 
     return (
         <div

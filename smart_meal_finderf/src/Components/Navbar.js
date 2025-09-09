@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useMyContext} from "../Store/ContextApi";
 import {RxCross2} from "react-icons/rx";
@@ -23,6 +23,10 @@ const Navbar = () => {
         setIsAdmin(false);
         navigate("/login");
     };
+
+    useEffect(() => {
+        setHeaderToggle(false);
+    }, [pathName]);
 
     return (
         <header

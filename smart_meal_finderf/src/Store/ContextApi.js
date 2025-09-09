@@ -21,8 +21,8 @@ export const ContextProvider = ({children}) => {
     //Bejelentkezett felhasználó tárolása
     const [currentUser, setCurrentUser] = useState(null);
 
-    //Oldalsó menű nyitva állapota
-    const [openSidebar, setOpenSidebar] = useState(true);
+    // //Oldalsó menű nyitva állapota
+    // const [openSidebar, setOpenSidebar] = useState(true);
 
     //Admin jogosultság meglétének ellenőrzése
     const [isAdmin, setIsAdmin] = useState(isADmin);
@@ -66,8 +66,8 @@ export const ContextProvider = ({children}) => {
                 setToken,
                 currentUser,
                 setCurrentUser,
-                openSidebar,
-                setOpenSidebar,
+                // openSidebar,
+                // setOpenSidebar,
                 isAdmin,
                 setIsAdmin,
             }}
