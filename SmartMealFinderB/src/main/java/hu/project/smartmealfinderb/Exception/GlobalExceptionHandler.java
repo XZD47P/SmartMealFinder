@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<Map<String, Object>> handleMalformedJwtException(MalformedJwtException ex) {
-        return buildResponse("Invalid JWT token", HttpStatus.BAD_REQUEST);
+        return buildResponse("Invalid JWT token", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(SignatureException.class)

@@ -1,4 +1,5 @@
 import axios from "axios"
+import toast from "react-hot-toast";
 
 //Axios Példány létrehozása
 const api = axios.create({
@@ -38,6 +39,25 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem("JWT_TOKEN");
+            localStorage.removeItem("CSRF_TOKEN");
+
+            toast.error("Login expired, please login again.")
+
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 1500)
+
+
+        }
         return Promise.reject(error);
     }
 );

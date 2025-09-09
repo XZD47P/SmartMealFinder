@@ -21,10 +21,6 @@ const UserProfile = () => {
 
     const [pageError, setPageError] = useState(null);
 
-    const [accountLocked, setAccountLocked] = useState();
-    const [accountVerified, setAccountVerified] = useState();
-    const [verificationDeadline, setVerificationDeadline] = useState();
-
     const [openAccount, setOpenAccount] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -53,11 +49,6 @@ const UserProfile = () => {
 
         try {
             setLoading(true);
-            // const formData = new URLSearchParams();
-            // formData.append("token", token);
-            // formData.append("oldPassword", oldPassword);
-            // formData.append("newPassword", newPassword);
-            // formData.append("newPassword2", newPassword2);
             const formData = {
                 token,
                 oldPassword,
@@ -82,11 +73,6 @@ const UserProfile = () => {
         if (currentUser?.id) {
             setValue("username", currentUser.username);
             setValue("email", currentUser.email);
-            setAccountLocked(!currentUser.accountNonLocked);
-            setAccountVerified(currentUser.accountVerified)
-
-            const accountVerificationDate = moment(currentUser?.verificationDeadline).format("YYYY-MM-DD");
-            setVerificationDeadline(accountVerificationDate);
         }
     }, [currentUser, setValue]);
 
@@ -99,29 +85,6 @@ const UserProfile = () => {
             setLoginSession(lastLogin);
         }
     }, [token]);
-
-    // const handleAccountLockStatus = async (event) => {
-    //     setAccountLocked(event.target.checked);
-    //
-    //     try {
-    //         const formData = new URLSearchParams();
-    //         formData.append("token", token);
-    //         formData.append("lock", event.target.checked);
-    //
-    //         await api.put("/auth/update-lock-status", formData, {
-    //             headers: {
-    //                 "Content-Type": "application/x-www-form-urlencoded",
-    //             },
-    //         });
-    //
-    //         //fetchUser();
-    //         toast.success("Update Account Lock Status");
-    //     } catch (error) {
-    //         toast.error("Update Account Lock status failed");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     //Hibakezelés
     if (pageError) {
@@ -276,7 +239,7 @@ const UserProfile = () => {
                                         </h3>
                                         <div className="shadow-md shadow-gray-300 px-4 py-2 rounded-md">
                                             <p className="text-slate-700 text-sm">
-                                                Your Last LogIn Session when you are loggedin <br/>
+                                                Last time you logged in: <br/>
                                                 <span>{loginSession}</span>
                                             </p>
                                         </div>
