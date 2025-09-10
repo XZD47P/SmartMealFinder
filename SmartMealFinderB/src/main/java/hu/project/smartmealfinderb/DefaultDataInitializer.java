@@ -5,6 +5,7 @@ import hu.project.smartmealfinderb.Model.DietGoal;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Repository.DietGoalRepository;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
+import hu.project.smartmealfinderb.Service.DietOptionService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,6 +24,9 @@ public class DefaultDataInitializer implements CommandLineRunner {
 
     @Autowired //TODO: Ha lesz Service, akkor csere
     private DietGoalRepository dietGoalRepository;
+
+    @Autowired
+    private DietOptionService dietOptionService;
 
     @Override
     public void run(String... args) {
@@ -46,6 +50,20 @@ public class DefaultDataInitializer implements CommandLineRunner {
                 this.dietGoalRepository.save(new DietGoal("Maintain", 0));
                 this.dietGoalRepository.save(new DietGoal("Gain", 0.25));
                 this.dietGoalRepository.save(new DietGoal("Gain", 0.5));
+            }
+
+            if (this.dietOptionService.count() == 0) {
+                this.dietOptionService.save("Gluten Free", "gluten free");
+                this.dietOptionService.save("Ketogenic", "ketogenic");
+                this.dietOptionService.save("Vegetarian", "vegetarian");
+                this.dietOptionService.save("Lacto-Vegetarian", "lacto-vegetarian");
+                this.dietOptionService.save("Ovo-Vegetarian", "ovo-vegetarian");
+                this.dietOptionService.save("Vegan", "vegan");
+                this.dietOptionService.save("Pescetarian", "pescetarian");
+                this.dietOptionService.save("Paleo", "paleo");
+                this.dietOptionService.save("Primal", "primal");
+                this.dietOptionService.save("Low FODMAP", "low FODMAP");
+                this.dietOptionService.save("Whole30", "whole30");
             }
         } catch (Exception e) {
             System.err.println("There was an error while trying to set up starter data: " + e.getMessage());
