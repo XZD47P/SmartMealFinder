@@ -2,6 +2,7 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.Model.DietOption;
 import hu.project.smartmealfinderb.Repository.DietOptionRepository;
+import hu.project.smartmealfinderb.Repository.UserDietOptionRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,16 @@ public class DietOptionServiceImpl implements DietOptionService {
     @Autowired
     private DietOptionRepository dietOptionRepository;
 
+    @Autowired
+    private UserDietOptionRepository userDietOptionRepository;
+
     @Override
-    public Long count() {
+    public Long countDietOptions() {
         return this.dietOptionRepository.count();
     }
 
     @Override
-    public void save(String label, String apiValue) {
+    public void saveDietOption(String label, String apiValue) {
         this.dietOptionRepository.save(new DietOption(label, apiValue));
     }
 

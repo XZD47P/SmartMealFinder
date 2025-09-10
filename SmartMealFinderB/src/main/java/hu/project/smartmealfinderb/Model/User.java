@@ -12,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -70,6 +72,9 @@ public class User {
     private DietPlan planId;
 
      */
+
+    @OneToMany(mappedBy = "user")
+    private List<UserDietOption> dietOptions = new ArrayList<>();
 
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {
         this.userName = userName;

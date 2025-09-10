@@ -5,9 +5,9 @@ import hu.project.smartmealfinderb.Model.DietOption;
 import java.util.List;
 
 public interface DietOptionService {
-    Long count();
+    Long countDietOptions();
 
-    void save(String label, String apiValue);
+    void saveDietOption(String label, String apiValue);
 
     List<DietOption> findAll();
 }

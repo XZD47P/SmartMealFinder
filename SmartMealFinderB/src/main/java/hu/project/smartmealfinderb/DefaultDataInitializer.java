@@ -52,18 +52,18 @@ public class DefaultDataInitializer implements CommandLineRunner {
                 this.dietGoalRepository.save(new DietGoal("Gain", 0.5));
             }
 
-            if (this.dietOptionService.count() == 0) {
-                this.dietOptionService.save("Gluten Free", "gluten free");
-                this.dietOptionService.save("Ketogenic", "ketogenic");
-                this.dietOptionService.save("Vegetarian", "vegetarian");
-                this.dietOptionService.save("Lacto-Vegetarian", "lacto-vegetarian");
-                this.dietOptionService.save("Ovo-Vegetarian", "ovo-vegetarian");
-                this.dietOptionService.save("Vegan", "vegan");
-                this.dietOptionService.save("Pescetarian", "pescetarian");
-                this.dietOptionService.save("Paleo", "paleo");
-                this.dietOptionService.save("Primal", "primal");
-                this.dietOptionService.save("Low FODMAP", "low FODMAP");
-                this.dietOptionService.save("Whole30", "whole30");
+            if (this.dietOptionService.countDietOptions() == 0) {
+                this.dietOptionService.saveDietOption("Gluten Free", "gluten free");
+                this.dietOptionService.saveDietOption("Ketogenic", "ketogenic");
+                this.dietOptionService.saveDietOption("Vegetarian", "vegetarian");
+                this.dietOptionService.saveDietOption("Lacto-Vegetarian", "lacto-vegetarian");
+                this.dietOptionService.saveDietOption("Ovo-Vegetarian", "ovo-vegetarian");
+                this.dietOptionService.saveDietOption("Vegan", "vegan");
+                this.dietOptionService.saveDietOption("Pescetarian", "pescetarian");
+                this.dietOptionService.saveDietOption("Paleo", "paleo");
+                this.dietOptionService.saveDietOption("Primal", "primal");
+                this.dietOptionService.saveDietOption("Low FODMAP", "low FODMAP");
+                this.dietOptionService.saveDietOption("Whole30", "whole30");
             }
         } catch (Exception e) {
             System.err.println("There was an error while trying to set up starter data: " + e.getMessage());
