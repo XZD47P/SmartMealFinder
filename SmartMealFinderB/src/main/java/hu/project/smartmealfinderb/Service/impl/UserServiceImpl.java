@@ -334,4 +334,13 @@ public class UserServiceImpl implements UserService {
     public long count() {
         return this.userRepository.count();
     }
+
+    @Override
+    public void updateAccountVerificationStatus(Long userId, boolean verification) {
+        User user = this.userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+        user.setAccountVerified(verification);
+        this.userRepository.save(user);
+    }
 }

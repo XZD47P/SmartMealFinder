@@ -143,7 +143,7 @@ const UserDetails = () => {
         try {
             const formData = {
                 userId,
-                name: checked,
+                checked: checked,
             };
 
             await api.put(updateUrl, formData, {
@@ -154,7 +154,7 @@ const UserDetails = () => {
             fetchUserDetails();
             toast.success(message);
         } catch (error) {
-            toast.error(error?.response?.data?.message);
+            toast.error("Something went wrong, please try again!");
         } finally {
             message = null;
         }
@@ -327,7 +327,7 @@ const UserDetails = () => {
                                     name="verify"
                                     checked={user?.accountVerified}
                                     onChange={(e) =>
-                                        handleCheckboxChange(e, "/admin/update-enabled-status")
+                                        handleCheckboxChange(e, "/admin/update-verification-status")
                                     }
                                 />
                             </div>

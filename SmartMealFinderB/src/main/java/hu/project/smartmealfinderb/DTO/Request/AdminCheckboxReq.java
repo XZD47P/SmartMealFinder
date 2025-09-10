@@ -6,5 +6,5 @@ import lombok.Data;
 public class AdminCheckboxReq {
 
     private Long userId;
-    private boolean name;
+    private boolean checked;
 }

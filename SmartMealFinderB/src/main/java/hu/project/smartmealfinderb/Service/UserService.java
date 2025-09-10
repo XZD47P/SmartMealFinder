@@ -47,4 +47,6 @@ public interface UserService {
     User findByUsername(String username);
 
     long count();
+
+    void updateAccountVerificationStatus(Long userId, boolean verification);
 }

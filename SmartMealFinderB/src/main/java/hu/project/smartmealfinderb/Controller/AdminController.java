@@ -46,7 +46,14 @@ public class AdminController {
     @PutMapping("/update-lock-status")
     public ResponseEntity<?> updateAccountLockStatus(@RequestBody AdminCheckboxReq adminCheckboxReq) {
 
-        this.userService.updateAccountLockedStatus(adminCheckboxReq.getUserId(), adminCheckboxReq.isName());
+        this.userService.updateAccountLockedStatus(adminCheckboxReq.getUserId(), adminCheckboxReq.isChecked());
+        return ResponseEntity.ok(new MessageResponse("User lock status updated successfully"));
+    }
+
+    @PutMapping("/update-verification-status")
+    public ResponseEntity<?> updateAccountVerificationStatus(@RequestBody AdminCheckboxReq adminCheckboxReq) {
+
+        this.userService.updateAccountVerificationStatus(adminCheckboxReq.getUserId(), adminCheckboxReq.isChecked());
         return ResponseEntity.ok(new MessageResponse("User lock status updated successfully"));
     }
 
