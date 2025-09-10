@@ -4,6 +4,7 @@ import RecipeTile from "./RecipeTile";
 import useDebounce from "../../Hooks/useDebounce";
 import toast from "react-hot-toast";
 import Select from "react-select";
+import api from "../../Backend/api";
 
 
 const WhatsInMyFridgePage = () => {
@@ -12,22 +13,27 @@ const WhatsInMyFridgePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [inputValue, setInputValue] = useState(""); //A felhasználó által adott input
     const [ingredientOptions, setIngredientOptions] = useState([]); //Api által javasolt hozzávalók selecthez adása
+    const [dietOptions, setDietOptions] = useState([]); // A különböző diétákat tárolja az adatbázisból
 
     const debouncedInput = useDebounce(inputValue, 500);
 
-    const dietOptions = [
-        {label: "Gluten Free", value: "gluten free"},
-        {label: "Ketogenic", value: "ketogenic"},
-        {label: "Vegetarian", value: "vegetarian"},
-        {label: "Lacto-Vegetarian", value: "lacto-vegetarian"},
-        {label: "Ovo-Vegetarian", value: "ovo-vegetarian"},
-        {label: "Vegan", value: "vegan"},
-        {label: "Pescetarian", value: "pescetarian"},
-        {label: "Paleo", value: "paleo"},
-        {label: "Primal", value: "primal"},
-        {label: "Low FODMAP", value: "low FODMAP"},
-        {label: "Whole30", value: "whole30"},
-    ];
+    useEffect(() => {
+        fetchDietOptions();
+    }, []);
+
+    const fetchDietOptions = async () => {
+        try {
+            const response = await api.get("/diet-option/list");
+            const mappedDietOptions = response.data.map(item => ({
+                label: item.label,
+                value: item.apiValue,
+            }));
+
+            setDietOptions(mappedDietOptions);
+        } catch (error) {
+            toast.error("There was an error while retrieving diet options");
+        }
+    }
 
     useEffect(() => {
         const fetchIngredients = async () => {
