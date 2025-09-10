@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import {autocompleteIngredients, searchRecipes} from "../Service/recipeService";
-import RecipeTile from "./Recipe/RecipeTile";
-import useDebounce from "../Hooks/useDebounce";
+import {autocompleteIngredients, searchRecipes} from "../../Service/recipeService";
+import RecipeTile from "./RecipeTile";
+import useDebounce from "../../Hooks/useDebounce";
 import toast from "react-hot-toast";
 import Select from "react-select";
 

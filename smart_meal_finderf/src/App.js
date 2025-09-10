@@ -18,7 +18,7 @@ import Admin from "./Components/Admin/Admin";
 import VerificationPage from "./Components/Authentication/VerificationPage";
 import Plan from "./Components/DietPlan/Plan";
 import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
-import WhatsInMyFridgePage from "./Components/WhatsInMyFridgePage";
+import WhatsInMyFridgePage from "./Components/Recipe/WhatsInMyFridgePage";
 
 const App = () => {
     return (
