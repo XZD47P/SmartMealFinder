@@ -21,7 +21,7 @@ const UserProfile = () => {
 
     const [pageError, setPageError] = useState(null);
 
-    const [openAccount, setOpenAccount] = useState(false);
+    const [openAccountCredential, setopenAccountCredential] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);
     const [loading, setLoading] = useState(false);
     const [pageLoader, setPageLoader] = useState(false);
@@ -92,14 +92,14 @@ const UserProfile = () => {
     }
 
     //Kinyitott fiók fül
-    const onOpenAccountHandler = () => {
-        setOpenAccount(!openAccount);
+    const onOpenAccountCredentialsHandler = () => {
+        setopenAccountCredential(!openAccountCredential);
         setOpenSetting(false);
     };
     //kinyitott beállítások fül
     const onOpenSettingHandler = () => {
         setOpenSetting(!openSetting);
-        setOpenAccount(false);
+        setopenAccountCredential(false);
     };
 
     return (
@@ -151,10 +151,10 @@ const UserProfile = () => {
                                     </h1>
                                 </div>
                                 <div className="py-3">
-                                    <Accordion expanded={openAccount}>
+                                    <Accordion expanded={openAccountCredential}>
                                         <AccordionSummary
                                             className="shadow-md shadow-gray-300"
-                                            onClick={onOpenAccountHandler}
+                                            onClick={onOpenAccountCredentialsHandler}
                                             expandIcon={<ArrowDropDownIcon/>}
                                             aria-controls="panel1-content"
                                             id="panel1-header"
