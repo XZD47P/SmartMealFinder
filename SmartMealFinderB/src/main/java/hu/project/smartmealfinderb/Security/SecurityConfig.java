@@ -41,8 +41,9 @@ public class SecurityConfig {
                         request.requestMatchers("/api/auth/public/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/csrf-token").permitAll()
+                                .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
-                                .requestMatchers("/api/diet-option/**").permitAll()
+                                .requestMatchers("/api/diet-option/list").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
@@ -52,7 +53,8 @@ public class SecurityConfig {
         http.addFilterBefore(this.jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt));
         http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/api/auth/public/**"));
+                .ignoringRequestMatchers("/api/auth/public/**")
+                .ignoringRequestMatchers("/error/**"));
         http.cors(withDefaults());
         return http.build();
     }
