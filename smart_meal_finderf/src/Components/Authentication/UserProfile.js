@@ -12,6 +12,7 @@ import InputField from "../Utils/InputField";
 import Avatar from "@mui/material/Avatar";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {ClockLoader} from "react-spinners";
+import DietOptionSelect from "../Utils/DietOptionSelect";
 
 
 const UserProfile = () => {
@@ -26,6 +27,21 @@ const UserProfile = () => {
     const [loading, setLoading] = useState(false);
     const [pageLoader, setPageLoader] = useState(false);
 
+    //Diéták mentése
+    const [userDiets, setUserDiets] = useState([]);
+    const handleDietChange = async () => {
+        try {
+            setLoading(true);
+            await api.post("/diet-option/add-to-user", {
+                diets: userDiets.map((diet) => diet.value),
+            });
+            toast.success("Diet added successfully.");
+        } catch (error) {
+            toast.error("Failed to add diet to user. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const {
         register,
@@ -229,7 +245,13 @@ const UserProfile = () => {
                                                 </h3>
                                             </AccordionSummary>
                                             <AccordionDetails className="shadow-md shadow-gray-300">
-
+                                                <DietOptionSelect value={userDiets}
+                                                                  onChange={setUserDiets}
+                                                                  placeholder={"Select your diets"}/>
+                                                <Buttons disabled={loading}
+                                                         type={"button"}
+                                                         className={"bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700 transition-colors"}
+                                                         onClickhandler={handleDietChange}>Save</Buttons>
                                             </AccordionDetails>
                                         </Accordion>
                                     </div>

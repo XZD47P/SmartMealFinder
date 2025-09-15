@@ -4,7 +4,7 @@ import RecipeTile from "./RecipeTile";
 import useDebounce from "../../Hooks/useDebounce";
 import toast from "react-hot-toast";
 import Select from "react-select";
-import api from "../../Backend/api";
+import DietOptionSelect from "../Utils/DietOptionSelect";
 
 
 const WhatsInMyFridgePage = () => {
@@ -13,27 +13,26 @@ const WhatsInMyFridgePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [inputValue, setInputValue] = useState(""); //A felhasználó által adott input
     const [ingredientOptions, setIngredientOptions] = useState([]); //Api által javasolt hozzávalók selecthez adása
-    const [dietOptions, setDietOptions] = useState([]); // A különböző diétákat tárolja az adatbázisból
 
     const debouncedInput = useDebounce(inputValue, 500);
 
-    useEffect(() => {
-        fetchDietOptions();
-    }, []);
-
-    const fetchDietOptions = async () => {
-        try {
-            const response = await api.get("/diet-option/list");
-            const mappedDietOptions = response.data.map(item => ({
-                label: item.label,
-                value: item.apiValue,
-            }));
-
-            setDietOptions(mappedDietOptions);
-        } catch (error) {
-            toast.error("There was an error while retrieving diet options");
-        }
-    }
+    // useEffect(() => {
+    //     fetchDietOptions();
+    // }, []);
+    //
+    // const fetchDietOptions = async () => {
+    //     try {
+    //         const response = await api.get("/diet-option/list");
+    //         const mappedDietOptions = response.data.map(item => ({
+    //             label: item.label,
+    //             value: item.apiValue,
+    //         }));
+    //
+    //         setDietOptions(mappedDietOptions);
+    //     } catch (error) {
+    //         toast.error("There was an error while retrieving diet options");
+    //     }
+    // }
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -96,17 +95,9 @@ const WhatsInMyFridgePage = () => {
                     className="mt-2"
                 />
             </div>
-            <div className="mb-4">
-                <label className="font-medium">Do you have any dietary restrictions?</label>
-                <Select
-                    isMulti
-                    options={dietOptions}
-                    onChange={setSelectedDiet}
-                    value={selectedDiet}
-                    placeholder="Select a diet (optional)"
-                    className="mt-2"
-                />
-            </div>
+            <DietOptionSelect value={selectedDiet}
+                              onChange={setSelectedDiet}
+                              placeholder={"Select a diet (optional)"}/>
 
             <button
                 onClick={handleSearch}
