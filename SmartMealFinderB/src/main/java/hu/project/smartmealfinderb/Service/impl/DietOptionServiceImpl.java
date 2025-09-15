@@ -9,6 +9,7 @@ import hu.project.smartmealfinderb.Service.DietOptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,5 +45,25 @@ public class DietOptionServiceImpl implements DietOptionService {
                 .toList();
 
         return dietNames;
+    }
+
+    @Override
+    public void addDietOptionToUser(User user, List<String> diets) {
+        List<DietOption> dietOptions = new ArrayList<>();
+
+        //DietOption létezésének ellenőrzése
+        for (String diet : diets) {
+            DietOption dietOption = this.dietOptionRepository.findByApiValue(diet)
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown diet option: " + diet));
+
+            dietOptions.add(dietOption);
+        }
+
+        //User-DietOption kapcsolat létrehozása
+        List<UserDietOption> userDietOptions = dietOptions.stream()
+                .map(dietOption -> new UserDietOption(user, dietOption))
+                .toList();
+
+        this.userDietOptionRepository.saveAll(userDietOptions);
     }
 }
