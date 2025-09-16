@@ -74,6 +74,7 @@ public class User {
      */
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<UserDietOption> dietOptions = new ArrayList<>();
 
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {

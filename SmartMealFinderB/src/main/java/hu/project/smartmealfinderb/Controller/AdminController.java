@@ -24,7 +24,7 @@ public class AdminController {
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(this.userService.getAllUsers(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.getAllUsers());
     }
 
     @PutMapping("/update-role")
