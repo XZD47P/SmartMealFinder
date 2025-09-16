@@ -1,9 +1,9 @@
 package hu.project.smartmealfinderb;
 
 import hu.project.smartmealfinderb.Model.AppRole;
-import hu.project.smartmealfinderb.Model.DietGoal;
+import hu.project.smartmealfinderb.Model.FitnessGoal;
 import hu.project.smartmealfinderb.Model.Role;
-import hu.project.smartmealfinderb.Repository.DietGoalRepository;
+import hu.project.smartmealfinderb.Repository.FitnessGoalRepository;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
 import hu.project.smartmealfinderb.Service.UserService;
@@ -23,7 +23,7 @@ public class DefaultDataInitializer implements CommandLineRunner {
     private RoleRepository roleRepository;
 
     @Autowired //TODO: Ha lesz Service, akkor csere
-    private DietGoalRepository dietGoalRepository;
+    private FitnessGoalRepository fitnessGoalRepository;
 
     @Autowired
     private DietOptionService dietOptionService;
@@ -44,12 +44,12 @@ public class DefaultDataInitializer implements CommandLineRunner {
                 this.userService.registerUser("admin@emal.com", "admin", "admin123", Collections.singleton("admin"), "User", "Admin");
             }
 
-            if (this.dietGoalRepository.count() == 0) {
-                this.dietGoalRepository.save(new DietGoal("Lose", 0.5));
-                this.dietGoalRepository.save(new DietGoal("Lose", 0.25));
-                this.dietGoalRepository.save(new DietGoal("Maintain", 0));
-                this.dietGoalRepository.save(new DietGoal("Gain", 0.25));
-                this.dietGoalRepository.save(new DietGoal("Gain", 0.5));
+            if (this.fitnessGoalRepository.count() == 0) {
+                this.fitnessGoalRepository.save(new FitnessGoal("Lose", 0.5));
+                this.fitnessGoalRepository.save(new FitnessGoal("Lose", 0.25));
+                this.fitnessGoalRepository.save(new FitnessGoal("Maintain", 0));
+                this.fitnessGoalRepository.save(new FitnessGoal("Gain", 0.25));
+                this.fitnessGoalRepository.save(new FitnessGoal("Gain", 0.5));
             }
 
             if (this.dietOptionService.countDietOptions() == 0) {

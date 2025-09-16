@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class DietGoal {
+public class FitnessGoal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class DietGoal {
     @Column(name = "delta_weight(kg)")
     private double deltaWeight;
 
-    public DietGoal(String goal, double deltaWeight) {
+    public FitnessGoal(String goal, double deltaWeight) {
         this.goal = goal;
         this.deltaWeight = deltaWeight;
     }

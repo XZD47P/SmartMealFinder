@@ -38,10 +38,10 @@ public class DietPlan {
     private User userId;
 
     @ManyToOne()
-    @JoinColumn(name = "diet_goal_id")
-    private DietGoal dietGoalId;
+    @JoinColumn(name = "fitness_goal_id")
+    private FitnessGoal fitnessGoalId;
 
-    public DietPlan(String sex, double height, int age, LocalDate goalDate, double startWeight, double goalWeight, int activityLevel, double goalCalorie, double goalProtein, double goalCarbohydrate, double goalFat, User userId, DietGoal dietGoalId) {
+    public DietPlan(String sex, double height, int age, LocalDate goalDate, double startWeight, double goalWeight, int activityLevel, double goalCalorie, double goalProtein, double goalCarbohydrate, double goalFat, User userId, FitnessGoal fitnessGoalId) {
         this.sex = sex;
         this.height = height;
         this.age = age;
@@ -54,6 +54,6 @@ public class DietPlan {
         this.goalCarbohydrate = goalCarbohydrate;
         this.goalFat = goalFat;
         this.userId = userId;
-        this.dietGoalId = dietGoalId;
+        this.fitnessGoalId = fitnessGoalId;
     }
 }
