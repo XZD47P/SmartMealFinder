@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/dietgoal")
+@RequestMapping("/api/fitness-goal")
 public class FitnessGoalController {
 
     @Autowired

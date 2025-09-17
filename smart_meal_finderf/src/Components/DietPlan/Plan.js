@@ -47,7 +47,7 @@ const Plan = () => {
 
     const fetchGoals = async () => {
         try {
-            const response = await api.get("/dietgoal/all");
+            const response = await api.get("/fitness-goal/all");
             const mappedGoals = response.data.map(data => ({
                 value: data.id,
                 label: `${data.goal} ${data.deltaWeight}kg a week`,
