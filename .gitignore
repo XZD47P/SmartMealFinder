@@ -58,3 +58,4 @@ yarn-error.log*
 
 /TODO.txt
 /*.one
+/smart_meal_finderf/.env.development
