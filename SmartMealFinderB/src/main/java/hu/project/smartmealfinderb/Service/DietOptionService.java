@@ -14,5 +14,5 @@ public interface DietOptionService {
 
     List<String> findByUser(User user);
 
-    void addDietOptionToUser(User user, List<String> diets);
+    void modifyDietOptionToUser(User user, List<String> diets);
 }

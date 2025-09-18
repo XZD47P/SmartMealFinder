@@ -50,13 +50,13 @@ public class DietOptionController {
         }
     }
 
-    @PostMapping("/add-to-user")
+    @PostMapping("/save-to-user")
     public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestBody AddUserDietOptionReq addUserDietOptionReq) {
 
         try {
             User user = this.userService.findByUsername(userDetails.getUsername());
-            this.dietOptionService.addDietOptionToUser(user, addUserDietOptionReq.getDiets());
+            this.dietOptionService.modifyDietOptionToUser(user, addUserDietOptionReq.getDiets());
 
             return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
         } catch (Exception e) {

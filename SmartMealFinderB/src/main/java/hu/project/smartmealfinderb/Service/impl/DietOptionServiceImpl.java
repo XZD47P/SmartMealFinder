@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,7 +38,7 @@ public class DietOptionServiceImpl implements DietOptionService {
 
     @Override
     public List<String> findByUser(User user) {
-        List<UserDietOption> userDiets = this.userDietOptionRepository.findByUser(user);
+        List<UserDietOption> userDiets = this.userDietOptionRepository.findAllByUser(user);
 
         List<String> dietNames = userDiets.stream()
                 .map(userDietOption -> userDietOption.getDietOption().getApiValue())
@@ -50,19 +49,55 @@ public class DietOptionServiceImpl implements DietOptionService {
 
     @Override
     @Transactional
-    public void addDietOptionToUser(User user, List<String> diets) {
-        List<DietOption> dietOptions = new ArrayList<>();
+    public void modifyDietOptionToUser(User user, List<String> diets) {
+        //Bejövő diéták dietOption-né alakítása
+        List<DietOption> requestedDietOptions = diets.stream()
+                .map(diet -> this.dietOptionRepository.findByApiValue(diet)
+                        .orElseThrow(() -> new RuntimeException("Unknown diet option: " + diet)))
+                .toList();
 
-        //DietOption létezésének ellenőrzése
-        for (String diet : diets) {
-            DietOption dietOption = this.dietOptionRepository.findByApiValue(diet)
-                    .orElseThrow(() -> new IllegalArgumentException("Unknown diet option: " + diet));
+        //Jelenleg mentett diétát betöltése
+        List<UserDietOption> currentUserDietOptions = this.userDietOptionRepository.findAllByUser(user);
+        List<DietOption> currentDietOptions = currentUserDietOptions.stream()
+                .map(UserDietOption::getDietOption)
+                .toList();
 
-            dietOptions.add(dietOption);
+        //Új diéták meghatározása
+        List<DietOption> addedDietOptions = requestedDietOptions.stream()
+                .filter(dietOption -> !currentDietOptions.contains(dietOption))
+                .toList();
+
+        //Törölt diéták meghatározása
+        List<DietOption> removedDietOptions = currentDietOptions.stream()
+                .filter(dietOption -> !requestedDietOptions.contains(dietOption))
+                .toList();
+
+        //Új diéták mentése a felhasználóhoz
+        if (!addedDietOptions.isEmpty()) {
+            this.saveDietOptionToUser(user, addedDietOptions);
         }
 
-        //User-DietOption kapcsolat létrehozása
-        List<UserDietOption> userDietOptions = dietOptions.stream()
+        //Törölt diéták törlése a felhasználótól
+        if (!removedDietOptions.isEmpty()) {
+            this.deleteDietOptionFromUser(user, removedDietOptions);
+        }
+
+        //Ha üres volt a bejövő kérés, akkor minden diéta törlése a felhasználótól
+        if (requestedDietOptions.isEmpty()) {
+            this.userDietOptionRepository.deleteAll(currentUserDietOptions);
+        }
+
+        this.deleteDietOptionFromUser(user, removedDietOptions);
+    }
+
+    private void deleteDietOptionFromUser(User user, List<DietOption> deletedDietOptions) {
+        for (DietOption dietOption : deletedDietOptions) {
+            this.userDietOptionRepository.deleteByUserAndDietOption(user, dietOption);
+        }
+    }
+
+    private void saveDietOptionToUser(User user, List<DietOption> newDietOptions) {
+        List<UserDietOption> userDietOptions = newDietOptions.stream()
                 .map(dietOption -> new UserDietOption(user, dietOption))
                 .toList();
 
