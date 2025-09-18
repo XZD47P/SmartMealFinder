@@ -32,7 +32,7 @@ const UserProfile = () => {
     const handleDietChange = async () => {
         try {
             setLoading(true);
-            await api.post("/diet-option/add-to-user", {
+            await api.post("/diet-option/save-to-user", {
                 diets: userDiets.map((diet) => diet.value),
             });
             toast.success("Diet added successfully.");
