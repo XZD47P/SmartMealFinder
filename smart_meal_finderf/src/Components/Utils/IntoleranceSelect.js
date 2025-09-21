@@ -1,10 +1,13 @@
 import Select from "react-select";
 import {useEffect, useState} from "react";
 import api from "../../Backend/api";
+import {useMyContext} from "../../Store/ContextApi";
+import toast from "react-hot-toast";
 
 
 const IntoleranceSelect = ({onChange, value, placeholder}) => {
     const [intoleranceOptions, setIntoleranceOptions] = useState([]);
+    const {currentUser} = useMyContext();
 
     useEffect(() => {
         const init = async () => {
@@ -17,13 +20,25 @@ const IntoleranceSelect = ({onChange, value, placeholder}) => {
                 }));
                 setIntoleranceOptions(mappedDietOptions);
 
-            } catch (error) {
+                // A felhasználó mentett intoleranciáinak betöltése, ha van
+                if (currentUser) {
+                    const intoleranceResponse = await api.get("/intolerance/load-by-user");
+                    const userIntolerances = intoleranceResponse.data;
 
+                    const defaultIntoleranceOptions = mappedDietOptions.filter(option =>
+                        userIntolerances.includes(option.value)
+                    );
+
+                    onChange(defaultIntoleranceOptions);
+                }
+                ;
+            } catch (error) {
+                toast.error("There was an error while retrieving food intolerance options");
             }
-        }
+        };
 
         init();
-    }, []);
+    }, [currentUser, onChange]);
 
 
     return (
