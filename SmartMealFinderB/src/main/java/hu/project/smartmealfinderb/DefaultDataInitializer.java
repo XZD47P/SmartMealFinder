@@ -6,6 +6,7 @@ import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Repository.FitnessGoalRepository;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
+import hu.project.smartmealfinderb.Service.IntoleranceService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,6 +28,9 @@ public class DefaultDataInitializer implements CommandLineRunner {
 
     @Autowired
     private DietOptionService dietOptionService;
+
+    @Autowired
+    private IntoleranceService intoleranceService;
 
     @Override
     public void run(String... args) {
@@ -64,6 +68,21 @@ public class DefaultDataInitializer implements CommandLineRunner {
                 this.dietOptionService.saveDietOption("Primal", "primal");
                 this.dietOptionService.saveDietOption("Low FODMAP", "low FODMAP");
                 this.dietOptionService.saveDietOption("Whole30", "whole30");
+            }
+
+            if (this.intoleranceService.countIntolerances() == 0) {
+                this.intoleranceService.saveIntolerance("Dairy", "dairy");
+                this.intoleranceService.saveIntolerance("Egg", "egg");
+                this.intoleranceService.saveIntolerance("Gluten", "gluten");
+                this.intoleranceService.saveIntolerance("Grain", "grain");
+                this.intoleranceService.saveIntolerance("Peanut", "peanut");
+                this.intoleranceService.saveIntolerance("Seafood", "seafood");
+                this.intoleranceService.saveIntolerance("Sesame", "sesame");
+                this.intoleranceService.saveIntolerance("Shellfish", "shellfish");
+                this.intoleranceService.saveIntolerance("Soy", "soy");
+                this.intoleranceService.saveIntolerance("Sulfite", "sulfite");
+                this.intoleranceService.saveIntolerance("Tree Nut", "tree nut");
+                this.intoleranceService.saveIntolerance("Wheat", "wheat");
             }
         } catch (Exception e) {
             System.err.println("There was an error while trying to set up starter data: " + e.getMessage());
