@@ -41,7 +41,7 @@ const DietOptionSelect = ({value, onChange, placeholder}) => {
 
     return (
         <div className="mb-4">
-            <label className="font-medium">Do you have any dietary restrictions?</label>
+            <label className="font-medium">Do you follow any diet?</label>
             <Select
                 isMulti
                 options={dietOptions}
