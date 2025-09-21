@@ -13,6 +13,7 @@ import Avatar from "@mui/material/Avatar";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {ClockLoader} from "react-spinners";
 import DietOptionSelect from "../Utils/DietOptionSelect";
+import IntoleranceSelect from "../Utils/IntoleranceSelect";
 
 
 const UserProfile = () => {
@@ -38,6 +39,22 @@ const UserProfile = () => {
             toast.success("Diet added successfully.");
         } catch (error) {
             toast.error("Failed to add diet to user. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //Intolernaciák mentése
+    const [userIntolerance, setUserIntolerance] = useState([]);
+    const handleIntoleranceChange = async () => {
+        try {
+            setLoading(true);
+            await api.post("/intolerance/save-to-user", {
+                intolerances: userIntolerance.map((intolerance) => intolerance.value),
+            });
+            toast.success("Intolerance added successfully.");
+        } catch (error) {
+            toast.error("Failed to add intolerance to user. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -252,6 +269,13 @@ const UserProfile = () => {
                                                          type={"button"}
                                                          className={"bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700 transition-colors"}
                                                          onClickhandler={handleDietChange}>Save</Buttons>
+                                                <IntoleranceSelect value={userIntolerance}
+                                                                   onChange={setUserIntolerance}
+                                                                   placeholder={"Select your intolerance"}/>
+                                                <Buttons disabled={loading}
+                                                         type={"button"}
+                                                         className={"bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700 transition-colors"}
+                                                         onClickhandler={handleIntoleranceChange}>Save</Buttons>
                                             </AccordionDetails>
                                         </Accordion>
                                     </div>
