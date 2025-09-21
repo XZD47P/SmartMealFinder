@@ -77,6 +77,10 @@ public class User {
     @JsonIgnore
     private List<UserDietOption> dietOptions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserIntolerance> intolerances = new ArrayList<>();
+
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {
         this.userName = userName;
         this.firstName = firstName;
