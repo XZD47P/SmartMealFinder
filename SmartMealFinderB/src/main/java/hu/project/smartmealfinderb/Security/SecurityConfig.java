@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/oauth2/**").permitAll()
                                 .requestMatchers("/api/diet-option/list").permitAll()
+                                .requestMatchers("/api/intolerance/list").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
