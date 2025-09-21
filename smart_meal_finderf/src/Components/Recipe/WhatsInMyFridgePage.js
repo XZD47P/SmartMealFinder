@@ -5,6 +5,7 @@ import useDebounce from "../../Hooks/useDebounce";
 import toast from "react-hot-toast";
 import Select from "react-select";
 import DietOptionSelect from "../Utils/DietOptionSelect";
+import IntoleranceSelect from "../Utils/IntoleranceSelect";
 
 
 const WhatsInMyFridgePage = () => {
@@ -13,6 +14,7 @@ const WhatsInMyFridgePage = () => {
     const [recipes, setRecipes] = useState([]);
     const [inputValue, setInputValue] = useState(""); //A felhasználó által adott input
     const [ingredientOptions, setIngredientOptions] = useState([]); //Api által javasolt hozzávalók selecthez adása
+    const [selectedIntolerance, setSelectedIntolerance] = useState([]);
 
     const debouncedInput = useDebounce(inputValue, 500);
 
@@ -61,9 +63,14 @@ const WhatsInMyFridgePage = () => {
     const handleSearch = async () => {
         const ingredients = selectedIngredients.map((ingredient) => ingredient.value);
         let diets = [];
+        let intolerances = [];
 
         if (selectedDiet) {
             diets = selectedDiet.map((diet) => diet.value);
+        }
+
+        if (selectedIntolerance) {
+            intolerances = selectedIntolerance.map((intolerance) => intolerance.value);
         }
 
         try {
@@ -71,6 +78,7 @@ const WhatsInMyFridgePage = () => {
                 includeIngredients: ingredients.join(","),
                 ignorePantry: true,
                 diet: diets.join(","),
+                intolerances: intolerances.join(","),
             });
             setRecipes(data)
         } catch (error) {
@@ -98,7 +106,9 @@ const WhatsInMyFridgePage = () => {
             <DietOptionSelect value={selectedDiet}
                               onChange={setSelectedDiet}
                               placeholder={"Select a diet (optional)"}/>
-
+            <IntoleranceSelect value={selectedIntolerance}
+                               onChange={setSelectedIntolerance}
+                               placeholder={"Select your intolerance(s) (optional)"}/>
             <button
                 onClick={handleSearch}
                 className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
