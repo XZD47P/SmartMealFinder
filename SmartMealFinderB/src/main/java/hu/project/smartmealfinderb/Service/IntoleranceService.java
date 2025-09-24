@@ -13,4 +13,6 @@ public interface IntoleranceService {
     List<Intolerance> findAll();
 
     List<String> findByUser(User user);
+
+    void modifyIntoleranceToUser(User user, List<String> intolerances);
 }

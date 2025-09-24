@@ -8,6 +8,7 @@ import hu.project.smartmealfinderb.Repository.UserIntoleranceRepository;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,5 +45,60 @@ public class IntoleranceServiceImpl implements IntoleranceService {
                 .toList();
 
         return intolerances;
+    }
+
+    @Override
+    @Transactional
+    public void modifyIntoleranceToUser(User user, List<String> intolerances) {
+        //Bejövő intoleranciák intolerance-á alakítása
+        List<Intolerance> requestedIntolerances = intolerances.stream()
+                .map(intolerance -> this.intoleranceRepository.findByApiValue(intolerance)
+                        .orElseThrow(() -> new RuntimeException("Unknown food intolerance option: " + intolerance)))
+                .toList();
+
+        //Jelenleg mentett intoleranciák betöltése
+        List<UserIntolerance> currentUserIntolerances = this.userIntoleranceRepository.findAllByUser(user);
+        List<Intolerance> currentIntolerances = currentUserIntolerances.stream()
+                .map(UserIntolerance::getIntolerance)
+                .toList();
+
+        //Új intoleranciák meghatározása
+        List<Intolerance> addedIntolerances = requestedIntolerances.stream()
+                .filter(intolerance -> !currentIntolerances.contains(intolerance))
+                .toList();
+
+        //Törölt intoleranciák meghatározása
+        List<Intolerance> removedIntolerances = currentIntolerances.stream()
+                .filter(intolerance -> !requestedIntolerances.contains(intolerance))
+                .toList();
+
+        //Új intoleranciák mentése a felhasználóhoz
+        if (!addedIntolerances.isEmpty()) {
+            this.saveIntoleranceToUser(user, addedIntolerances);
+        }
+
+        //Törölt intolernaciák törlése a felhasználótól
+        if (!removedIntolerances.isEmpty()) {
+            this.deleteIntoleranceFromUser(user, removedIntolerances);
+        }
+
+        //Ha üres volt a bejövő kérés, akkor minden intolerancia törlése a felhasználótól
+        if (requestedIntolerances.isEmpty()) {
+            this.userIntoleranceRepository.deleteAll(currentUserIntolerances);
+        }
+    }
+
+    private void deleteIntoleranceFromUser(User user, List<Intolerance> removedIntolerances) {
+        for (Intolerance intolerance : removedIntolerances) {
+            this.userIntoleranceRepository.deleteByUserAndIntolerance(user, intolerance);
+        }
+    }
+
+    private void saveIntoleranceToUser(User user, List<Intolerance> addedIntolerances) {
+        List<UserIntolerance> userIntolerances = addedIntolerances.stream()
+                .map(intolerance -> new UserIntolerance(user, intolerance))
+                .toList();
+
+        this.userIntoleranceRepository.saveAll(userIntolerances);
     }
 }

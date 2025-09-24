@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.DTO.Request.AddUserIntoleranceReq;
 import hu.project.smartmealfinderb.Model.Intolerance;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
@@ -12,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -45,5 +48,20 @@ public class IntoleranceController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while loading user's diet: " + e.getMessage()));
         }
+    }
+
+    @PostMapping("/save-to-user")
+    public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
+                                                @RequestBody AddUserIntoleranceReq addUserIntoleranceReq) {
+
+        try {
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            this.intoleranceService.modifyIntoleranceToUser(user, addUserIntoleranceReq.getIntolerances());
+
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while adding diet to user: " + e.getMessage()));
+        }
+
     }
 }
