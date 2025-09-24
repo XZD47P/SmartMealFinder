@@ -86,8 +86,6 @@ public class DietOptionServiceImpl implements DietOptionService {
         if (requestedDietOptions.isEmpty()) {
             this.userDietOptionRepository.deleteAll(currentUserDietOptions);
         }
-
-        this.deleteDietOptionFromUser(user, removedDietOptions);
     }
 
     private void deleteDietOptionFromUser(User user, List<DietOption> deletedDietOptions) {
