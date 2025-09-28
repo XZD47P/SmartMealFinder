@@ -10,6 +10,7 @@ import {ClockLoader} from "react-spinners";
 import GoalTile from "../Utils/GoalTile";
 import DailyProgressForm from "./DailyProgressForm";
 import ProgressChart from "./ProgressChart";
+import RecipeRecommendation from "./RecipeRecommendation";
 
 const Plan = () => {
     const {currentUser, token} = useMyContext();
@@ -151,6 +152,7 @@ const Plan = () => {
                             </div>
                             <DailyProgressForm onSuccess={triggerChartRefresh}/>
                             <ProgressChart refreshTrigger={refreshChart}/>
+                            <RecipeRecommendation dietPlan={dietPlan}/>
                         </div>
 
                     ) : (
