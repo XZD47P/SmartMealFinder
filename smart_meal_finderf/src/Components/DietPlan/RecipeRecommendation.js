@@ -22,6 +22,7 @@ const RecipeRecommendation = ({dietPlan}) => {
             const getRecipeRecommendation = async () => {
                 try {
                     setLoading(true);
+                    const offset = Math.floor(Math.random() * 5) * 10; //Offset, hogy más recepteket jelenítsen meg
 
                     const filters = {
                         diet: macros.diets?.join(",") || undefined,
@@ -30,7 +31,8 @@ const RecipeRecommendation = ({dietPlan}) => {
                         maxProtein: macros.remainingProteins,
                         maxCarbs: macros.remainingCarbs,
                         maxFat: macros.remainingFats,
-                        addRecipeNutrition: true,
+                        // addRecipeNutrition: true,
+                        offset: offset,
                     }
                     const [breakfast, main_course, snack] = await Promise.all([
                         searchRecipes({...filters, type: "breakfast"}),
