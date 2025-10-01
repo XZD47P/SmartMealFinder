@@ -43,9 +43,15 @@ const LandingPage = () => {
                 </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {recipes.map((recipe) => (
-                    <RecipeTile key={recipe.id} recipe={recipe}/>
-                ))}
+                {recipes ? (
+                    recipes.map((recipe) => (
+                        <RecipeTile key={recipe.id} recipe={recipe}/>
+                    ))
+                ) : (
+                    <section className="relative">
+                        <div>No recipe found!</div>
+                    </section>
+                )}
             </div>
         </div>
     );
