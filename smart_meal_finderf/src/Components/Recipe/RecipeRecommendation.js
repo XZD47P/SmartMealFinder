@@ -31,7 +31,7 @@ const RecipeRecommendation = ({dietPlan}) => {
                         maxProtein: macros.remainingProteins,
                         maxCarbs: macros.remainingCarbs,
                         maxFat: macros.remainingFats,
-                        // addRecipeNutrition: true,
+                        //addRecipeNutrition: true,
                         offset: offset,
                     }
                     const [breakfast, main_course, snack] = await Promise.all([
