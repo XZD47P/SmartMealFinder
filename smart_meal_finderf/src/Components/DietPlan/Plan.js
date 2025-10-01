@@ -10,7 +10,7 @@ import {ClockLoader} from "react-spinners";
 import GoalTile from "../Utils/GoalTile";
 import DailyProgressForm from "./DailyProgressForm";
 import ProgressChart from "./ProgressChart";
-import RecipeRecommendation from "./RecipeRecommendation";
+import RecipeRecommendation from "../Recipe/RecipeRecommendation";
 
 const Plan = () => {
     const {currentUser, token} = useMyContext();
