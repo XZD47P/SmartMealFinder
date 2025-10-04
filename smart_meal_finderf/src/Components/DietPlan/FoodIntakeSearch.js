@@ -1,8 +1,8 @@
 import {useState} from "react";
 import spoonacular from "../../Backend/spoonacular";
 import toast from "react-hot-toast";
-import api from "../../Backend/api";
 import Buttons from "../Utils/Buttons";
+import {saveFoodEntry} from "../../Service/recipeService";
 
 const FoodIntakeSearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
@@ -44,32 +44,7 @@ const FoodIntakeSearch = ({onSuccess}) => {
 
     const handleAdd = async (item) => {
         try {
-            let response;
-            if (item.type === "product") {
-                response = await spoonacular.get(`/food/products/${item.id}`);
-
-            } else if (item.type === "ingredient") {
-                response = await spoonacular.get(`/food/ingredients/${item.id}/information`, {
-                    params: {amount: 100, unit: "g"}
-                });
-            }
-
-            const spoonacularData = {
-                spoonacularId: item.id,
-                name: item.name,
-                calories: response.data.nutrition.nutrients.find(nutrient => nutrient.name === "Calories")?.amount,
-                protein: response.data.nutrition.nutrients.find(n => n.name === "Protein")?.amount,
-                carbs: response.data.nutrition.nutrients.find(n => n.name === "Carbohydrates")?.amount,
-                fats: response.data.nutrition.nutrients.find(n => n.name === "Fat")?.amount
-
-            };
-
-            await api.post("/food-entry/save", spoonacularData, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
+            await saveFoodEntry(item);
             setQuery("")
             setResults([]);
             onSuccess();

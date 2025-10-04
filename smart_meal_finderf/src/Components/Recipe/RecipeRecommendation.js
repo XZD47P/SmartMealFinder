@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import api from "../../Backend/api";
 import toast from "react-hot-toast";
-import {searchRecipes} from "../../Service/recipeService";
 import HorizontalSection from "../Utils/HorizontalSection";
+import {searchRecipes} from "../../Service/recipeService";
 
 
 const RecipeRecommendation = ({dietPlan}) => {
@@ -31,7 +31,7 @@ const RecipeRecommendation = ({dietPlan}) => {
                         maxProtein: macros.remainingProteins,
                         maxCarbs: macros.remainingCarbs,
                         maxFat: macros.remainingFats,
-                        //addRecipeNutrition: true,
+                        addRecipeNutrition: false,
                         offset: offset,
                     }
                     const [breakfast, main_course, snack] = await Promise.all([

@@ -41,7 +41,7 @@ const HorizontalSection = ({title, recipes}) => {
                 >
                     {recipes.map((recipe) => (
                         <div key={recipe.id} className="flex-shrink-0 w-64">
-                            <RecipeTile recipe={recipe}/>
+                            <RecipeTile recipe={recipe} button={true}/>
                         </div>
                     ))}
                 </div>
