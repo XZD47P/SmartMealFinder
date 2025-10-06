@@ -31,37 +31,27 @@ public class IntoleranceController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllIntolerances() {
-        try {
-            List<Intolerance> intolerances = this.intoleranceService.findAll();
-            return ResponseEntity.status(HttpStatus.OK).body(intolerances);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while listing the intolerances: " + e.getMessage()));
-        }
+
+        List<Intolerance> intolerances = this.intoleranceService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(intolerances);
     }
 
     @GetMapping("/load-by-user")
     public ResponseEntity<?> getUserIntolerances(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            List<String> userIntolerances = this.intoleranceService.findByUser(user);
-            return ResponseEntity.status(HttpStatus.OK).body(userIntolerances);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while loading user's diet: " + e.getMessage()));
-        }
+
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        List<String> userIntolerances = this.intoleranceService.findByUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userIntolerances);
     }
 
     @PostMapping("/save-to-user")
     public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestBody AddUserIntoleranceReq addUserIntoleranceReq) {
 
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            this.intoleranceService.modifyIntoleranceToUser(user, addUserIntoleranceReq.getIntolerances());
 
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while adding diet to user: " + e.getMessage()));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        this.intoleranceService.modifyIntoleranceToUser(user, addUserIntoleranceReq.getIntolerances());
 
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
     }
 }

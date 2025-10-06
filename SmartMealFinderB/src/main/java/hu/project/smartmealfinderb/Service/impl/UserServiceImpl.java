@@ -62,39 +62,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(String email, String username, String password, Set<String> role, String firstName, String lastName) {
-        if (this.userRepository.existsByUserName(username)) {
-            throw new RuntimeException("Username is already in use");
-        }
-        if (this.userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email is already registered");
-        }
+        try {
+            if (this.userRepository.existsByUserName(username)) {
+                throw new RuntimeException("Username is already in use");
+            }
+            if (this.userRepository.existsByEmail(email)) {
+                throw new RuntimeException("Email is already registered");
+            }
 
-        Instant verificationDeadline = Instant.now().plus(15, ChronoUnit.DAYS);
+            Instant verificationDeadline = Instant.now().plus(15, ChronoUnit.DAYS);
 
-        User newUser = new User(email, username, passwordEncoder.encode(password), firstName, lastName, verificationDeadline);
-        Set<String> strRoles = role;
-        Role userRole;
+            User newUser = new User(email, username, passwordEncoder.encode(password), firstName, lastName, verificationDeadline);
+            Set<String> strRoles = role;
+            Role userRole;
 
-        if (strRoles == null || strRoles.isEmpty()) {
-            userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-        } else {
-            String roleName = strRoles.iterator().next();
-            if (roleName.equals("admin")) {
-                userRole = this.roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-            } else if (roleName.equals("user")) {
+            if (strRoles == null || strRoles.isEmpty()) {
                 userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
                         .orElseThrow(() -> new RuntimeException("Role not found"));
             } else {
-                throw new RuntimeException("Invalid role");
+                String roleName = strRoles.iterator().next();
+                if (roleName.equals("admin")) {
+                    userRole = this.roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Role not found"));
+                } else if (roleName.equals("user")) {
+                    userRole = this.roleRepository.findByRoleName(AppRole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Role not found"));
+                } else {
+                    throw new RuntimeException("Invalid role");
+                }
             }
+
+            newUser.setRole(userRole);
+            newUser.setSignUpMethod("email");
+
+            this.userRepository.save(newUser);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while registering user: " + e.getMessage());
         }
-
-        newUser.setRole(userRole);
-        newUser.setSignUpMethod("email");
-
-        this.userRepository.save(newUser);
     }
 
     @Override
@@ -146,38 +150,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void generatePasswordResetToken(String email) {
-        User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            User user = this.userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = UUID.randomUUID().toString();
-        Instant expiryDate = Instant.now().plus(15, ChronoUnit.MINUTES);
-        PasswordResetToken passwordResetToken = new PasswordResetToken(user, token, expiryDate);
-        this.passwordResetTokenRepository.save(passwordResetToken);
+            String token = UUID.randomUUID().toString();
+            Instant expiryDate = Instant.now().plus(15, ChronoUnit.MINUTES);
+            PasswordResetToken passwordResetToken = new PasswordResetToken(user, token, expiryDate);
+            this.passwordResetTokenRepository.save(passwordResetToken);
 
-        //Email küldése
-        String resetURL = this.frontendUrl + "/reset-password?token=" + token;
-        this.emailService.sendPasswordResetEmail(user.getUserName(), email, resetURL);
+            //Email küldése
+            String resetURL = this.frontendUrl + "/reset-password?token=" + token;
+            this.emailService.sendPasswordResetEmail(user.getUserName(), email, resetURL);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while generating password reset token: " + e.getMessage());
+        }
     }
 
     @Override
     public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid password reset token"));
+        try {
+            PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                    .orElseThrow(() -> new RuntimeException("Invalid password reset token"));
 
-        if (resetToken.isUsed()) {
-            throw new RuntimeException("Password reset token has already been used");
+            if (resetToken.isUsed()) {
+                throw new RuntimeException("Password reset token has already been used");
+            }
+
+            if (resetToken.getExpiryDate().isBefore(Instant.now())) {
+                throw new RuntimeException("Password reset token has expired");
+            }
+
+            User user = resetToken.getUser();
+            user.setPassword(this.passwordEncoder.encode(newPassword));
+            this.userRepository.save(user);
+
+            resetToken.setUsed(true);
+            this.passwordResetTokenRepository.save(resetToken);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while resetting password: " + e.getMessage());
         }
-
-        if (resetToken.getExpiryDate().isBefore(Instant.now())) {
-            throw new RuntimeException("Password reset token has expired");
-        }
-
-        User user = resetToken.getUser();
-        user.setPassword(this.passwordEncoder.encode(newPassword));
-        this.userRepository.save(user);
-
-        resetToken.setUsed(true);
-        this.passwordResetTokenRepository.save(resetToken);
 
     }
 
@@ -246,12 +258,12 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(Long userId, String password) {
         try {
             User user = this.userRepository.findById(userId).orElseThrow(
-                    () -> new RuntimeException("User not found")
+                    () -> new RuntimeException("User not found, while trying to update password")
             );
             user.setPassword(this.passwordEncoder.encode(password));
             this.userRepository.save(user);
         } catch (Exception e) {
-            throw new RuntimeException("Password update failed");
+            throw new RuntimeException("Password update failed: " + e.getMessage());
         }
     }
 
@@ -272,55 +284,65 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(String jwtToken, String oldPassword, String newPassword) {
+        try {
+            String username = this.jwtUtils.getUserNameFromJwtToken(jwtToken);
 
-
-        String username = this.jwtUtils.getUserNameFromJwtToken(jwtToken);
-
-        User user = this.userRepository.findByUserName(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = this.userRepository.findByUserName(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
 //        String encodedOldPassword = this.passwordEncoder.encode(oldPassword);
 
-        if (!this.passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new RuntimeException("Old password does not match");
-        }
-        String encodedNewPassword = this.passwordEncoder.encode(newPassword);
+            if (!this.passwordEncoder.matches(oldPassword, user.getPassword())) {
+                throw new RuntimeException("Old password does not match");
+            }
+            String encodedNewPassword = this.passwordEncoder.encode(newPassword);
 
-        user.setPassword(encodedNewPassword);
-        this.userRepository.save(user);
+            user.setPassword(encodedNewPassword);
+            this.userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while changing password: " + e.getMessage());
+        }
     }
 
     @Override
     public void generateVerificationToken(String email) {
-        User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            User user = this.userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = UUID.randomUUID().toString();
-        Instant expiryDate = user.getVerificationDeadline();
-        VerificationToken verificationToken = new VerificationToken(user, token, expiryDate);
+            String token = UUID.randomUUID().toString();
+            Instant expiryDate = user.getVerificationDeadline();
+            VerificationToken verificationToken = new VerificationToken(user, token, expiryDate);
 
-        this.verificationTokenRepository.save(verificationToken);
+            this.verificationTokenRepository.save(verificationToken);
 
-        //Email küldése
-        String verificationURL = this.frontendUrl + "/verification?token=" + token;
-        this.emailService.sendVerificationEmail(user.getUserName(), email, verificationURL);
+            //Email küldése
+            String verificationURL = this.frontendUrl + "/verification?token=" + token;
+            this.emailService.sendVerificationEmail(user.getUserName(), email, verificationURL);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while generating verification token: " + e.getMessage());
+        }
     }
 
     @Override
     public void verifyUser(String token) {
-        VerificationToken verificationToken = this.verificationTokenRepository.findByVerificationToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
+        try {
+            VerificationToken verificationToken = this.verificationTokenRepository.findByVerificationToken(token)
+                    .orElseThrow(() -> new RuntimeException("Invalid verification token"));
 
-        if (verificationToken.isUsed()) {
-            throw new RuntimeException("User already verified");
+            if (verificationToken.isUsed()) {
+                throw new RuntimeException("User already verified");
+            }
+
+            User user = verificationToken.getUser();
+            user.setAccountVerified(true);
+            this.userRepository.save(user);
+
+            verificationToken.setUsed(true);
+            this.verificationTokenRepository.save(verificationToken);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while verifying user: " + e.getMessage());
         }
-
-        User user = verificationToken.getUser();
-        user.setAccountVerified(true);
-        this.userRepository.save(user);
-
-        verificationToken.setUsed(true);
-        this.verificationTokenRepository.save(verificationToken);
     }
 
     @Override

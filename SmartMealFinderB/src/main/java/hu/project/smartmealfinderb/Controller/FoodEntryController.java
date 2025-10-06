@@ -33,41 +33,28 @@ public class FoodEntryController {
     @PostMapping("/save")
     public ResponseEntity<?> saveFoodEntry(@AuthenticationPrincipal UserDetails userDetails,
                                            @RequestBody SaveFoodEntryReq newFoodEntry) {
-        try {
-            User user = userService.findByUsername(userDetails.getUsername());
-            this.foodTrackingService.saveFoodEntry(user, newFoodEntry);
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Saved Successfully"));
-        } catch (Exception e) {
-            System.err.println("There was an error saving your food entry: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("There was an error saving food intake"));
-        }
 
+        User user = userService.findByUsername(userDetails.getUsername());
+        this.foodTrackingService.saveFoodEntry(user, newFoodEntry);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Saved Successfully"));
     }
 
     @GetMapping("/list")
     public ResponseEntity<?> getTodayEntries(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            List<FoodEntry> todayFoodEntryList = this.foodEntryService.findAllTodayEntryByUser(user);
 
-            return ResponseEntity.status(HttpStatus.OK).body(todayFoodEntryList);
-        } catch (Exception e) {
-            System.err.println("There was an error getting today food entries: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("There was an error getting today food entries"));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        List<FoodEntry> todayFoodEntryList = this.foodEntryService.findAllTodayEntryByUser(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(todayFoodEntryList);
     }
 
     @DeleteMapping("/delete/{foodEntryId}")
     public ResponseEntity<?> deleteFoodEntry(@AuthenticationPrincipal UserDetails userDetails,
                                              @PathVariable Long foodEntryId) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            this.foodTrackingService.deleteFoodEntry(user, foodEntryId);
 
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Deleted Successfully"));
-        } catch (Exception e) {
-            System.err.println("There was an error deleting your food entry: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("There was an error deleting food entry"));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        this.foodTrackingService.deleteFoodEntry(user, foodEntryId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Deleted Successfully"));
     }
 }

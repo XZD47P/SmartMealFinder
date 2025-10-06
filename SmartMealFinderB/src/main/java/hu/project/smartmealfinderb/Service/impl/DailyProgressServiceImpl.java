@@ -51,27 +51,35 @@ public class DailyProgressServiceImpl implements DailyProgressService {
 
     @Override
     public void deleteUserProgression(User user) {
-        this.dailyProgressRepository.deleteByUserId(user);
+        try {
+            this.dailyProgressRepository.deleteByUserId(user);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while deleting user progression: " + e.getMessage());
+        }
     }
 
     @Override
     public void saveWeight(User user, DietPlan dietPlan, double weight, String comment) {
-        DailyProgress dailyProgress = findTodayProgress(user);
+        try {
+            DailyProgress dailyProgress = findTodayProgress(user);
 
-        if (dailyProgress == null) {
-            DailyProgress newDailyProgress = new DailyProgress();
+            if (dailyProgress == null) {
+                DailyProgress newDailyProgress = new DailyProgress();
 
-            newDailyProgress.setDate(this.date);
-            newDailyProgress.setDietPlan(dietPlan);
-            newDailyProgress.setUserId(user);
-            newDailyProgress.setWeight(weight);
-            newDailyProgress.setComment(comment);
+                newDailyProgress.setDate(this.date);
+                newDailyProgress.setDietPlan(dietPlan);
+                newDailyProgress.setUserId(user);
+                newDailyProgress.setWeight(weight);
+                newDailyProgress.setComment(comment);
 
-            this.dailyProgressRepository.save(newDailyProgress);
-        } else {
-            dailyProgress.setWeight(weight);
-            dailyProgress.setComment(comment);
-            this.dailyProgressRepository.save(dailyProgress);
+                this.dailyProgressRepository.save(newDailyProgress);
+            } else {
+                dailyProgress.setWeight(weight);
+                dailyProgress.setComment(comment);
+                this.dailyProgressRepository.save(dailyProgress);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while saving weight: " + e.getMessage());
         }
     }
 }

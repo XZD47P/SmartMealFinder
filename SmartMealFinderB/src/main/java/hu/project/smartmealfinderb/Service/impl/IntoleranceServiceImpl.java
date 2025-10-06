@@ -50,41 +50,45 @@ public class IntoleranceServiceImpl implements IntoleranceService {
     @Override
     @Transactional
     public void modifyIntoleranceToUser(User user, List<String> intolerances) {
-        //Bejövő intoleranciák intolerance-á alakítása
-        List<Intolerance> requestedIntolerances = intolerances.stream()
-                .map(intolerance -> this.intoleranceRepository.findByApiValue(intolerance)
-                        .orElseThrow(() -> new RuntimeException("Unknown food intolerance option: " + intolerance)))
-                .toList();
+        try {
+            //Bejövő intoleranciák intolerance-á alakítása
+            List<Intolerance> requestedIntolerances = intolerances.stream()
+                    .map(intolerance -> this.intoleranceRepository.findByApiValue(intolerance)
+                            .orElseThrow(() -> new RuntimeException("Unknown food intolerance option: " + intolerance)))
+                    .toList();
 
-        //Jelenleg mentett intoleranciák betöltése
-        List<UserIntolerance> currentUserIntolerances = this.userIntoleranceRepository.findAllByUser(user);
-        List<Intolerance> currentIntolerances = currentUserIntolerances.stream()
-                .map(UserIntolerance::getIntolerance)
-                .toList();
+            //Jelenleg mentett intoleranciák betöltése
+            List<UserIntolerance> currentUserIntolerances = this.userIntoleranceRepository.findAllByUser(user);
+            List<Intolerance> currentIntolerances = currentUserIntolerances.stream()
+                    .map(UserIntolerance::getIntolerance)
+                    .toList();
 
-        //Új intoleranciák meghatározása
-        List<Intolerance> addedIntolerances = requestedIntolerances.stream()
-                .filter(intolerance -> !currentIntolerances.contains(intolerance))
-                .toList();
+            //Új intoleranciák meghatározása
+            List<Intolerance> addedIntolerances = requestedIntolerances.stream()
+                    .filter(intolerance -> !currentIntolerances.contains(intolerance))
+                    .toList();
 
-        //Törölt intoleranciák meghatározása
-        List<Intolerance> removedIntolerances = currentIntolerances.stream()
-                .filter(intolerance -> !requestedIntolerances.contains(intolerance))
-                .toList();
+            //Törölt intoleranciák meghatározása
+            List<Intolerance> removedIntolerances = currentIntolerances.stream()
+                    .filter(intolerance -> !requestedIntolerances.contains(intolerance))
+                    .toList();
 
-        //Új intoleranciák mentése a felhasználóhoz
-        if (!addedIntolerances.isEmpty()) {
-            this.saveIntoleranceToUser(user, addedIntolerances);
-        }
+            //Új intoleranciák mentése a felhasználóhoz
+            if (!addedIntolerances.isEmpty()) {
+                this.saveIntoleranceToUser(user, addedIntolerances);
+            }
 
-        //Törölt intolernaciák törlése a felhasználótól
-        if (!removedIntolerances.isEmpty()) {
-            this.deleteIntoleranceFromUser(user, removedIntolerances);
-        }
+            //Törölt intolernaciák törlése a felhasználótól
+            if (!removedIntolerances.isEmpty()) {
+                this.deleteIntoleranceFromUser(user, removedIntolerances);
+            }
 
-        //Ha üres volt a bejövő kérés, akkor minden intolerancia törlése a felhasználótól
-        if (requestedIntolerances.isEmpty()) {
-            this.userIntoleranceRepository.deleteAll(currentUserIntolerances);
+            //Ha üres volt a bejövő kérés, akkor minden intolerancia törlése a felhasználótól
+            if (requestedIntolerances.isEmpty()) {
+                this.userIntoleranceRepository.deleteAll(currentUserIntolerances);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while modifying user intolerances: " + e.getMessage());
         }
     }
 

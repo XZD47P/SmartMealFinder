@@ -28,81 +28,84 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     @Override
     public void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal) {
+        try {
+            double proteinGram, fatGram, carbsGram = 0;
+            goalDate = LocalDate.now();
 
-        double proteinGram, fatGram, carbsGram = 0;
-        goalDate = LocalDate.now();
+            if (sex.isBlank() || weight == 0 || height == 0 || age == 0 || activityLevel == 0 || goalType == 0) {
+                throw new RuntimeException("One or more parameters are missing!");
+            }
 
-        if (sex.isBlank() || weight == 0 || height == 0 || age == 0 || activityLevel == 0 || goalType == 0) {
-            throw new RuntimeException("One or more parameters are missing!");
+            //Basal Metabolic Rate = Az a kalóriaszám, ami a súly fenntartásához szükséges ha nem csinálnánk semmit
+            double bmr;
+            if (sex.equals("male")) {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else if (sex.equals("female")) {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            } else {
+                throw new RuntimeException("Sex is missing or invalid!");
+            }
+
+            switch (activityLevel) {
+                case 1:
+                    this.tdee = bmr * 1.2;
+                    break;
+                case 2:
+                    this.tdee = bmr * 1.375;
+                    break;
+                case 3:
+                    this.tdee = bmr * 1.55;
+                    break;
+                case 4:
+                    this.tdee = bmr * 1.725;
+                    break;
+                case 5:
+                    this.tdee = bmr * 1.9;
+                    break;
+                default:
+                    throw new RuntimeException("ActivityLevel is invalid!");
+            }
+
+            FitnessGoal fitnessGoal = this.fitnessGoalService.findById(goalType);
+
+            switch (fitnessGoal.getGoal().toLowerCase()) {
+                case "lose": //0.5kg vesztése hetente
+                    loseWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
+                    break;
+                case "maintain": //súlyfenntartás
+                    break;
+                case "gain": //0.25kg tömegnövelés hetente
+                    gainWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
+                    //goalDate = goalDate.plusDays(daysToReachGoal);
+                    break;
+                default:
+                    throw new RuntimeException("DietGoal is invalid!");
+            }
+
+            //Forrás: https://carbonperformance.com/macros-101-how-to-gain-lose-weight-or-maintain/
+            proteinGram = this.calculateProteinNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
+            fatGram = this.calculateFatNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
+            carbsGram = this.calculateCarbsNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
+
+            //DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
+            DietPlan dietPlan = new DietPlan();
+            dietPlan.setSex(sex);
+            dietPlan.setHeight(height);
+            dietPlan.setAge(age);
+            dietPlan.setGoalDate(goalDate);
+            dietPlan.setStartWeight(weight);
+            dietPlan.setGoalWeight(roundUp(weightGoal));
+            dietPlan.setActivityLevel(activityLevel);
+            dietPlan.setGoalCalorie(roundUp(this.tdee));
+            dietPlan.setGoalProtein(roundUp(proteinGram));
+            dietPlan.setGoalCarbohydrate(roundUp(carbsGram));
+            dietPlan.setGoalFat(roundUp(fatGram));
+            dietPlan.setUserId(user);
+            dietPlan.setFitnessGoalId(fitnessGoal);
+            dietPlanRepository.save(dietPlan);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while calculating the diet plan: " + e.getMessage());
         }
-
-        //Basal Metabolic Rate = Az a kalóriaszám, ami a súly fenntartásához szükséges ha nem csinálnánk semmit
-        double bmr;
-        if (sex.equals("male")) {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-        } else if (sex.equals("female")) {
-            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
-        } else {
-            throw new RuntimeException("Sex is missing or invalid!");
-        }
-
-        switch (activityLevel) {
-            case 1:
-                this.tdee = bmr * 1.2;
-                break;
-            case 2:
-                this.tdee = bmr * 1.375;
-                break;
-            case 3:
-                this.tdee = bmr * 1.55;
-                break;
-            case 4:
-                this.tdee = bmr * 1.725;
-                break;
-            case 5:
-                this.tdee = bmr * 1.9;
-                break;
-            default:
-                throw new RuntimeException("ActivityLevel is invalid!");
-        }
-
-        FitnessGoal fitnessGoal = this.fitnessGoalService.findById(goalType);
-
-        switch (fitnessGoal.getGoal().toLowerCase()) {
-            case "lose": //0.5kg vesztése hetente
-                loseWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
-                break;
-            case "maintain": //súlyfenntartás
-                break;
-            case "gain": //0.25kg tömegnövelés hetente
-                gainWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
-                //goalDate = goalDate.plusDays(daysToReachGoal);
-                break;
-            default:
-                throw new RuntimeException("DietGoal is invalid!");
-        }
-
-        //Forrás: https://carbonperformance.com/macros-101-how-to-gain-lose-weight-or-maintain/
-        proteinGram = this.calculateProteinNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
-        fatGram = this.calculateFatNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
-        carbsGram = this.calculateCarbsNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
-
-        //DietPlan dietPlan = new DietPlan(sex, height, age, goalDate, weight, weightGoal, activityLevel, tdee, proteinGram, carbsGram, fatGram, user, goalType);
-        DietPlan dietPlan = new DietPlan();
-        dietPlan.setSex(sex);
-        dietPlan.setHeight(height);
-        dietPlan.setAge(age);
-        dietPlan.setGoalDate(goalDate);
-        dietPlan.setStartWeight(weight);
-        dietPlan.setGoalWeight(roundUp(weightGoal));
-        dietPlan.setActivityLevel(activityLevel);
-        dietPlan.setGoalCalorie(roundUp(this.tdee));
-        dietPlan.setGoalProtein(roundUp(proteinGram));
-        dietPlan.setGoalCarbohydrate(roundUp(carbsGram));
-        dietPlan.setGoalFat(roundUp(fatGram));
-        dietPlan.setUserId(user);
-        dietPlan.setFitnessGoalId(fitnessGoal);
-        dietPlanRepository.save(dietPlan);
     }
 
     @Override
@@ -114,7 +117,11 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     @Override
     public void deleteUserDietPlan(User user) {
-        this.dietPlanRepository.deleteByUserId(user);
+        try {
+            this.dietPlanRepository.deleteByUserId(user);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while deleting user diet plan: " + e.getMessage());
+        }
     }
 
     //Kerekítés

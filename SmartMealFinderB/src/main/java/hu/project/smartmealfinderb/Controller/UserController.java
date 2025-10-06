@@ -10,7 +10,6 @@ import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,21 +24,16 @@ public class UserController {
 
     @PostMapping("/public/register")
     public ResponseEntity<?> registerUser(@Valid
-                                          @RequestBody RegisterRequest registerRequest
-    ) {
+                                          @RequestBody RegisterRequest registerRequest) {
 
-        try {
-            this.userService.registerUser(registerRequest.getEmail(),
-                    registerRequest.getUsername(),
-                    registerRequest.getPassword(),
-                    registerRequest.getRole(),
-                    registerRequest.getFirstName(),
-                    registerRequest.getLastName());
+        this.userService.registerUser(registerRequest.getEmail(),
+                registerRequest.getUsername(),
+                registerRequest.getPassword(),
+                registerRequest.getRole(),
+                registerRequest.getFirstName(),
+                registerRequest.getLastName());
 
-            this.userService.generateVerificationToken(registerRequest.getEmail());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
+        this.userService.generateVerificationToken(registerRequest.getEmail());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
@@ -54,60 +48,38 @@ public class UserController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        UserInfoResponse userInfo;
 
-        try {
-            userInfo = this.userService.getUserInfo(userDetails);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
-
+        UserInfoResponse userInfo = this.userService.getUserInfo(userDetails);
         return ResponseEntity.ok().body(userInfo);
     }
 
     @PostMapping("/public/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
-        try {
-            this.userService.generatePasswordResetToken(email);
-            return ResponseEntity.ok(new MessageResponse("Password reset token generated successfully and sent by email!"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse("Error while processing request: " + e.getMessage()));
-        }
+
+        this.userService.generatePasswordResetToken(email);
+        return ResponseEntity.ok(new MessageResponse("Password reset token generated successfully and sent by email!"));
     }
 
     @PostMapping("/public/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordChangeReq resetPasswordChangeReq) {
-        try {
-            this.userService.resetPassword(resetPasswordChangeReq.getToken(), resetPasswordChangeReq.getNewPassword());
-            return ResponseEntity.ok(new MessageResponse("Password reset successful"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+
+        this.userService.resetPassword(resetPasswordChangeReq.getToken(), resetPasswordChangeReq.getNewPassword());
+        return ResponseEntity.ok(new MessageResponse("Password reset successful"));
     }
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
-        try {
-            this.userService.changePassword(request.getToken(),
-                    request.getOldPassword(),
-                    request.getNewPassword());
-            return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+
+        this.userService.changePassword(request.getToken(),
+                request.getOldPassword(),
+                request.getNewPassword());
+        return ResponseEntity.ok(new MessageResponse("Password changed successfully"));
     }
 
     @PostMapping("/public/verify-user")
     public ResponseEntity<?> verifyUser(@RequestParam String token) {
-        try {
-            this.userService.verifyUser(token);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+
+        this.userService.verifyUser(token);
         return ResponseEntity.ok(new MessageResponse("User verified successfully"));
     }
 

@@ -33,7 +33,11 @@ public class FoodEntryServiceImpl implements FoodEntryService {
 
     @Override
     public void deleteAllUserFoodEntries(User user) {
-        this.foodEntryRepository.deleteAllByUser(user);
+        try {
+            this.foodEntryRepository.deleteAllByUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting user food entries: " + e.getMessage());
+        }
     }
 
     @Override

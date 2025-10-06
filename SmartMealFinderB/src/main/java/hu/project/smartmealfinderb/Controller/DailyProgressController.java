@@ -37,18 +37,13 @@ public class DailyProgressController {
     @PostMapping("/weight/save")
     public ResponseEntity<?> saveWeightProgress(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestBody WeightLogReq weightLogReq) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
-            this.dailyProgressService.saveWeight(user,
-                    dietPlan,
-                    weightLogReq.getWeight(),
-                    weightLogReq.getComment());
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
+        this.dailyProgressService.saveWeight(user,
+                dietPlan,
+                weightLogReq.getWeight(),
+                weightLogReq.getComment());
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Daily progress successfully saved."));
     }
@@ -56,27 +51,19 @@ public class DailyProgressController {
     @GetMapping
     public ResponseEntity<?> getProgress(@AuthenticationPrincipal UserDetails userDetails) {
 
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
-            return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getProgressHistory(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            List<DailyProgress> progressHistoryList = this.dailyProgressService.findAll(user);
 
-            return ResponseEntity.status(HttpStatus.OK).body(progressHistoryList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse("Something went wrong, please try again later."));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        List<DailyProgress> progressHistoryList = this.dailyProgressService.findAll(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(progressHistoryList);
     }
 }

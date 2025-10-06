@@ -9,7 +9,6 @@ import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,23 +37,15 @@ public class DietPlanController {
                                             @RequestBody DietPlanRequest dietPlanRequest) {
 
 
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            this.dietPlanService.calculateDietPlan(user,
-                    dietPlanRequest.getSex(),
-                    dietPlanRequest.getWeight(),
-                    dietPlanRequest.getHeight(),
-                    dietPlanRequest.getAge(),
-                    dietPlanRequest.getActivityLevel(),
-                    dietPlanRequest.getGoalType(),
-                    dietPlanRequest.getWeightGoal());
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse("Could not save diet plan"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        this.dietPlanService.calculateDietPlan(user,
+                dietPlanRequest.getSex(),
+                dietPlanRequest.getWeight(),
+                dietPlanRequest.getHeight(),
+                dietPlanRequest.getAge(),
+                dietPlanRequest.getActivityLevel(),
+                dietPlanRequest.getGoalType(),
+                dietPlanRequest.getWeightGoal());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new MessageResponse("Diet Plan created successfully"));
@@ -65,13 +56,8 @@ public class DietPlanController {
 
         DietPlan userDietPlan;
 
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            userDietPlan = this.dietPlanService.getUserDietPlan(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        userDietPlan = this.dietPlanService.getUserDietPlan(user);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userDietPlan);
@@ -80,14 +66,11 @@ public class DietPlanController {
     @DeleteMapping
     @Transactional
     public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            this.foodEntryService.deleteAllUserFoodEntries(user);
-            this.dailyProgressService.deleteUserProgression(user);
-            this.dietPlanService.deleteUserDietPlan(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
-        }
+
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        this.foodEntryService.deleteAllUserFoodEntries(user);
+        this.dailyProgressService.deleteUserProgression(user);
+        this.dietPlanService.deleteUserDietPlan(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet Plan deleted successfully"));
     }

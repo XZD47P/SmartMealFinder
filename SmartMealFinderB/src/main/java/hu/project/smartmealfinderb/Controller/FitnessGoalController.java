@@ -1,7 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.Model.FitnessGoal;
-import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.FitnessGoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +20,8 @@ public class FitnessGoalController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllDietGoals() {
-        try {
-            List<FitnessGoal> fitnessGoals = this.fitnessGoalService.findAll();
-            return ResponseEntity.status(HttpStatus.OK).body(fitnessGoals);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse(e.getMessage()));
-        }
+
+        List<FitnessGoal> fitnessGoals = this.fitnessGoalService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(fitnessGoals);
     }
 }

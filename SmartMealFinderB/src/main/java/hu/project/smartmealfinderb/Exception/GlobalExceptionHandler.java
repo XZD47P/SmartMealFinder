@@ -63,4 +63,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleJwtException(JwtException ex) {
         return buildResponse("JWT validation failed", HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
+        return buildResponse("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
+        return buildResponse("Unexpected error happened: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

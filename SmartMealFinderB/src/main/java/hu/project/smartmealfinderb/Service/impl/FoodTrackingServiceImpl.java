@@ -26,52 +26,59 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
 
     @Override
     public void saveFoodEntry(User user, SaveFoodEntryReq newFoodEntry) {
+        try {
+            DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
+            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
-        DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
-        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+            if (dailyProgress == null) {
+                this.dailyProgressService.createTodayProgress(user,
+                        dietPlan,
+                        newFoodEntry.getCalories(),
+                        newFoodEntry.getProtein(),
+                        newFoodEntry.getCarbs(),
+                        newFoodEntry.getFats());
+                dailyProgress = this.dailyProgressService.findTodayProgress(user);
+            } else {
+                this.dailyProgressService.updateTodayProgress(dailyProgress,
+                        dailyProgress.getCaloriesConsumed() + newFoodEntry.getCalories(),
+                        dailyProgress.getProteinConsumed() + newFoodEntry.getProtein(),
+                        dailyProgress.getCarbsConsumed() + newFoodEntry.getCarbs(),
+                        dailyProgress.getFatsConsumed() + newFoodEntry.getFats());
+            }
 
-        if (dailyProgress == null) {
-            this.dailyProgressService.createTodayProgress(user,
-                    dietPlan,
+            this.foodEntryService.addFoodEntry(user,
+                    dailyProgress,
+                    newFoodEntry.getSpoonacularId(),
+                    newFoodEntry.getName(),
                     newFoodEntry.getCalories(),
                     newFoodEntry.getProtein(),
                     newFoodEntry.getCarbs(),
                     newFoodEntry.getFats());
-            dailyProgress = this.dailyProgressService.findTodayProgress(user);
-        } else {
-            this.dailyProgressService.updateTodayProgress(dailyProgress,
-                    dailyProgress.getCaloriesConsumed() + newFoodEntry.getCalories(),
-                    dailyProgress.getProteinConsumed() + newFoodEntry.getProtein(),
-                    dailyProgress.getCarbsConsumed() + newFoodEntry.getCarbs(),
-                    dailyProgress.getFatsConsumed() + newFoodEntry.getFats());
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while saving food entry: " + e.getMessage());
         }
-
-        this.foodEntryService.addFoodEntry(user,
-                dailyProgress,
-                newFoodEntry.getSpoonacularId(),
-                newFoodEntry.getName(),
-                newFoodEntry.getCalories(),
-                newFoodEntry.getProtein(),
-                newFoodEntry.getCarbs(),
-                newFoodEntry.getFats());
     }
 
     @Override
     public void deleteFoodEntry(User user, Long foodEntryId) {
-        FoodEntry foodEntry = this.foodEntryService.findById(foodEntryId);
+        try {
+            FoodEntry foodEntry = this.foodEntryService.findById(foodEntryId);
 
-        if (!foodEntry.getUser().equals(user)) {
-            throw new RuntimeException("The entry is not owned by the user");
+            if (!foodEntry.getUser().equals(user)) {
+                throw new RuntimeException("The entry is not owned by the user");
+            }
+
+            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+            this.dailyProgressService.updateTodayProgress(dailyProgress,
+                    dailyProgress.getCaloriesConsumed() - foodEntry.getCalories(),
+                    dailyProgress.getProteinConsumed() - foodEntry.getProtein(),
+                    dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
+                    dailyProgress.getFatsConsumed() - foodEntry.getFats());
+
+            this.foodEntryService.deleteById(foodEntryId);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while deleting food entry: " + e.getMessage());
         }
-
-        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
-        this.dailyProgressService.updateTodayProgress(dailyProgress,
-                dailyProgress.getCaloriesConsumed() - foodEntry.getCalories(),
-                dailyProgress.getProteinConsumed() - foodEntry.getProtein(),
-                dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
-                dailyProgress.getFatsConsumed() - foodEntry.getFats());
-
-        this.foodEntryService.deleteById(foodEntryId);
     }
 
 

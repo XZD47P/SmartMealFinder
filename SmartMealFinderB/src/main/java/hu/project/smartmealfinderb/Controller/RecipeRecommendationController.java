@@ -2,7 +2,6 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.Response.RemainingDailyMacrosResp;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.RecipeRecommendationService;
 import hu.project.smartmealfinderb.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,10 @@ public class RecipeRecommendationController {
 
     @GetMapping("/remaining-macros")
     public ResponseEntity<?> calculateRemainingMacros(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            RemainingDailyMacrosResp resp = this.recipeRecommendationService.calcRemainingMacros(user);
 
-            return ResponseEntity.status(HttpStatus.OK).body(resp);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Could not calculate remaining macros"));
-        }
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        RemainingDailyMacrosResp resp = this.recipeRecommendationService.calcRemainingMacros(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(resp);
     }
 }

@@ -31,37 +31,26 @@ public class DietOptionController {
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllDietOptions() {
-        try {
-            List<DietOption> dietOptions = this.dietOptionService.findAll();
-            return ResponseEntity.status(HttpStatus.OK).body(dietOptions);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while loading options: " + e.getMessage()));
-        }
+
+        List<DietOption> dietOptions = this.dietOptionService.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(dietOptions);
     }
 
     @GetMapping("/load-by-user")
     public ResponseEntity<?> getUserDietOptions(@AuthenticationPrincipal UserDetails userDetails) {
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            List<String> userDietOptions = this.dietOptionService.findByUser(user);
-            return ResponseEntity.status(HttpStatus.OK).body(userDietOptions);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while loading user's diet: " + e.getMessage()));
-        }
+
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        List<String> userDietOptions = this.dietOptionService.findByUser(user);
+        return ResponseEntity.status(HttpStatus.OK).body(userDietOptions);
     }
 
     @PostMapping("/save-to-user")
     public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestBody AddUserDietOptionReq addUserDietOptionReq) {
+        
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        this.dietOptionService.modifyDietOptionToUser(user, addUserDietOptionReq.getDiets());
 
-        try {
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            this.dietOptionService.modifyDietOptionToUser(user, addUserDietOptionReq.getDiets());
-
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Error while adding diet to user: " + e.getMessage()));
-        }
-
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
     }
 }
