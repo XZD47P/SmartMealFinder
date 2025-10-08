@@ -5,10 +5,7 @@ import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.FoodEntry;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Service.DailyProgressService;
-import hu.project.smartmealfinderb.Service.DietPlanService;
-import hu.project.smartmealfinderb.Service.FoodEntryService;
-import hu.project.smartmealfinderb.Service.FoodTrackingService;
+import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +16,12 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     private final FoodEntryService foodEntryService;
     private final DailyProgressService dailyProgressService;
     private final DietPlanService dietPlanService;
+    private final UserService userService;
 
     @Override
-    public void saveFoodEntry(User user, SaveFoodEntryReq newFoodEntry) {
+    public void saveFoodEntry(SaveFoodEntryReq newFoodEntry) {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
             DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
@@ -56,8 +55,9 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     }
 
     @Override
-    public void deleteFoodEntry(User user, Long foodEntryId) {
+    public void deleteFoodEntry(Long foodEntryId) {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
             FoodEntry foodEntry = this.foodEntryService.findById(foodEntryId);
 
             if (!foodEntry.getUser().equals(user)) {

@@ -5,6 +5,7 @@ import hu.project.smartmealfinderb.Model.FoodEntry;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.FoodEntryRepository;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
+import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class FoodEntryServiceImpl implements FoodEntryService {
 
     private final FoodEntryRepository foodEntryRepository;
+    private final UserService userService;
 
     @Override
     public void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, double calories, double protein, double carbs, double fats) {
@@ -41,7 +43,8 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     }
 
     @Override
-    public List<FoodEntry> findAllTodayEntryByUser(User user) {
+    public List<FoodEntry> findAllTodayEntryByUser() {
+        User user = this.userService.getCurrentlyLoggedInUser();
         LocalDate date = LocalDate.now();
         return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
     }

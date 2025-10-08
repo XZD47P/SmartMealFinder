@@ -11,7 +11,7 @@ public interface FoodEntryService {
 
     void deleteAllUserFoodEntries(User user);
 
-    List<FoodEntry> findAllTodayEntryByUser(User user);
+    List<FoodEntry> findAllTodayEntryByUser();
 
     FoodEntry findById(Long foodEntryId);
 
