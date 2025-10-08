@@ -2,15 +2,11 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.Request.AddUserIntoleranceReq;
 import hu.project.smartmealfinderb.Model.Intolerance;
-import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
-import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +21,6 @@ import java.util.List;
 public class IntoleranceController {
 
     private final IntoleranceService intoleranceService;
-    private final UserService userService;
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllIntolerances() {
@@ -35,21 +30,16 @@ public class IntoleranceController {
     }
 
     @GetMapping("/load-by-user")
-    public ResponseEntity<?> getUserIntolerances(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getUserIntolerances() {
 
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        List<String> userIntolerances = this.intoleranceService.findByUser(user);
+        List<String> userIntolerances = this.intoleranceService.findByUser();
         return ResponseEntity.status(HttpStatus.OK).body(userIntolerances);
     }
 
     @PostMapping("/save-to-user")
-    public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
-                                                @RequestBody AddUserIntoleranceReq addUserIntoleranceReq) {
+    public ResponseEntity<?> saveUserDietOption(@RequestBody AddUserIntoleranceReq addUserIntoleranceReq) {
 
-
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        this.intoleranceService.modifyIntoleranceToUser(user, addUserIntoleranceReq.getIntolerances());
-
+        this.intoleranceService.modifyIntoleranceToUser(addUserIntoleranceReq.getIntolerances());
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet option added successfully"));
     }
 }

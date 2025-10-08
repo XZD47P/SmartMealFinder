@@ -1,7 +1,6 @@
 package hu.project.smartmealfinderb.Service;
 
 import hu.project.smartmealfinderb.Model.Intolerance;
-import hu.project.smartmealfinderb.Model.User;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface IntoleranceService {
 
     List<Intolerance> findAll();
 
-    List<String> findByUser(User user);
+    List<String> findByUser();
 
-    void modifyIntoleranceToUser(User user, List<String> intolerances);
+    void modifyIntoleranceToUser(List<String> intolerances);
 }

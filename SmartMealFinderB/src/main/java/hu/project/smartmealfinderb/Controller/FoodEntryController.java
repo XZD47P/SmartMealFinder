@@ -38,7 +38,7 @@ public class FoodEntryController {
 
     @DeleteMapping("/delete/{foodEntryId}")
     public ResponseEntity<?> deleteFoodEntry(@PathVariable Long foodEntryId) {
-        
+
         this.foodTrackingService.deleteFoodEntry(foodEntryId);
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Food Entry Deleted Successfully"));

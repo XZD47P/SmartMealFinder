@@ -6,6 +6,7 @@ import hu.project.smartmealfinderb.Model.UserIntolerance;
 import hu.project.smartmealfinderb.Repository.IntoleranceRepository;
 import hu.project.smartmealfinderb.Repository.UserIntoleranceRepository;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
+import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class IntoleranceServiceImpl implements IntoleranceService {
 
     private final IntoleranceRepository intoleranceRepository;
     private final UserIntoleranceRepository userIntoleranceRepository;
+    private final UserService userService;
 
     @Override
     public Long countIntolerances() {
@@ -35,7 +37,8 @@ public class IntoleranceServiceImpl implements IntoleranceService {
     }
 
     @Override
-    public List<String> findByUser(User user) {
+    public List<String> findByUser() {
+        User user = this.userService.getCurrentlyLoggedInUser();
         List<UserIntolerance> userIntolerances = this.userIntoleranceRepository.findByUser(user);
 
         List<String> intolerances = userIntolerances.stream()
@@ -47,8 +50,10 @@ public class IntoleranceServiceImpl implements IntoleranceService {
 
     @Override
     @Transactional
-    public void modifyIntoleranceToUser(User user, List<String> intolerances) {
+    public void modifyIntoleranceToUser(List<String> intolerances) {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+
             //Bejövő intoleranciák intolerance-á alakítása
             List<Intolerance> requestedIntolerances = intolerances.stream()
                     .map(intolerance -> this.intoleranceRepository.findByApiValue(intolerance)
