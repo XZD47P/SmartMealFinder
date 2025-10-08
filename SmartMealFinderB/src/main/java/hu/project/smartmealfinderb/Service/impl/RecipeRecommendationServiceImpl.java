@@ -7,6 +7,7 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.RecipeRecommendationService;
+import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,13 @@ public class RecipeRecommendationServiceImpl implements RecipeRecommendationServ
 
     private final DietPlanService dietPlanService;
     private final DailyProgressService dailyProgressService;
+    private final UserService userService;
 
 
     @Override
-    public RemainingDailyMacrosResp calcRemainingMacros(User user) {
+    public RemainingDailyMacrosResp calcRemainingMacros() {
         double calories, protein, carbs, fats;
+        User user = this.userService.getCurrentlyLoggedInUser();
         DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
         DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
