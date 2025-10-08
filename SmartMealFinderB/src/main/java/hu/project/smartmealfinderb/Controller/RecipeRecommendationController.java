@@ -4,7 +4,7 @@ import hu.project.smartmealfinderb.DTO.Response.RemainingDailyMacrosResp;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.RecipeRecommendationService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/api/recommendation")
+@RequiredArgsConstructor
 public class RecipeRecommendationController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private RecipeRecommendationService recipeRecommendationService;
+    private final UserService userService;
+    private final RecipeRecommendationService recipeRecommendationService;
 
     @GetMapping("/remaining-macros")
     public ResponseEntity<?> calculateRemainingMacros(@AuthenticationPrincipal UserDetails userDetails) {

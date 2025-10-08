@@ -8,29 +8,23 @@ import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
 @Component
+@RequiredArgsConstructor
 public class DefaultDataInitializer implements CommandLineRunner {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired //TODO: Ha lesz RoleService, akkor csere kell
-    private RoleRepository roleRepository;
-
-    @Autowired //TODO: Ha lesz Service, akkor csere
-    private FitnessGoalRepository fitnessGoalRepository;
-
-    @Autowired
-    private DietOptionService dietOptionService;
-
-    @Autowired
-    private IntoleranceService intoleranceService;
+    private final UserService userService;
+    //TODO: Ha lesz RoleService, akkor csere kell
+    private final RoleRepository roleRepository;
+    //TODO: Ha lesz Service, akkor csere
+    private final FitnessGoalRepository fitnessGoalRepository;
+    private final DietOptionService dietOptionService;
+    private final IntoleranceService intoleranceService;
 
     @Override
     public void run(String... args) {

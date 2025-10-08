@@ -6,20 +6,18 @@ import hu.project.smartmealfinderb.Model.UserDietOption;
 import hu.project.smartmealfinderb.Repository.DietOptionRepository;
 import hu.project.smartmealfinderb.Repository.UserDietOptionRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DietOptionServiceImpl implements DietOptionService {
 
-    @Autowired
-    private DietOptionRepository dietOptionRepository;
-
-    @Autowired
-    private UserDietOptionRepository userDietOptionRepository;
+    private final DietOptionRepository dietOptionRepository;
+    private final UserDietOptionRepository userDietOptionRepository;
 
     @Override
     public Long countDietOptions() {

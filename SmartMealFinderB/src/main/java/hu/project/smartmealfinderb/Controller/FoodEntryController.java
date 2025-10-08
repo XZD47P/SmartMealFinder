@@ -7,7 +7,7 @@ import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.FoodTrackingService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,16 +19,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/food-entry")
+@RequiredArgsConstructor
 public class FoodEntryController {
 
-    @Autowired
-    private FoodTrackingService foodTrackingService;
-
-    @Autowired
-    private FoodEntryService foodEntryService;
-
-    @Autowired
-    private UserService userService;
+    private final FoodTrackingService foodTrackingService;
+    private final FoodEntryService foodEntryService;
+    private final UserService userService;
 
     @PostMapping("/save")
     public ResponseEntity<?> saveFoodEntry(@AuthenticationPrincipal UserDetails userDetails,

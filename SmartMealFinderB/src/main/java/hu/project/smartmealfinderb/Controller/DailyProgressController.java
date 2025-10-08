@@ -8,7 +8,7 @@ import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,16 +23,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/progress")
+@RequiredArgsConstructor
 public class DailyProgressController {
 
-    @Autowired
-    private DailyProgressService dailyProgressService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private DietPlanService dietPlanService;
+    private final DailyProgressService dailyProgressService;
+    private final UserService userService;
+    private final DietPlanService dietPlanService;
 
     @PostMapping("/weight/save")
     public ResponseEntity<?> saveWeightProgress(@AuthenticationPrincipal UserDetails userDetails,

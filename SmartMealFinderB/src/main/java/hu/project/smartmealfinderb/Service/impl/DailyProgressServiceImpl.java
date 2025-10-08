@@ -5,19 +5,18 @@ import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.DailyProgressRepository;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DailyProgressServiceImpl implements DailyProgressService {
 
+    private final DailyProgressRepository dailyProgressRepository;
     private LocalDate date;
-
-    @Autowired
-    private DailyProgressRepository dailyProgressRepository;
 
     @Override
     public DailyProgress findTodayProgress(User user) {

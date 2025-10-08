@@ -2,7 +2,7 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.Model.FitnessGoal;
 import hu.project.smartmealfinderb.Service.FitnessGoalService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/fitness-goal")
+@RequiredArgsConstructor
 public class FitnessGoalController {
 
-    @Autowired
-    private FitnessGoalService fitnessGoalService;
+    private final FitnessGoalService fitnessGoalService;
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllDietGoals() {

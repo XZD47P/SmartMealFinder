@@ -6,7 +6,7 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DietOptionService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,13 +21,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/diet-option")
+@RequiredArgsConstructor
 public class DietOptionController {
 
-    @Autowired
-    private DietOptionService dietOptionService;
-
-    @Autowired
-    private UserService userService;
+    private final DietOptionService dietOptionService;
+    private final UserService userService;
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllDietOptions() {
@@ -47,7 +45,7 @@ public class DietOptionController {
     @PostMapping("/save-to-user")
     public ResponseEntity<?> saveUserDietOption(@AuthenticationPrincipal UserDetails userDetails,
                                                 @RequestBody AddUserDietOptionReq addUserDietOptionReq) {
-        
+
         User user = this.userService.findByUsername(userDetails.getUsername());
         this.dietOptionService.modifyDietOptionToUser(user, addUserDietOptionReq.getDiets());
 

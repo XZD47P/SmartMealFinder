@@ -6,7 +6,7 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.DietPlanRepository;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.FitnessGoalService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,15 +14,12 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
 public class DietPlanServiceImpl implements DietPlanService {
 
     private static final int KGTOCALORIE = 7700; //1kg zsír nagyjából 7700 kalória
-
-    @Autowired
-    private FitnessGoalService fitnessGoalService;
-
-    @Autowired
-    private DietPlanRepository dietPlanRepository;
+    private final FitnessGoalService fitnessGoalService;
+    private final DietPlanRepository dietPlanRepository;
     private double tdee;//Total Daily Energy Expenditure = Az a kalóriaszám, amire a testünknek szüksége van az aktivitási szinthez képest
     private LocalDate goalDate;
 

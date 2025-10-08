@@ -3,16 +3,16 @@ package hu.project.smartmealfinderb.Service.impl;
 import hu.project.smartmealfinderb.Model.FitnessGoal;
 import hu.project.smartmealfinderb.Repository.FitnessGoalRepository;
 import hu.project.smartmealfinderb.Service.FitnessGoalService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FitnessGoalServiceImpl implements FitnessGoalService {
 
-    @Autowired
-    private FitnessGoalRepository fitnessGoalRepository;
+    private final FitnessGoalRepository fitnessGoalRepository;
 
     @Override
     public FitnessGoal findById(int goalType) {

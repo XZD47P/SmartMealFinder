@@ -6,7 +6,7 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,13 +21,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/api/intolerance")
+@RequiredArgsConstructor
 public class IntoleranceController {
 
-    @Autowired
-    private IntoleranceService intoleranceService;
-
-    @Autowired
-    private UserService userService;
+    private final IntoleranceService intoleranceService;
+    private final UserService userService;
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllIntolerances() {

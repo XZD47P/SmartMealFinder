@@ -6,20 +6,18 @@ import hu.project.smartmealfinderb.Model.UserIntolerance;
 import hu.project.smartmealfinderb.Repository.IntoleranceRepository;
 import hu.project.smartmealfinderb.Repository.UserIntoleranceRepository;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class IntoleranceServiceImpl implements IntoleranceService {
 
-    @Autowired
-    private IntoleranceRepository intoleranceRepository;
-
-    @Autowired
-    private UserIntoleranceRepository userIntoleranceRepository;
+    private final IntoleranceRepository intoleranceRepository;
+    private final UserIntoleranceRepository userIntoleranceRepository;
 
     @Override
     public Long countIntolerances() {

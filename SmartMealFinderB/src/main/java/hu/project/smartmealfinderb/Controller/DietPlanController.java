@@ -8,7 +8,7 @@ import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,19 +18,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/plan")
+@RequiredArgsConstructor
 public class DietPlanController {
 
-    @Autowired
-    private DietPlanService dietPlanService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private DailyProgressService dailyProgressService;
-
-    @Autowired
-    private FoodEntryService foodEntryService;
+    private final DietPlanService dietPlanService;
+    private final UserService userService;
+    private final DailyProgressService dailyProgressService;
+    private final FoodEntryService foodEntryService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createDietPlan(@AuthenticationPrincipal UserDetails userDetails,

@@ -7,19 +7,17 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.RecipeRecommendationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RecipeRecommendationServiceImpl implements RecipeRecommendationService {
 
-    @Autowired
-    private DietPlanService dietPlanService;
-
-    @Autowired
-    private DailyProgressService dailyProgressService;
+    private final DietPlanService dietPlanService;
+    private final DailyProgressService dailyProgressService;
 
 
     @Override

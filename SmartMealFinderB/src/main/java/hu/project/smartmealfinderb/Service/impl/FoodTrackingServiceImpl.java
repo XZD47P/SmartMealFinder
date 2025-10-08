@@ -9,20 +9,16 @@ import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.FoodTrackingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class FoodTrackingServiceImpl implements FoodTrackingService {
 
-    @Autowired
-    private FoodEntryService foodEntryService;
-
-    @Autowired
-    private DailyProgressService dailyProgressService;
-
-    @Autowired
-    private DietPlanService dietPlanService;
+    private final FoodEntryService foodEntryService;
+    private final DailyProgressService dailyProgressService;
+    private final DietPlanService dietPlanService;
 
     @Override
     public void saveFoodEntry(User user, SaveFoodEntryReq newFoodEntry) {

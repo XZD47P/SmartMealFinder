@@ -4,6 +4,7 @@ import hu.project.smartmealfinderb.Oauth2.OAuth2LoginSuccessHandler;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Security.JWT.AuthEntryPointJwt;
 import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,16 +23,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+    private final AuthEntryPointJwt authEntryPointJwt;
 
-    @Autowired
-    private AuthEntryPointJwt authEntryPointJwt;
-
-    @Autowired
     @Lazy
+    @Autowired
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
