@@ -11,8 +11,6 @@ import hu.project.smartmealfinderb.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,9 +45,9 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getProfile() {
 
-        UserInfoResponse userInfo = this.userService.getUserInfo(userDetails);
+        UserInfoResponse userInfo = this.userService.getUserInfo();
         return ResponseEntity.ok().body(userInfo);
     }
 

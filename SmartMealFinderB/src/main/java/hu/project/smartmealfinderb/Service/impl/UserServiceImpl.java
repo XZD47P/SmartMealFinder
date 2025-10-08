@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -110,14 +109,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserInfoResponse getUserInfo(UserDetails userDetails) {
-        User user = this.userRepository.findByUserName(userDetails.getUsername()).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
+    public UserInfoResponse getUserInfo() {
+        User user = this.getCurrentlyLoggedInUser();
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+//        List<String> roles = userDetails.getAuthorities().stream()
+//                .map(item -> item.getAuthority())
+//                .collect(Collectors.toList());
+
+        List<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .map(authority -> authority.getAuthority()).
+                toList();
 
         UserInfoResponse response = new UserInfoResponse(
                 user.getUserId(),

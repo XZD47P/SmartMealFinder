@@ -5,7 +5,6 @@ import hu.project.smartmealfinderb.DTO.UserInfoResponse;
 import hu.project.smartmealfinderb.Model.Role;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ public interface UserService {
 
     LoginResponse authenticateUser(String username, String password);
 
-    UserInfoResponse getUserInfo(UserDetails userDetails);
+    UserInfoResponse getUserInfo();
 
     void generatePasswordResetToken(String email);
 
