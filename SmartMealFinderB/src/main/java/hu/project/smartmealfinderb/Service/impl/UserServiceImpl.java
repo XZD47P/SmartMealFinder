@@ -9,6 +9,7 @@ import hu.project.smartmealfinderb.Repository.UserRepository;
 import hu.project.smartmealfinderb.Repository.VerificationTokenRepository;
 import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
+import hu.project.smartmealfinderb.Security.Service.SecurityHelper;
 import hu.project.smartmealfinderb.Service.EmailService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final SecurityHelper securityHelper;
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -349,5 +351,11 @@ public class UserServiceImpl implements UserService {
         );
         user.setAccountVerified(verification);
         this.userRepository.save(user);
+    }
+
+    @Override
+    public User getCurrentlyLoggedInUser() {
+        String username = this.securityHelper.getCurrentUsername();
+        return this.findByUsername(username);
     }
 }

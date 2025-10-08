@@ -49,4 +49,6 @@ public interface UserService {
     long count();
 
     void updateAccountVerificationStatus(Long userId, boolean verification);
+
+    User getCurrentlyLoggedInUser();
 }
