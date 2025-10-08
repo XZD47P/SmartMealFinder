@@ -6,6 +6,7 @@ import hu.project.smartmealfinderb.Model.UserDietOption;
 import hu.project.smartmealfinderb.Repository.DietOptionRepository;
 import hu.project.smartmealfinderb.Repository.UserDietOptionRepository;
 import hu.project.smartmealfinderb.Service.DietOptionService;
+import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class DietOptionServiceImpl implements DietOptionService {
 
     private final DietOptionRepository dietOptionRepository;
     private final UserDietOptionRepository userDietOptionRepository;
+    private final UserService userService;
 
     @Override
     public Long countDietOptions() {
@@ -35,7 +37,8 @@ public class DietOptionServiceImpl implements DietOptionService {
     }
 
     @Override
-    public List<String> findByUser(User user) {
+    public List<String> findByUser() {
+        User user = this.userService.getCurrentlyLoggedInUser();
         List<UserDietOption> userDiets = this.userDietOptionRepository.findAllByUser(user);
 
         List<String> dietNames = userDiets.stream()
@@ -47,8 +50,10 @@ public class DietOptionServiceImpl implements DietOptionService {
 
     @Override
     @Transactional
-    public void modifyDietOptionToUser(User user, List<String> diets) {
+    public void modifyDietOptionToUser(List<String> diets) {
         try {
+
+            User user = this.userService.getCurrentlyLoggedInUser();
             //Bejövő diéták dietOption-né alakítása
             List<DietOption> requestedDietOptions = diets.stream()
                     .map(diet -> this.dietOptionRepository.findByApiValue(diet)
