@@ -2,17 +2,11 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.Request.WeightLogReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
-import hu.project.smartmealfinderb.Model.DietPlan;
-import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
-import hu.project.smartmealfinderb.Service.DietPlanService;
-import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +21,11 @@ import java.util.List;
 public class DailyProgressController {
 
     private final DailyProgressService dailyProgressService;
-    private final UserService userService;
-    private final DietPlanService dietPlanService;
 
     @PostMapping("/weight/save")
-    public ResponseEntity<?> saveWeightProgress(@AuthenticationPrincipal UserDetails userDetails,
-                                                @RequestBody WeightLogReq weightLogReq) {
+    public ResponseEntity<?> saveWeightProgress(@RequestBody WeightLogReq weightLogReq) {
 
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
-        this.dailyProgressService.saveWeight(user,
-                dietPlan,
+        this.dailyProgressService.saveWeight(
                 weightLogReq.getWeight(),
                 weightLogReq.getComment());
 
@@ -45,20 +33,17 @@ public class DailyProgressController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getProgress(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getProgress() {
 
-
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+        DailyProgress dailyProgress = this.dailyProgressService.getTodayProgress();
 
         return ResponseEntity.status(HttpStatus.OK).body(dailyProgress);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getProgressHistory(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getProgressHistory() {
 
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        List<DailyProgress> progressHistoryList = this.dailyProgressService.findAll(user);
+        List<DailyProgress> progressHistoryList = this.dailyProgressService.findAll();
 
         return ResponseEntity.status(HttpStatus.OK).body(progressHistoryList);
     }

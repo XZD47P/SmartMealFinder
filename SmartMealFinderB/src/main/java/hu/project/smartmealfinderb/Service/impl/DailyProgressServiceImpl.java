@@ -5,6 +5,8 @@ import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.DailyProgressRepository;
 import hu.project.smartmealfinderb.Service.DailyProgressService;
+import hu.project.smartmealfinderb.Service.DietPlanService;
+import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.List;
 public class DailyProgressServiceImpl implements DailyProgressService {
 
     private final DailyProgressRepository dailyProgressRepository;
+    private final UserService userService;
+    private final DietPlanService dietPlanService;
     private LocalDate date;
 
     @Override
@@ -44,7 +48,8 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     }
 
     @Override
-    public List<DailyProgress> findAll(User user) {
+    public List<DailyProgress> findAll() {
+        User user = this.userService.getCurrentlyLoggedInUser();
         return this.dailyProgressRepository.findAllByUserId(user);
     }
 
@@ -58,8 +63,10 @@ public class DailyProgressServiceImpl implements DailyProgressService {
     }
 
     @Override
-    public void saveWeight(User user, DietPlan dietPlan, double weight, String comment) {
+    public void saveWeight(double weight, String comment) {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
             DailyProgress dailyProgress = findTodayProgress(user);
 
             if (dailyProgress == null) {
@@ -80,5 +87,12 @@ public class DailyProgressServiceImpl implements DailyProgressService {
         } catch (Exception e) {
             throw new RuntimeException("Error while saving weight: " + e.getMessage());
         }
+    }
+
+    @Override
+    public DailyProgress getTodayProgress() {
+
+        User user = this.userService.getCurrentlyLoggedInUser();
+        return this.findTodayProgress(user);
     }
 }

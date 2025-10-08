@@ -8,15 +8,17 @@ import java.util.List;
 
 public interface DailyProgressService {
 
-    DailyProgress findTodayProgress(User userId);
+    DailyProgress findTodayProgress(User user);
 
     void createTodayProgress(User user, DietPlan plan, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed);
 
     void updateTodayProgress(DailyProgress existingProgress, double caloriesConsumed, double proteinConsumed, double carbsConsumed, double fatsConsumed);
 
-    List<DailyProgress> findAll(User user);
+    List<DailyProgress> findAll();
 
     void deleteUserProgression(User user);
 
-    void saveWeight(User user, DietPlan dietPlan, double weight, String comment);
+    void saveWeight(double weight, String comment);
+
+    DailyProgress getTodayProgress();
 }
