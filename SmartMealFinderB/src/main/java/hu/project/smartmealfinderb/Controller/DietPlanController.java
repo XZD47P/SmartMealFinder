@@ -2,18 +2,11 @@ package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.Request.DietPlanRequest;
 import hu.project.smartmealfinderb.Model.DietPlan;
-import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
-import hu.project.smartmealfinderb.Service.DailyProgressService;
 import hu.project.smartmealfinderb.Service.DietPlanService;
-import hu.project.smartmealfinderb.Service.FoodEntryService;
-import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,18 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class DietPlanController {
 
     private final DietPlanService dietPlanService;
-    private final UserService userService;
-    private final DailyProgressService dailyProgressService;
-    private final FoodEntryService foodEntryService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createDietPlan(@AuthenticationPrincipal UserDetails userDetails,
-                                            @RequestBody DietPlanRequest dietPlanRequest) {
+    public ResponseEntity<?> createDietPlan(@RequestBody DietPlanRequest dietPlanRequest) {
 
-
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        this.dietPlanService.calculateDietPlan(user,
-                dietPlanRequest.getSex(),
+        this.dietPlanService.calculateDietPlan(dietPlanRequest.getSex(),
                 dietPlanRequest.getWeight(),
                 dietPlanRequest.getHeight(),
                 dietPlanRequest.getAge(),
@@ -46,26 +32,16 @@ public class DietPlanController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getDietPlan() {
 
-        DietPlan userDietPlan;
-
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        userDietPlan = this.dietPlanService.getUserDietPlan(user);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(userDietPlan);
+        DietPlan userDietPlan = this.dietPlanService.getCurrentUserDietPlan();
+        return ResponseEntity.status(HttpStatus.OK).body(userDietPlan);
     }
 
     @DeleteMapping
-    @Transactional
-    public ResponseEntity<?> deleteDietPlan(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> deleteDietPlan() {
 
-        User user = this.userService.findByUsername(userDetails.getUsername());
-        this.foodEntryService.deleteAllUserFoodEntries(user);
-        this.dailyProgressService.deleteUserProgression(user);
-        this.dietPlanService.deleteUserDietPlan(user);
-
+        this.dietPlanService.deleteUserDietPlan();
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Diet Plan deleted successfully"));
     }
 }

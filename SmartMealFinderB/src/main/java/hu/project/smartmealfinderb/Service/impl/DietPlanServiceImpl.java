@@ -4,10 +4,12 @@ import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.FitnessGoal;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.DietPlanRepository;
-import hu.project.smartmealfinderb.Service.DietPlanService;
-import hu.project.smartmealfinderb.Service.FitnessGoalService;
+import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,17 +17,24 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DietPlanServiceImpl implements DietPlanService {
 
     private static final int KGTOCALORIE = 7700; //1kg zsír nagyjából 7700 kalória
     private final FitnessGoalService fitnessGoalService;
     private final DietPlanRepository dietPlanRepository;
+    private final FoodEntryService foodEntryService;
+    private final UserService userService;
+    @Lazy
+    @Autowired
+    private DailyProgressService dailyProgressService;
     private double tdee;//Total Daily Energy Expenditure = Az a kalóriaszám, amire a testünknek szüksége van az aktivitási szinthez képest
     private LocalDate goalDate;
 
     @Override
-    public void calculateDietPlan(User user, String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal) {
+    public void calculateDietPlan(String sex, double weight, double height, int age, int activityLevel, int goalType, double weightGoal) {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
             double proteinGram, fatGram, carbsGram = 0;
             goalDate = LocalDate.now();
 
@@ -113,12 +122,22 @@ public class DietPlanServiceImpl implements DietPlanService {
     }
 
     @Override
-    public void deleteUserDietPlan(User user) {
+    public void deleteUserDietPlan() {
         try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+
+            this.foodEntryService.deleteAllUserFoodEntries(user);
+            this.dailyProgressService.deleteUserProgression(user);
             this.dietPlanRepository.deleteByUserId(user);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while deleting user diet plan: " + e.getMessage());
         }
+    }
+
+    @Override
+    public DietPlan getCurrentUserDietPlan() {
+        User user = this.userService.getCurrentlyLoggedInUser();
+        return this.dietPlanRepository.findByUserId(user).orElse(null);
     }
 
     //Kerekítés
