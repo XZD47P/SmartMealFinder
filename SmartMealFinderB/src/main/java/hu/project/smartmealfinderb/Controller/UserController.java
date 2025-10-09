@@ -31,8 +31,6 @@ public class UserController {
                 registerRequest.getFirstName(),
                 registerRequest.getLastName());
 
-        this.userService.generateVerificationToken(registerRequest.getEmail());
-
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
 

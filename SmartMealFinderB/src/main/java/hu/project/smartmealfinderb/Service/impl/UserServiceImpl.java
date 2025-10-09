@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
             newUser.setSignUpMethod("email");
 
             this.userRepository.save(newUser);
+            this.generateVerificationToken(email);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while registering user: " + e.getMessage());
         }
