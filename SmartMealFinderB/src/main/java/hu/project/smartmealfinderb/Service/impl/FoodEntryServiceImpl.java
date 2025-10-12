@@ -7,6 +7,7 @@ import hu.project.smartmealfinderb.Repository.FoodEntryRepository;
 import hu.project.smartmealfinderb.Service.FoodEntryService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,22 +22,28 @@ public class FoodEntryServiceImpl implements FoodEntryService {
 
     @Override
     public void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, double calories, double protein, double carbs, double fats) {
-        FoodEntry foodEntry = new FoodEntry();
-        foodEntry.setDailyProgress(dailyProgress);
-        foodEntry.setSpoonacularId(spoonacularId);
-        foodEntry.setName(name);
-        foodEntry.setCalories(calories);
-        foodEntry.setProtein(protein);
-        foodEntry.setCarbs(carbs);
-        foodEntry.setFats(fats);
-        foodEntry.setUser(user);
-        this.foodEntryRepository.save(foodEntry);
+        try {
+            FoodEntry foodEntry = new FoodEntry();
+            foodEntry.setDailyProgress(dailyProgress);
+            foodEntry.setSpoonacularId(spoonacularId);
+            foodEntry.setName(name);
+            foodEntry.setCalories(calories);
+            foodEntry.setProtein(protein);
+            foodEntry.setCarbs(carbs);
+            foodEntry.setFats(fats);
+            foodEntry.setUser(user);
+            this.foodEntryRepository.save(foodEntry);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while saving food entry: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteAllUserFoodEntries(User user) {
         try {
             this.foodEntryRepository.deleteAllByUser(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while deleting food entry: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Error while deleting user food entries: " + e.getMessage(), e);
         }
@@ -44,19 +51,36 @@ public class FoodEntryServiceImpl implements FoodEntryService {
 
     @Override
     public List<FoodEntry> findAllTodayEntryByUser() {
-        User user = this.userService.getCurrentlyLoggedInUser();
-        LocalDate date = LocalDate.now();
-        return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            if (user == null) {
+                throw new RuntimeException("User is null");
+            }
+            LocalDate date = LocalDate.now();
+            return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while fetching all todays food entry by user: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching all todays food entry by user: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public FoodEntry findById(Long foodEntryId) {
-        return this.foodEntryRepository.findById(foodEntryId).orElseThrow(
-                () -> new RuntimeException("Food entry not found with id " + foodEntryId));
+        try {
+            return this.foodEntryRepository.findById(foodEntryId).orElseThrow(
+                    () -> new RuntimeException("Food entry not found with id " + foodEntryId));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while fetching food entry by id: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteById(Long foodEntryId) {
-        this.foodEntryRepository.deleteById(foodEntryId);
+        try {
+            this.foodEntryRepository.deleteById(foodEntryId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while deleting food entry by id: " + e.getMessage(), e);
+        }
     }
 }

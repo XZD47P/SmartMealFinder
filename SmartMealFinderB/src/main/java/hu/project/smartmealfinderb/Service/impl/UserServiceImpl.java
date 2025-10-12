@@ -14,6 +14,7 @@ import hu.project.smartmealfinderb.Service.EmailService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -83,6 +84,8 @@ public class UserServiceImpl implements UserService {
 
             this.userRepository.save(newUser);
             this.generateVerificationToken(email);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while registering user: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while registering user: " + e.getMessage());
         }
@@ -90,51 +93,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse authenticateUser(String username, String password) {
+        try {
+            Authentication authentication = this.authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        Authentication authentication = this.authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = this.jwtUtils.generateTokenFromUsername(userDetails);
 
-        String jwtToken = this.jwtUtils.generateTokenFromUsername(userDetails);
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                    .toList();
 
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .toList();
+            LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
 
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
-
-        return response;
-
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while authenticating user: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public UserInfoResponse getUserInfo() {
-        User user = this.getCurrentlyLoggedInUser();
+        try {
+            User user = this.getCurrentlyLoggedInUser();
 
 //        List<String> roles = userDetails.getAuthorities().stream()
 //                .map(item -> item.getAuthority())
 //                .collect(Collectors.toList());
 
-        List<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                .map(authority -> authority.getAuthority()).
-                toList();
+            List<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                    .map(authority -> authority.getAuthority()).
+                    toList();
 
-        UserInfoResponse response = new UserInfoResponse(
-                user.getUserId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.isAccountNonLocked(),
-                user.isAccountVerified(),
-                user.getVerificationDeadline(),
-                roles
-        );
+            UserInfoResponse response = new UserInfoResponse(
+                    user.getUserId(),
+                    user.getUserName(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.isAccountNonLocked(),
+                    user.isAccountVerified(),
+                    user.getVerificationDeadline(),
+                    roles
+            );
 
-        return response;
-
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting user info: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -152,7 +160,7 @@ public class UserServiceImpl implements UserService {
             String resetURL = this.frontendUrl + "/reset-password?token=" + token;
             this.emailService.sendPasswordResetEmail(user.getUserName(), email, resetURL);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while generating password reset token: " + e.getMessage());
+            throw new RuntimeException("There was an error while generating password reset token: " + e.getMessage(), e);
         }
     }
 
@@ -177,38 +185,57 @@ public class UserServiceImpl implements UserService {
             resetToken.setUsed(true);
             this.passwordResetTokenRepository.save(resetToken);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while resetting password: " + e.getMessage());
+            throw new RuntimeException("There was an error while resetting password: " + e.getMessage(), e);
         }
 
     }
 
     @Override
     public List<User> getAllUsers() {
-        return this.userRepository.findAll();
+        try {
+            return this.userRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while retrieving all users: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while retrieving all users: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void updateUserRole(Long userId, String roleName) {
-        User user = this.userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
+        try {
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
 
-        AppRole appRole = AppRole.valueOf(roleName);
-        Role role = this.roleRepository.findByRoleName(appRole).orElseThrow(
-                () -> new RuntimeException("Role not found")
-        );
+            AppRole appRole = AppRole.valueOf(roleName);
+            Role role = this.roleRepository.findByRoleName(appRole).orElseThrow(
+                    () -> new RuntimeException("Role not found")
+            );
 
-        user.setRole(role);
-        this.userRepository.save(user);
+            user.setRole(role);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user role: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user role: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public UserDTO getUserById(Long userId) {
-        User user = this.userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
+        try {
 
-        return this.convertToDTO(user);
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
+
+            return this.convertToDTO(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while retrieving user: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while retrieving user: " + e.getMessage(), e);
+        }
     }
 
     private UserDTO convertToDTO(User user) {
@@ -231,16 +258,28 @@ public class UserServiceImpl implements UserService {
     //TODO: Role Service létrehozása
     @Override
     public List<Role> getAllRoles() {
-        return this.roleRepository.findAll();
+        try {
+            return this.roleRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while retrieving all roles: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while retrieving all roles: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void updateAccountLockedStatus(Long userId, boolean lock) {
-        User user = this.userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
-        user.setAccountNonLocked(!lock);
-        this.userRepository.save(user);
+        try {
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
+            user.setAccountNonLocked(!lock);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user account locked status: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user account locked status: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -251,6 +290,8 @@ public class UserServiceImpl implements UserService {
             );
             user.setPassword(this.passwordEncoder.encode(password));
             this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user password: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Password update failed: " + e.getMessage());
         }
@@ -258,17 +299,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return this.userRepository.findByEmail(email);
+        try {
+            return this.userRepository.findByEmail(email);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while retrieving user by email: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while retrieving user by email: " + e.getMessage(), e);
+        }
     }
 
     //Oauth2 user regisztráció
     @Override
     public void registerUser(User newUser) {
-        if (newUser.getPassword() != null) {
-            newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
-        }
+        try {
+            if (newUser.getPassword() != null) {
+                newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
+            }
 
-        this.userRepository.save(newUser);
+            this.userRepository.save(newUser);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while registering user: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while registering user: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -288,8 +341,10 @@ public class UserServiceImpl implements UserService {
 
             user.setPassword(encodedNewPassword);
             this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while changing password: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while changing password: " + e.getMessage());
+            throw new RuntimeException("There was an error while changing password: " + e.getMessage(), e);
         }
     }
 
@@ -308,8 +363,10 @@ public class UserServiceImpl implements UserService {
             //Email küldése
             String verificationURL = this.frontendUrl + "/verification?token=" + token;
             this.emailService.sendVerificationEmail(user.getUserName(), email, verificationURL);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while generating verification token: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while generating verification token: " + e.getMessage());
+            throw new RuntimeException("There was an error while generating verification token: " + e.getMessage(), e);
         }
     }
 
@@ -329,8 +386,10 @@ public class UserServiceImpl implements UserService {
 
             verificationToken.setUsed(true);
             this.verificationTokenRepository.save(verificationToken);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while verifying user: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while verifying user: " + e.getMessage());
+            throw new RuntimeException("There was an error while verifying user: " + e.getMessage(), e);
         }
     }
 
@@ -343,16 +402,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public long count() {
-        return this.userRepository.count();
+        try {
+            return this.userRepository.count();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while counting users: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void updateAccountVerificationStatus(Long userId, boolean verification) {
-        User user = this.userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
-        user.setAccountVerified(verification);
-        this.userRepository.save(user);
+        try {
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
+            user.setAccountVerified(verification);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user verification status: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user verification status: " + e.getMessage(), e);
+        }
     }
 
     @Override

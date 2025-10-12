@@ -8,6 +8,7 @@ import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,9 @@ public class DietPlanServiceImpl implements DietPlanService {
             User user = this.userService.getCurrentlyLoggedInUser();
             double proteinGram, fatGram, carbsGram = 0;
             goalDate = LocalDate.now();
-
+            if (user != null) {
+                throw new RuntimeException("User is null");
+            }
             if (sex.isBlank() || weight == 0 || height == 0 || age == 0 || activityLevel == 0 || goalType == 0) {
                 throw new RuntimeException("One or more parameters are missing!");
             }
@@ -109,6 +112,8 @@ public class DietPlanServiceImpl implements DietPlanService {
             dietPlan.setUserId(user);
             dietPlan.setFitnessGoalId(fitnessGoal);
             dietPlanRepository.save(dietPlan);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while calculating diet plan: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while calculating the diet plan: " + e.getMessage());
         }
@@ -116,19 +121,29 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     @Override
     public DietPlan getUserDietPlan(User user) {
-        return this.dietPlanRepository.findByUserId(user).orElseThrow(
-                () -> new RuntimeException("User has no diet plan!")
-        );
+        try {
+            return this.dietPlanRepository.findByUserId(user).orElseThrow(
+                    () -> new RuntimeException("User has no diet plan!")
+            );
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while getting diet plan: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting diet plan: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteUserDietPlan() {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-
+            if (user == null) {
+                throw new RuntimeException("User is null");
+            }
             this.foodEntryService.deleteAllUserFoodEntries(user);
             this.dailyProgressService.deleteUserProgression(user);
             this.dietPlanRepository.deleteByUserId(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while deleting diet plan: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while deleting user diet plan: " + e.getMessage());
         }
@@ -136,8 +151,12 @@ public class DietPlanServiceImpl implements DietPlanService {
 
     @Override
     public DietPlan getCurrentUserDietPlan() {
-        User user = this.userService.getCurrentlyLoggedInUser();
-        return this.dietPlanRepository.findByUserId(user).orElse(null);
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            return this.dietPlanRepository.findByUserId(user).orElse(null);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while getting user diet plan: " + e.getMessage(), e);
+        }
     }
 
     //Kerekítés

@@ -24,32 +24,39 @@ public class RecipeRecommendationServiceImpl implements RecipeRecommendationServ
 
     @Override
     public RemainingDailyMacrosResp calcRemainingMacros() {
-        double calories, protein, carbs, fats;
-        User user = this.userService.getCurrentlyLoggedInUser();
-        DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
-        DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+        try {
+            double calories, protein, carbs, fats;
+            User user = this.userService.getCurrentlyLoggedInUser();
+            if (user == null) {
+                throw new RuntimeException("user is null");
+            }
+            DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
+            DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
-        if (dailyProgress == null) {
-            calories = dietPlan.getGoalCalorie();
-            protein = dietPlan.getGoalProtein();
-            carbs = dietPlan.getGoalCarbohydrate();
-            fats = dietPlan.getGoalFat();
-        } else {
-            calories = dietPlan.getGoalCalorie() - dailyProgress.getCaloriesConsumed();
-            protein = dietPlan.getGoalProtein() - dailyProgress.getProteinConsumed();
-            carbs = dietPlan.getGoalCarbohydrate() - dailyProgress.getCarbsConsumed();
-            fats = dietPlan.getGoalFat() - dailyProgress.getFatsConsumed();
+            if (dailyProgress == null) {
+                calories = dietPlan.getGoalCalorie();
+                protein = dietPlan.getGoalProtein();
+                carbs = dietPlan.getGoalCarbohydrate();
+                fats = dietPlan.getGoalFat();
+            } else {
+                calories = dietPlan.getGoalCalorie() - dailyProgress.getCaloriesConsumed();
+                protein = dietPlan.getGoalProtein() - dailyProgress.getProteinConsumed();
+                carbs = dietPlan.getGoalCarbohydrate() - dailyProgress.getCarbsConsumed();
+                fats = dietPlan.getGoalFat() - dailyProgress.getFatsConsumed();
+            }
+
+
+            List<String> diets = user.getDietOptions().stream()
+                    .map(userDietOption -> userDietOption.getDietOption().getApiValue())
+                    .toList();
+
+            List<String> intolerances = user.getIntolerances().stream()
+                    .map(userIntolerance -> userIntolerance.getIntolerance().getApiValue())
+                    .toList();
+
+            return new RemainingDailyMacrosResp(calories, protein, carbs, fats, diets, intolerances);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while calculating the remaining macros: " + e.getMessage(), e);
         }
-
-
-        List<String> diets = user.getDietOptions().stream()
-                .map(userDietOption -> userDietOption.getDietOption().getApiValue())
-                .toList();
-
-        List<String> intolerances = user.getIntolerances().stream()
-                .map(userIntolerance -> userIntolerance.getIntolerance().getApiValue())
-                .toList();
-
-        return new RemainingDailyMacrosResp(calories, protein, carbs, fats, diets, intolerances);
     }
 }

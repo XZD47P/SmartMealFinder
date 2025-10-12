@@ -8,6 +8,7 @@ import hu.project.smartmealfinderb.Repository.UserIntoleranceRepository;
 import hu.project.smartmealfinderb.Service.IntoleranceService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,24 +29,48 @@ public class IntoleranceServiceImpl implements IntoleranceService {
 
     @Override
     public void saveIntolerance(String label, String apiValue) {
-        this.intoleranceRepository.save(new Intolerance(label, apiValue));
+        try {
+            if (label == null) {
+                throw new RuntimeException("label is null");
+            } else if (apiValue == null) {
+                throw new RuntimeException("apiValue is null");
+            }
+            this.intoleranceRepository.save(new Intolerance(label, apiValue));
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while saving intolerance: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while saving intolerance: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public List<Intolerance> findAll() {
-        return this.intoleranceRepository.findAll();
+        try {
+            return this.intoleranceRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while fetching all intolerances: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public List<String> findByUser() {
-        User user = this.userService.getCurrentlyLoggedInUser();
-        List<UserIntolerance> userIntolerances = this.userIntoleranceRepository.findByUser(user);
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            if (user == null) {
+                throw new RuntimeException("user is null");
+            }
+            List<UserIntolerance> userIntolerances = this.userIntoleranceRepository.findByUser(user);
 
-        List<String> intolerances = userIntolerances.stream()
-                .map(userIntolerance -> userIntolerance.getIntolerance().getApiValue())
-                .toList();
+            List<String> intolerances = userIntolerances.stream()
+                    .map(userIntolerance -> userIntolerance.getIntolerance().getApiValue())
+                    .toList();
 
-        return intolerances;
+            return intolerances;
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while fetching user intolerances: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while fetching user intolerances: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -53,7 +78,9 @@ public class IntoleranceServiceImpl implements IntoleranceService {
     public void modifyIntoleranceToUser(List<String> intolerances) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-
+            if (user == null) {
+                throw new RuntimeException("user is null");
+            }
             //Bejövő intoleranciák intolerance-á alakítása
             List<Intolerance> requestedIntolerances = intolerances.stream()
                     .map(intolerance -> this.intoleranceRepository.findByApiValue(intolerance)
@@ -90,8 +117,10 @@ public class IntoleranceServiceImpl implements IntoleranceService {
             if (requestedIntolerances.isEmpty()) {
                 this.userIntoleranceRepository.deleteAll(currentUserIntolerances);
             }
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while modifying user intolerances: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while modifying user intolerances: " + e.getMessage());
+            throw new RuntimeException("There was an error while modifying user intolerances: " + e.getMessage(), e);
         }
     }
 

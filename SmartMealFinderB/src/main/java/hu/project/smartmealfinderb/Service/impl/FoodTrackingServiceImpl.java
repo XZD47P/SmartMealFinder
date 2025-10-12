@@ -22,6 +22,9 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     public void saveFoodEntry(SaveFoodEntryReq newFoodEntry) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
+            if (user == null) {
+                throw new RuntimeException("User is not null");
+            }
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
             DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
 
@@ -50,7 +53,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     newFoodEntry.getCarbs(),
                     newFoodEntry.getFats());
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while saving food entry: " + e.getMessage());
+            throw new RuntimeException("There was an error while saving food entry: " + e.getMessage(), e);
         }
     }
 
@@ -58,6 +61,9 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     public void deleteFoodEntry(Long foodEntryId) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
+            if (user == null) {
+                throw new RuntimeException("User is null");
+            }
             FoodEntry foodEntry = this.foodEntryService.findById(foodEntryId);
 
             if (!foodEntry.getUser().equals(user)) {
@@ -73,7 +79,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
 
             this.foodEntryService.deleteById(foodEntryId);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while deleting food entry: " + e.getMessage());
+            throw new RuntimeException("There was an error while deleting food entry: " + e.getMessage(), e);
         }
     }
 

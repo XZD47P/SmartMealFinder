@@ -20,7 +20,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private ResponseEntity<Map<String, Object>> buildResponse(String message, HttpStatus status) {
         Map<String, Object> response = new HashMap<>();
@@ -70,13 +70,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
-        logger.error(ex.getMessage(), ex);
+        LOGGER.error(ex.getMessage(), ex);
         return buildResponse("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
-        logger.error(ex.getMessage(), ex);
+        LOGGER.error(ex.getMessage(), ex);
         return buildResponse("Unexpected error happened: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
