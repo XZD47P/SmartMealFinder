@@ -41,6 +41,7 @@ export const saveFoodEntry = async (item) => {
                 spoonacularData = {
                     spoonacularId: item.id,
                     name: item.name,
+                    category: item.type,
                     ...extractNutrients(response.data.nutrition),
                 }
                 break;
@@ -52,6 +53,7 @@ export const saveFoodEntry = async (item) => {
                 spoonacularData = {
                     spoonacularId: item.id,
                     name: item.name,
+                    category: item.type,
                     ...extractNutrients(response.data.nutrition),
                 }
                 break;
@@ -60,13 +62,14 @@ export const saveFoodEntry = async (item) => {
                 spoonacularData = {
                     spoonacularId: item.id,
                     name: item.name,
+                    category: item.type,
                     calories: item.calories,
                     protein: item.protein,
                     carbs: item.carbs,
                     fats: item.fats,
                 };
                 break;
-                
+
             default:
                 console.error("Unsupported type: ", item.type);
                 return;

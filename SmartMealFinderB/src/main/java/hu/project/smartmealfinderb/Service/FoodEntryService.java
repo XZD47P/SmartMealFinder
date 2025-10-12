@@ -7,7 +7,7 @@ import hu.project.smartmealfinderb.Model.User;
 import java.util.List;
 
 public interface FoodEntryService {
-    void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, double calories, double protein, double carbs, double fats);
+    void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, String category, double calories, double protein, double carbs, double fats);
 
     void deleteAllUserFoodEntries(User user);
 

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
 
-const FoodIntakeSearch = ({onSuccess}) => {
+const FoodEntrySearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ const FoodIntakeSearch = ({onSuccess}) => {
             setQuery("")
             setResults([]);
             onSuccess();
-            toast.success("Product Added");
+            toast.success("Successfully added " + item.name + " to your daily intake");
         } catch (error) {
             console.log(error);
             toast.error("Error while adding product");
@@ -97,4 +97,4 @@ const FoodIntakeSearch = ({onSuccess}) => {
     )
 }
 
-export default FoodIntakeSearch;
+export default FoodEntrySearch;

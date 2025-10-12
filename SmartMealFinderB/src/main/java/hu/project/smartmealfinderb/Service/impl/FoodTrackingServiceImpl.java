@@ -48,6 +48,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     dailyProgress,
                     newFoodEntry.getSpoonacularId(),
                     newFoodEntry.getName(),
+                    newFoodEntry.getCategory(),
                     newFoodEntry.getCalories(),
                     newFoodEntry.getProtein(),
                     newFoodEntry.getCarbs(),

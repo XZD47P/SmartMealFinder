@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
+import toast from "react-hot-toast";
 
 const RecipeTile = ({recipe, button = false}) => {
     const nutrients = recipe.nutrition?.nutrients || [];
@@ -14,15 +15,20 @@ const RecipeTile = ({recipe, button = false}) => {
     const protein = Math.round(getNutrient("Protein")?.amount);
 
     const handleSave = async () => {
-        await saveFoodEntry({
-            type: "recipe",
-            id: recipe.id,
-            name: recipe.title,
-            calories: calories,
-            protein: protein,
-            carbs: carbs,
-            fats: fats,
-        });
+        try {
+            await saveFoodEntry({
+                type: "recipe",
+                id: recipe.id,
+                name: recipe.title,
+                calories: calories,
+                protein: protein,
+                carbs: carbs,
+                fats: fats,
+            });
+            toast.success("Successfully added " + recipe.name + " to your daily intake");
+        } catch (error) {
+            toast.error("Error while saving food intake! Please try again later!");
+        }
     }
     return (
         <div className="border p-4 rounded shadow hover:shadow-lg transition bg-white">

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import api from "../../Backend/api";
 import {useEffect, useState} from "react";
 import {useMyContext} from "../../Store/ContextApi";
-import FoodIntakeSearch from "./FoodIntakeSearch";
+import FoodEntrySearch from "./FoodEntrySearch";
 
 const DailyProgressForm = ({onSuccess}) => {
 
@@ -168,7 +168,7 @@ const DailyProgressForm = ({onSuccess}) => {
                 </>
             )}
             <div>
-                <FoodIntakeSearch onSuccess={fetchDailyProgress}/>
+                <FoodEntrySearch onSuccess={fetchDailyProgress}/>
             </div>
             <div>
                 <ul className="divide-y border rounded bg-white">

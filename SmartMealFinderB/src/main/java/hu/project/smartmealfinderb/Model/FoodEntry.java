@@ -29,6 +29,7 @@ public class FoodEntry {
     @Column(name = "spoonacular_id")
     private Long spoonacularId;
     private String name;
+    private String category;
     private double calories;
     private double protein;
     private double carbs;
