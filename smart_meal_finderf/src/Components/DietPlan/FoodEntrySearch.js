@@ -3,11 +3,14 @@ import spoonacular from "../../Backend/spoonacular";
 import toast from "react-hot-toast";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
+import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
 
 const FoodEntrySearch = ({onSuccess}) => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [quantity, setQuantity] = useState("");
 
     const searchProducts = async () => {
         setLoading(true);
@@ -45,6 +48,7 @@ const FoodEntrySearch = ({onSuccess}) => {
     const handleAdd = async (item) => {
         try {
             await saveFoodEntry(item);
+            setSelectedItem(null);
             setQuery("")
             setResults([]);
             onSuccess();
@@ -84,7 +88,7 @@ const FoodEntrySearch = ({onSuccess}) => {
                         <li key={item.id} className="flex justify-between items-center p-2">
                             <span>{item.name}</span>
                             <Buttons type={"button"}
-                                     onClickhandler={() => handleAdd(item)}
+                                     onClickhandler={() => setSelectedItem(item)}
                                      className={"bg-green-500 text-white px-2 py-1 rounded"}
                             >
                                 Add
@@ -93,6 +97,12 @@ const FoodEntrySearch = ({onSuccess}) => {
                     ))}
                 </ul>
             )}
+            <FoodEntryQuantityModal
+                open={!!selectedItem}
+                onClose={() => setSelectedItem(null)}
+                itemName={selectedItem?.name}
+                onConfirm={() => handleAdd(selectedItem)}
+            />
         </div>
     )
 }

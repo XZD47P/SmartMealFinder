@@ -2,9 +2,12 @@ import {Link} from "react-router-dom";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
 import toast from "react-hot-toast";
+import {useState} from "react";
+import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
 
 const RecipeTile = ({recipe, button = false}) => {
     const nutrients = recipe.nutrition?.nutrients || [];
+    const [open, setOpen] = useState(false);
 
     const getNutrient = (name) =>
         nutrients.find((nutrient) => nutrient.name.toLowerCase() === name.toLowerCase());
@@ -46,11 +49,20 @@ const RecipeTile = ({recipe, button = false}) => {
                 )}
             </Link>
             {button && (
-                <Buttons type={"button"} onClickhandler={handleSave}
+                <Buttons type={"button"} onClickhandler={() => setOpen(true)}
                          className={"bg-green-500 text-white px-3 py-1 mt-2 rounded"}>
                     I ate it!
                 </Buttons>
             )}
+            <FoodEntryQuantityModal
+                open={open}
+                onClose={() => setOpen(false)}
+                itemName={recipe?.title}
+                onConfirm={() => {
+                    handleSave();
+                    setOpen(false);
+                }}
+            />
         </div>
     );
 };
