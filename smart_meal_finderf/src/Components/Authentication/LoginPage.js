@@ -81,7 +81,7 @@ const LoginPage = () => {
         <div className="min-h-[calc(100vh-74px)] flex justify-center items-center">
             <React.Fragment>
                 <form onSubmit={handleSubmit(onLoginHandler)}
-                      className="sm:w-[450px] w-[360px]  shadow-custom py-8 sm:px-8 px-4">
+                      className="sm:w-[450px] w-[360px]  shadow-custom py-8 sm:px-8 px-4 bg-white">
                     <div>
                         <h1 className="font-montserrat text-center font-bold text-2xl">
                             Login Here

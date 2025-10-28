@@ -16,3 +16,7 @@
 .MuiDataGrid-row:nth-of-type(even) {
     background-color: #ffffff;
 }
+
+body {
+    @apply bg-orange-50 text-stone-800;
+}

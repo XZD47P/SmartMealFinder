@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import spoonacular from "../../Backend/spoonacular";
+import {motion} from "framer-motion";
+import {ListOrdered, Utensils} from "lucide-react";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
@@ -21,20 +23,58 @@ const RecipeDetailPage = () => {
     if (!recipe) return <div>Loading...</div>;
 
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-2">{recipe.title}</h1>
-            <img src={recipe.image} alt={recipe.title} className="w-full max-w-md rounded shadow mb-4"/>
-            <h2 className="text-xl font-semibold mt-4">Ingredients</h2>
-            <ul className="list-disc pl-5">
-                {recipe.extendedIngredients.map((ing) => (
-                    <li key={ing.id}>{ing.original}</li>
-                ))}
-            </ul>
+        <motion.div
+            className="max-w-4xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-lg"
+            initial={{opacity: 0, y: 30}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.4}}
+        >
+            {/* Header */}
+            <div className="text-center">
+                <h1 className="text-3xl md:text-4xl font-bold mb-3">{recipe.title}</h1>
+                <p className="text-gray-500 italic">
+                    {recipe.readyInMinutes} minutes • {recipe.servings} servings
+                </p>
+            </div>
 
-            <h2 className="text-xl font-semibold mt-4">Instructions</h2>
-            <p dangerouslySetInnerHTML={{__html: recipe.instructions}}/>
-        </div>
+            {/* Image */}
+            <div className="flex justify-center mt-6">
+                <img
+                    src={recipe.image}
+                    alt={recipe.title}
+                    className="rounded-2xl shadow-md w-full md:w-3/4 object-cover"
+                />
+            </div>
+
+            {/* Ingredients */}
+            <section className="mt-10">
+                <div className="flex items-center gap-2 mb-3">
+                    <Utensils className="w-5 h-5 text-emerald-600"/>
+                    <h2 className="text-2xl font-semibold">Ingredients</h2>
+                </div>
+                <ul className="bg-emerald-50 p-4 rounded-lg list-disc list-inside space-y-1">
+                    {recipe.extendedIngredients.map((ing) => (
+                        <li key={ing.id}>{ing.original}</li>
+                    ))}
+                </ul>
+            </section>
+
+            {/* Instructions */}
+            {recipe.instructions && (
+                <section className="mt-10">
+                    <div className="flex items-center gap-2 mb-3">
+                        <ListOrdered className="w-5 h-5 text-amber-600"/>
+                        <h2 className="text-2xl font-semibold">Instructions</h2>
+                    </div>
+                    <div
+                        className="prose max-w-none prose-emerald"
+                        dangerouslySetInnerHTML={{__html: recipe.instructions}}
+                    />
+                </section>
+            )}
+        </motion.div>
     );
 };
+
 
 export default RecipeDetailPage;
