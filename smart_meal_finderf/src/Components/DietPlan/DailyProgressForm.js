@@ -175,7 +175,7 @@ const DailyProgressForm = ({onSuccess}) => {
                     {foodEntries.map(entry => (
                         <li key={entry.id} className="flex justify-between items-center p-2">
                             <div>
-                                <p className="font-medium">{entry.name}</p>
+                                <p className="font-medium">{entry.quantity} {entry.unit} of {entry.name}</p>
                                 <p className="text-sm text-gray-600">
                                     {entry.calories} kcal | {entry.protein} g protein | {entry.carbs} g carbs
                                     | {entry.fats} g fat

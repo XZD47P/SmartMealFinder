@@ -21,13 +21,15 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     private final UserService userService;
 
     @Override
-    public void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, String category, double calories, double protein, double carbs, double fats) {
+    public void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, String category, double quantity, String unit, double calories, double protein, double carbs, double fats) {
         try {
             FoodEntry foodEntry = new FoodEntry();
             foodEntry.setDailyProgress(dailyProgress);
             foodEntry.setSpoonacularId(spoonacularId);
             foodEntry.setName(name);
             foodEntry.setCategory(category);
+            foodEntry.setQuantity(quantity);
+            foodEntry.setUnit(unit);
             foodEntry.setCalories(calories);
             foodEntry.setProtein(protein);
             foodEntry.setCarbs(carbs);

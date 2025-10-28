@@ -17,7 +17,7 @@ const RecipeTile = ({recipe, button = false}) => {
     const carbs = Math.round(getNutrient("Carbohydrates")?.amount);
     const protein = Math.round(getNutrient("Protein")?.amount);
 
-    const handleSave = async () => {
+    const handleSave = async (quantity, unit) => {
         try {
             await saveFoodEntry({
                 type: "recipe",
@@ -27,8 +27,10 @@ const RecipeTile = ({recipe, button = false}) => {
                 protein: protein,
                 carbs: carbs,
                 fats: fats,
+                quantity: quantity,
+                unit: unit,
             });
-            toast.success("Successfully added " + recipe.name + " to your daily intake");
+            toast.success("Successfully added " + recipe.title + " to your daily intake");
         } catch (error) {
             toast.error("Error while saving food intake! Please try again later!");
         }
@@ -58,8 +60,9 @@ const RecipeTile = ({recipe, button = false}) => {
                 open={open}
                 onClose={() => setOpen(false)}
                 itemName={recipe?.title}
-                onConfirm={() => {
-                    handleSave();
+                itemType={"recipe"}
+                onConfirm={({quantity, unit}) => {
+                    handleSave(quantity, unit);
                     setOpen(false);
                 }}
             />

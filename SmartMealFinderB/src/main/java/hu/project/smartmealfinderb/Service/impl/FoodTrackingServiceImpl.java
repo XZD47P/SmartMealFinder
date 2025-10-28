@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.MacroTotals;
 import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
@@ -8,6 +9,9 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
@@ -23,25 +27,40 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
             if (user == null) {
-                throw new RuntimeException("User is not null");
+                throw new RuntimeException("User is null");
             }
             DietPlan dietPlan = this.dietPlanService.getUserDietPlan(user);
             DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
+            MacroTotals macronutrientTotals;
+
+            switch (newFoodEntry.getCategory()) {
+                case "product":
+                    macronutrientTotals = this.saveProductEntry(newFoodEntry);
+                    break;
+                case "ingredient":
+                    macronutrientTotals = this.saveIngredientEntry(newFoodEntry);
+                    break;
+                case "recipe":
+                    macronutrientTotals = this.saveRecipeEntry(newFoodEntry);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid food entry category");
+            }
 
             if (dailyProgress == null) {
                 this.dailyProgressService.createTodayProgress(user,
                         dietPlan,
-                        newFoodEntry.getCalories(),
-                        newFoodEntry.getProtein(),
-                        newFoodEntry.getCarbs(),
-                        newFoodEntry.getFats());
+                        macronutrientTotals.getCalories(),
+                        macronutrientTotals.getProtein(),
+                        macronutrientTotals.getCarbs(),
+                        macronutrientTotals.getFats());
                 dailyProgress = this.dailyProgressService.findTodayProgress(user);
             } else {
                 this.dailyProgressService.updateTodayProgress(dailyProgress,
-                        dailyProgress.getCaloriesConsumed() + newFoodEntry.getCalories(),
-                        dailyProgress.getProteinConsumed() + newFoodEntry.getProtein(),
-                        dailyProgress.getCarbsConsumed() + newFoodEntry.getCarbs(),
-                        dailyProgress.getFatsConsumed() + newFoodEntry.getFats());
+                        dailyProgress.getCaloriesConsumed() + macronutrientTotals.getCalories(),
+                        dailyProgress.getProteinConsumed() + macronutrientTotals.getProtein(),
+                        dailyProgress.getCarbsConsumed() + macronutrientTotals.getCarbs(),
+                        dailyProgress.getFatsConsumed() + macronutrientTotals.getFats());
             }
 
             this.foodEntryService.addFoodEntry(user,
@@ -49,10 +68,12 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     newFoodEntry.getSpoonacularId(),
                     newFoodEntry.getName(),
                     newFoodEntry.getCategory(),
-                    newFoodEntry.getCalories(),
-                    newFoodEntry.getProtein(),
-                    newFoodEntry.getCarbs(),
-                    newFoodEntry.getFats());
+                    newFoodEntry.getQuantity(),
+                    newFoodEntry.getUnit(),
+                    macronutrientTotals.getCalories(),
+                    macronutrientTotals.getProtein(),
+                    macronutrientTotals.getCarbs(),
+                    macronutrientTotals.getFats());
         } catch (Exception e) {
             throw new RuntimeException("There was an error while saving food entry: " + e.getMessage(), e);
         }
@@ -84,5 +105,67 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
         }
     }
 
+    private MacroTotals saveProductEntry(SaveFoodEntryReq newFoodEntry) {
+        double calories, protein, carbs, fats;
+
+        calories = newFoodEntry.getCalories() * newFoodEntry.getQuantity();
+        protein = newFoodEntry.getProtein() * newFoodEntry.getQuantity();
+        carbs = newFoodEntry.getCarbs() * newFoodEntry.getQuantity();
+        fats = newFoodEntry.getFats() * newFoodEntry.getQuantity();
+
+        return new MacroTotals(this.roundUp(calories),
+                this.roundUp(protein),
+                this.roundUp(carbs),
+                this.roundUp(fats));
+    }
+
+    private MacroTotals saveIngredientEntry(SaveFoodEntryReq newFoodEntry) {
+        double calories, protein, carbs, fats;
+
+        calories = newFoodEntry.getCalories();
+        protein = newFoodEntry.getProtein();
+        carbs = newFoodEntry.getCarbs();
+        fats = newFoodEntry.getFats();
+
+        return new MacroTotals(this.roundUp(calories),
+                this.roundUp(protein),
+                this.roundUp(carbs),
+                this.roundUp(fats));
+    }
+
+    private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry) {
+        double calories, protein, carbs, fats;
+        switch (newFoodEntry.getUnit()) {
+            case "serving":
+                calories = newFoodEntry.getCalories() * newFoodEntry.getQuantity();
+                protein = newFoodEntry.getProtein() * newFoodEntry.getQuantity();
+                carbs = newFoodEntry.getCarbs() * newFoodEntry.getQuantity();
+                fats = newFoodEntry.getFats() * newFoodEntry.getQuantity();
+                break;
+            case "grams":
+                if (newFoodEntry.getWeightPerServing() == 0) {
+                    throw new RuntimeException("Cannot use grams as a Unit, because API doesn't provide grams for recipe");
+                } else {
+                    calories = (newFoodEntry.getCalories() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
+                    protein = (newFoodEntry.getProtein() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
+                    carbs = (newFoodEntry.getCarbs() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
+                    fats = (newFoodEntry.getFats() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
+                }
+                break;
+            default:
+                throw new RuntimeException("Unsupported unit: " + newFoodEntry.getUnit());
+        }
+
+        return new MacroTotals(this.roundUp(calories),
+                this.roundUp(protein),
+                this.roundUp(carbs),
+                this.roundUp(fats));
+    }
+
+    private double roundUp(double value) {
+        return new BigDecimal(value)
+                .setScale(2, RoundingMode.CEILING)
+                .doubleValue();
+    }
 
 }

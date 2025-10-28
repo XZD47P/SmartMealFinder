@@ -42,31 +42,41 @@ export const saveFoodEntry = async (item) => {
                     spoonacularId: item.id,
                     name: item.name,
                     category: item.type,
+                    quantity: item.quantity,
+                    unit: item.unit,
                     ...extractNutrients(response.data.nutrition),
                 }
                 break;
 
             case "ingredient":
                 response = await spoonacular.get(`/food/ingredients/${item.id}/information`, {
-                    params: {amount: 100, unit: "g"}
+                    params: {amount: item.quantity, unit: item.unit},
                 });
                 spoonacularData = {
                     spoonacularId: item.id,
                     name: item.name,
                     category: item.type,
+                    quantity: item.quantity,
+                    unit: item.unit,
                     ...extractNutrients(response.data.nutrition),
                 }
                 break;
 
             case "recipe":
+                response = await spoonacular.get(`/recipes/${item.id}/information`, {
+                    params: {includeNutrition: true}
+                });
                 spoonacularData = {
                     spoonacularId: item.id,
                     name: item.name,
                     category: item.type,
+                    quantity: item.quantity,
+                    unit: item.unit,
                     calories: item.calories,
                     protein: item.protein,
                     carbs: item.carbs,
                     fats: item.fats,
+                    weightPerServing: response.data?.nutrition?.weightPerServing?.amount || null,
                 };
                 break;
 

@@ -10,7 +10,6 @@ const FoodEntrySearch = ({onSuccess}) => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [quantity, setQuantity] = useState("");
 
     const searchProducts = async () => {
         setLoading(true);
@@ -101,7 +100,8 @@ const FoodEntrySearch = ({onSuccess}) => {
                 open={!!selectedItem}
                 onClose={() => setSelectedItem(null)}
                 itemName={selectedItem?.name}
-                onConfirm={() => handleAdd(selectedItem)}
+                itemType={selectedItem?.type}
+                onConfirm={({quantity, unit}) => handleAdd({...selectedItem, quantity, unit})}
             />
         </div>
     )

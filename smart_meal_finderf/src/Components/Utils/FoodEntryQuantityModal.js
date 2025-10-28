@@ -1,10 +1,32 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Box, MenuItem, Modal, TextField, Typography} from "@mui/material";
 import Buttons from "./Buttons";
 
-const FoodEntryQuantityModal = ({open, onClose, onConfirm, itemName}) => {
+const FoodEntryQuantityModal = ({open, onClose, onConfirm, itemName, itemType}) => {
     const [quantity, setQuantity] = useState("");
-    const [unit, setUnit] = useState("grams");
+    const [unit, setUnit] = useState("");
+
+    const getUnitsForType = (type) => {
+        switch (type) {
+            case "ingredient":
+                return ["grams", "piece"];
+            case "product":
+                return ["serving"];
+            case "recipe":
+                return ["grams", "serving"];
+            default:
+                return ["grams"];
+        }
+    }
+
+    const unitOptions = getUnitsForType(itemType);
+
+    useEffect(() => {
+        if (open) {
+            const defaultUnit = getUnitsForType(itemType);
+            setUnit(defaultUnit[0]);
+        }
+    }, [open, itemType]);
 
     const handleConfirm = () => {
         if (!quantity || quantity <= 0) {
@@ -12,7 +34,7 @@ const FoodEntryQuantityModal = ({open, onClose, onConfirm, itemName}) => {
         }
         onConfirm({quantity: parseFloat(quantity), unit});
         setQuantity("");
-        setUnit("grams");
+        setUnit("");
     };
 
     return (
@@ -51,8 +73,9 @@ const FoodEntryQuantityModal = ({open, onClose, onConfirm, itemName}) => {
                         size="small"
                         sx={{width: "40%"}}
                     >
-                        <MenuItem value="grams">grams</MenuItem>
-                        <MenuItem value="pieces">pieces</MenuItem>
+                        {unitOptions.map((option) => (
+                            <MenuItem key={option} value={option}>{option}</MenuItem>
+                        ))}
                     </TextField>
                 </Box>
 
