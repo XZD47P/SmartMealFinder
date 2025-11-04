@@ -6,6 +6,7 @@ export const searchRecipes = async (filters = {}) => {
         const response = await spoonacular.get("/recipes/complexSearch", {
             params: {
                 number: 3,
+                addRecipeNutrition: true,
                 ...filters,
             },
         });

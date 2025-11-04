@@ -14,10 +14,10 @@ const RecipeTile = ({recipe, button = false}) => {
     const getNutrient = (name) =>
         nutrients.find((nutrient) => nutrient.name.toLowerCase() === name.toLowerCase());
 
-    const calories = Math.round(getNutrient("Calories")?.amount);
-    const fats = Math.round(getNutrient("Fat")?.amount);
-    const carbs = Math.round(getNutrient("Carbohydrates")?.amount);
-    const protein = Math.round(getNutrient("Protein")?.amount);
+    const calories = getNutrient("Calories")?.amount;
+    const fats = getNutrient("Fat")?.amount;
+    const carbs = getNutrient("Carbohydrates")?.amount;
+    const protein = getNutrient("Protein")?.amount;
 
     const handleSave = async (quantity, unit) => {
         try {
@@ -46,10 +46,10 @@ const RecipeTile = ({recipe, button = false}) => {
 
                 {calories && (
                     <div className="text-sm text-gray-600 mt-2 space-y-1">
-                        <p>🔥 {calories} kcal</p>
-                        {protein && <p>🍗 {protein}g Protein</p>}
-                        {carbs && <p>🌾 {carbs}g Carbs</p>}
-                        {fats && <p>🧈 {fats}g Fat</p>}
+                        <p>🔥 {Math.round(calories)} kcal</p>
+                        {protein && <p>🍗 {Math.round(protein)}g Protein</p>}
+                        {carbs && <p>🌾 {Math.round(carbs)}g Carbs</p>}
+                        {fats && <p>🧈 {Math.round(fats)}g Fat</p>}
                     </div>
                 )}
             </Link>
