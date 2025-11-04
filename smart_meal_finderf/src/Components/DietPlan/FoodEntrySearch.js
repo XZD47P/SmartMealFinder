@@ -4,12 +4,14 @@ import toast from "react-hot-toast";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
 import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
+import {useMyContext} from "../../Store/ContextApi";
 
-const FoodEntrySearch = ({onSuccess}) => {
+const FoodEntrySearch = () => {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const {triggerProgressRefresh} = useMyContext();
 
     const searchProducts = async () => {
         setLoading(true);
@@ -50,7 +52,7 @@ const FoodEntrySearch = ({onSuccess}) => {
             setSelectedItem(null);
             setQuery("")
             setResults([]);
-            onSuccess();
+            triggerProgressRefresh();
             toast.success("Successfully added " + item.name + " to your daily intake");
         } catch (error) {
             console.log(error);

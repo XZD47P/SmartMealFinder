@@ -32,11 +32,12 @@ const RecipeRecommendation = ({dietPlan}) => {
                         maxCarbs: macros.remainingCarbs,
                         maxFat: macros.remainingFats,
                         offset: offset,
+                        number: 1,
                     }
                     const [breakfast, main_course, snack] = await Promise.all([
                         searchRecipes({...filters, type: "breakfast"}),
-                        searchRecipes({...filters, type: "main course"}),
-                        searchRecipes({...filters, type: "snack"}),
+                        // searchRecipes({...filters, type: "main course"}),
+                        // searchRecipes({...filters, type: "snack"}),
                     ]);
 
                     setRecipes({breakfast, main_course, snack});

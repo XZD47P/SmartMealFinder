@@ -2,11 +2,13 @@ import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
 import api from "../../Backend/api";
 import {Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {useMyContext} from "../../Store/ContextApi";
 
 
-const ProgressChart = ({refreshTrigger}) => {
+const ProgressChart = () => {
     const [data, setData] = useState([]);
     const [metric, setMetric] = useState("weight");
+    const {refreshProgress} = useMyContext();
 
     //Választható filter a charthoz
     const metrics = [
@@ -30,7 +32,7 @@ const ProgressChart = ({refreshTrigger}) => {
             }
         };
         fetchData();
-    }, [refreshTrigger]);
+    }, [refreshProgress]);
 
     const metricInfo = metrics.find(m => m.key === metric);
 

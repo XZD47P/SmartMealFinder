@@ -150,8 +150,8 @@ const Plan = () => {
                                          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
                                          onClickhandler={deleteDietPlan}>{loading ? "Loading..." : "Delete plan"}</Buttons>
                             </div>
-                            <DailyProgressForm onSuccess={triggerChartRefresh}/>
-                            <ProgressChart refreshTrigger={refreshChart}/>
+                            <DailyProgressForm/>
+                            <ProgressChart/>
                             <RecipeRecommendation dietPlan={dietPlan}/>
                         </div>
 

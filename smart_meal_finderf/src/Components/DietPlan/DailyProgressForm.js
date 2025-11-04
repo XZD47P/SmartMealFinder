@@ -7,10 +7,10 @@ import {useEffect, useState} from "react";
 import {useMyContext} from "../../Store/ContextApi";
 import FoodEntrySearch from "./FoodEntrySearch";
 
-const DailyProgressForm = ({onSuccess}) => {
+const DailyProgressForm = () => {
 
     const [loading, setLoading] = useState(false);
-    const {currentUser} = useMyContext();
+    const {currentUser, refreshProgress, triggerProgressRefresh} = useMyContext();
     const [dailyProgress, setDailyProgress] = useState(null);
     const [foodEntries, setFoodEntries] = useState([]);
 
@@ -37,7 +37,6 @@ const DailyProgressForm = ({onSuccess}) => {
                 setDailyProgress(null);
             }
             await fetchFoodEntries();
-            onSuccess();
         } catch (error) {
             toast.error("Daily progress could not be loaded!");
             setLoading(false);
@@ -49,8 +48,16 @@ const DailyProgressForm = ({onSuccess}) => {
 
 
     useEffect(() => {
-        fetchDailyProgress();
+        if (currentUser) {
+            fetchDailyProgress();
+        }
     }, [currentUser]);
+
+    useEffect(() => {
+        if (refreshProgress) {
+            fetchDailyProgress();
+        }
+    }, [refreshProgress]);
 
     useEffect(() => {
         if (dailyProgress) {
@@ -81,6 +88,7 @@ const DailyProgressForm = ({onSuccess}) => {
             });
             toast.success("Progress saved successfully!");
             await fetchDailyProgress();
+            triggerProgressRefresh();
         } catch (error) {
             console.error(error);
             toast.error("Failed to save progress.");
@@ -108,6 +116,7 @@ const DailyProgressForm = ({onSuccess}) => {
             await api.delete(`/food-entry/delete/${foodEntryId}`);
             toast.success("Food entry removed!");
             await fetchDailyProgress();
+            triggerProgressRefresh();
         } catch (error) {
             console.error(error);
             toast.error("Failed to delete food entry");
@@ -168,7 +177,7 @@ const DailyProgressForm = ({onSuccess}) => {
                 </>
             )}
             <div>
-                <FoodEntrySearch onSuccess={fetchDailyProgress}/>
+                <FoodEntrySearch/>
             </div>
             <div>
                 <ul className="divide-y border rounded bg-white">

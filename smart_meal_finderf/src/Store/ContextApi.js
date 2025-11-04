@@ -51,6 +51,12 @@ export const ContextProvider = ({children}) => {
         }
     };
 
+    const [refreshProgress, setRefreshProgress] = useState(false);
+
+    const triggerProgressRefresh = () => {
+        setRefreshProgress(prev => !prev);
+    }
+
     //Ha a token létezik, akkor keressük ki a felhasználót
     useEffect(() => {
         if (token) {
@@ -70,6 +76,8 @@ export const ContextProvider = ({children}) => {
                 // setOpenSidebar,
                 isAdmin,
                 setIsAdmin,
+                refreshProgress,
+                triggerProgressRefresh,
             }}
         >
             {children}

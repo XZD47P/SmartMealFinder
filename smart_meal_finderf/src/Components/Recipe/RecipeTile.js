@@ -4,10 +4,12 @@ import {saveFoodEntry} from "../../Service/recipeService";
 import toast from "react-hot-toast";
 import {useState} from "react";
 import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
+import {useMyContext} from "../../Store/ContextApi";
 
 const RecipeTile = ({recipe, button = false}) => {
     const nutrients = recipe.nutrition?.nutrients || [];
     const [open, setOpen] = useState(false);
+    const {triggerProgressRefresh} = useMyContext();
 
     const getNutrient = (name) =>
         nutrients.find((nutrient) => nutrient.name.toLowerCase() === name.toLowerCase());
@@ -31,6 +33,7 @@ const RecipeTile = ({recipe, button = false}) => {
                 unit: unit,
             });
             toast.success("Successfully added " + recipe.title + " to your daily intake");
+            triggerProgressRefresh();
         } catch (error) {
             toast.error("Error while saving food intake! Please try again later!");
         }
