@@ -3,13 +3,7 @@ import api from "../Backend/api";
 
 export const searchRecipes = async (filters = {}) => {
     try {
-        const response = await spoonacular.get("/recipes/complexSearch", {
-            params: {
-                number: 3,
-                addRecipeNutrition: true,
-                ...filters,
-            },
-        });
+        const response = await api.get("/food-api/recipes/search", {params: filters})
         return response.data.results;
     } catch (error) {
         console.log("Error seaching recipies: ", error);
@@ -18,12 +12,7 @@ export const searchRecipes = async (filters = {}) => {
 
 export const autocompleteIngredients = async (query) => {
     try {
-        const response = await spoonacular.get("/food/ingredients/autocomplete", {
-            params: {
-                query,
-                number: 3,
-            },
-        });
+        const response = await api.get("/food-api/ingredients/autocomplete", {params: {query}})
         return response.data; // Egy arrayt ad vissza
     } catch (error) {
         console.error("Error fetching ingredient suggestions:", error);
