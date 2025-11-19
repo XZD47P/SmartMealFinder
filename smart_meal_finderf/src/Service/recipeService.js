@@ -1,4 +1,3 @@
-import spoonacular from "../Backend/spoonacular";
 import api from "../Backend/api";
 
 export const searchRecipes = async (filters = {}) => {
@@ -22,79 +21,8 @@ export const autocompleteIngredients = async (query) => {
 
 export const saveFoodEntry = async (item) => {
     try {
-        let response;
-        let spoonacularData;
-
-        switch (item.type) {
-            case "product":
-                response = await spoonacular.get(`/food/products/${item.id}`);
-                spoonacularData = {
-                    spoonacularId: item.id,
-                    name: item.name,
-                    category: item.type,
-                    quantity: item.quantity,
-                    unit: item.unit,
-                    ...extractNutrients(response.data.nutrition),
-                }
-                break;
-
-            case "ingredient":
-                response = await spoonacular.get(`/food/ingredients/${item.id}/information`, {
-                    params: {amount: item.quantity, unit: item.unit},
-                });
-                spoonacularData = {
-                    spoonacularId: item.id,
-                    name: item.name,
-                    category: item.type,
-                    quantity: item.quantity,
-                    unit: item.unit,
-                    ...extractNutrients(response.data.nutrition),
-                }
-                break;
-
-            case "recipe":
-                response = await spoonacular.get(`/recipes/${item.id}/information`, {
-                    params: {includeNutrition: true}
-                });
-                spoonacularData = {
-                    spoonacularId: item.id,
-                    name: item.name,
-                    category: item.type,
-                    quantity: item.quantity,
-                    unit: item.unit,
-                    calories: item.calories,
-                    protein: item.protein,
-                    carbs: item.carbs,
-                    fats: item.fats,
-                    weightPerServing: response.data?.nutrition?.weightPerServing?.amount || null,
-                };
-                break;
-
-            default:
-                console.error("Unsupported type: ", item.type);
-                return;
-        }
-
-        await api.post("/food-entry/save", spoonacularData, {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        await api.post("/food-entry/save", item);
     } catch (error) {
         console.error("Error while saving food intake: ", error);
     }
 }
-
-const extractNutrients = (nutrition) => {
-    if (!nutrition?.nutrients) return {};
-
-    const get = (name) =>
-        nutrition.nutrients.find(n => n.name.toLowerCase() === name.toLowerCase())?.amount;
-
-    return {
-        calories: get("Calories"),
-        protein: get("Protein"),
-        carbs: get("Carbohydrates"),
-        fats: get("Fat"),
-    };
-};

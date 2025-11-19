@@ -1,6 +1,10 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
+import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
+import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
 import hu.project.smartmealfinderb.Service.FoodApiService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,9 +14,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FoodApiServiceImpl implements FoodApiService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     @Value("${spoonacular.apiKey}")
     private String apikey;
     @Value("${spoonacular.baseUrl}")
@@ -55,6 +60,55 @@ public class FoodApiServiceImpl implements FoodApiService {
             return response.getBody();
         } catch (Exception e) {
             throw new RuntimeException("There was an error while searching for ingredients: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ProductInfo getProductInfo(Long id) {
+        try {
+            String requestUrl = this.baseUrl + "/food/products/" + id;
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey);
+
+            return this.restTemplate.getForObject(builder.toUriString(), ProductInfo.class);
+
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting product info: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public IngredientInfo getIngredientInfo(Long id, double amount, String unit) {
+        try {
+            String requestUrl = this.baseUrl + "/food/ingredients/" + id + "/information";
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("amount", amount)
+                    .queryParam("unit", unit);
+
+            return this.restTemplate.getForObject(builder.toUriString(), IngredientInfo.class);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting ingredient info: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public RecipeInfo getRecipeInfo(Long id) {
+        try {
+            String requestUrl = this.baseUrl + "/recipes/" + id + "/information";
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("includeNutrition", true);
+
+            return this.restTemplate.getForObject(builder.toUriString(), RecipeInfo.class);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting recipe info: " + e.getMessage(), e);
         }
     }
 }

@@ -2,6 +2,9 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.MacroTotals;
 import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
+import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
+import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
+import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
 import hu.project.smartmealfinderb.Model.DailyProgress;
 import hu.project.smartmealfinderb.Model.DietPlan;
 import hu.project.smartmealfinderb.Model.FoodEntry;
@@ -21,6 +24,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     private final DailyProgressService dailyProgressService;
     private final DietPlanService dietPlanService;
     private final UserService userService;
+    private final FoodApiService foodApiService;
 
     @Override
     public void saveFoodEntry(SaveFoodEntryReq newFoodEntry) {
@@ -33,7 +37,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
             DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
             MacroTotals macronutrientTotals;
 
-            switch (newFoodEntry.getCategory()) {
+            switch (newFoodEntry.getType()) {
                 case "product":
                     macronutrientTotals = this.saveProductEntry(newFoodEntry);
                     break;
@@ -65,9 +69,9 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
 
             this.foodEntryService.addFoodEntry(user,
                     dailyProgress,
-                    newFoodEntry.getSpoonacularId(),
+                    newFoodEntry.getId(),
                     newFoodEntry.getName(),
-                    newFoodEntry.getCategory(),
+                    newFoodEntry.getType(),
                     newFoodEntry.getQuantity(),
                     newFoodEntry.getUnit(),
                     macronutrientTotals.getCalories(),
@@ -106,50 +110,53 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     }
 
     private MacroTotals saveProductEntry(SaveFoodEntryReq newFoodEntry) {
+        ProductInfo productInfo = this.foodApiService.getProductInfo(newFoodEntry.getId());
         double calories, protein, carbs, fats;
 
-        calories = newFoodEntry.getCalories() * newFoodEntry.getQuantity();
-        protein = newFoodEntry.getProtein() * newFoodEntry.getQuantity();
-        carbs = newFoodEntry.getCarbs() * newFoodEntry.getQuantity();
-        fats = newFoodEntry.getFats() * newFoodEntry.getQuantity();
+        calories = productInfo.getNutrition().getCalories() * newFoodEntry.getQuantity();
+        protein = productInfo.getNutrition().getProtein() * newFoodEntry.getQuantity();
+        carbs = productInfo.getNutrition().getCarbs() * newFoodEntry.getQuantity();
+        fats = productInfo.getNutrition().getFats() * newFoodEntry.getQuantity();
 
-        return new MacroTotals(this.roundUp(calories),
+        return new MacroTotals(
+                this.roundUp(calories),
                 this.roundUp(protein),
                 this.roundUp(carbs),
-                this.roundUp(fats));
+                this.roundUp(fats)
+        );
     }
 
     private MacroTotals saveIngredientEntry(SaveFoodEntryReq newFoodEntry) {
-        double calories, protein, carbs, fats;
+        IngredientInfo ingredientInfo = this.foodApiService.getIngredientInfo(newFoodEntry.getId(),
+                newFoodEntry.getQuantity(), newFoodEntry.getUnit());
 
-        calories = newFoodEntry.getCalories();
-        protein = newFoodEntry.getProtein();
-        carbs = newFoodEntry.getCarbs();
-        fats = newFoodEntry.getFats();
-
-        return new MacroTotals(this.roundUp(calories),
-                this.roundUp(protein),
-                this.roundUp(carbs),
-                this.roundUp(fats));
+        return new MacroTotals(this.roundUp(ingredientInfo.getNutrition().getCalories()),
+                this.roundUp(ingredientInfo.getNutrition().getProtein()),
+                this.roundUp(ingredientInfo.getNutrition().getCarbs()),
+                this.roundUp(ingredientInfo.getNutrition().getFats()));
     }
 
     private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry) {
+        RecipeInfo recipeInfo = this.foodApiService.getRecipeInfo(newFoodEntry.getId());
+
         double calories, protein, carbs, fats;
         switch (newFoodEntry.getUnit()) {
             case "serving":
-                calories = newFoodEntry.getCalories() * newFoodEntry.getQuantity();
-                protein = newFoodEntry.getProtein() * newFoodEntry.getQuantity();
-                carbs = newFoodEntry.getCarbs() * newFoodEntry.getQuantity();
-                fats = newFoodEntry.getFats() * newFoodEntry.getQuantity();
+                calories = recipeInfo.getNutrition().getCalories() * newFoodEntry.getQuantity();
+                protein = recipeInfo.getNutrition().getProtein() * newFoodEntry.getQuantity();
+                carbs = recipeInfo.getNutrition().getCarbs() * newFoodEntry.getQuantity();
+                fats = recipeInfo.getNutrition().getFats() * newFoodEntry.getQuantity();
                 break;
             case "grams":
-                if (newFoodEntry.getWeightPerServing() == 0) {
+                if (recipeInfo.getNutrition().getWeightPerServing().getAmount() == 0) {
                     throw new RuntimeException("Cannot use grams as a Unit, because API doesn't provide grams for recipe");
                 } else {
-                    calories = (newFoodEntry.getCalories() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
-                    protein = (newFoodEntry.getProtein() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
-                    carbs = (newFoodEntry.getCarbs() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
-                    fats = (newFoodEntry.getFats() / newFoodEntry.getWeightPerServing()) * newFoodEntry.getQuantity();
+                    double weightPerServing = recipeInfo.getNutrition().getWeightPerServing().getAmount();
+
+                    calories = (recipeInfo.getNutrition().getCalories() / weightPerServing) * newFoodEntry.getQuantity();
+                    protein = (recipeInfo.getNutrition().getProtein() / weightPerServing) * newFoodEntry.getQuantity();
+                    carbs = (recipeInfo.getNutrition().getCarbs() / weightPerServing) * newFoodEntry.getQuantity();
+                    fats = (recipeInfo.getNutrition().getFats() / weightPerServing) * newFoodEntry.getQuantity();
                 }
                 break;
             default:
