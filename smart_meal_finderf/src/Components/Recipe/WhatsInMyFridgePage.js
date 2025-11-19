@@ -119,7 +119,7 @@ const WhatsInMyFridgePage = () => {
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 {recipes ? (
                     recipes.map((recipe) => (
-                        <RecipeTile key={recipe.id} recipe={recipe}/>
+                        <RecipeTile recipe={recipe}/>
                     ))
                 ) : (
                     <section className="relative">
