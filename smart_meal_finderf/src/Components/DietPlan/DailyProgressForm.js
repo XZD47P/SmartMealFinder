@@ -54,9 +54,7 @@ const DailyProgressForm = () => {
     }, [currentUser]);
 
     useEffect(() => {
-        if (refreshProgress) {
-            fetchDailyProgress();
-        }
+        fetchDailyProgress();
     }, [refreshProgress]);
 
     useEffect(() => {

@@ -24,5 +24,6 @@ export const saveFoodEntry = async (item) => {
         await api.post("/food-entry/save", item);
     } catch (error) {
         console.error("Error while saving food intake: ", error);
+        throw error;
     }
 }
