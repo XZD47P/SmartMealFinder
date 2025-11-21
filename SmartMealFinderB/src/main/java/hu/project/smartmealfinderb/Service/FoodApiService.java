@@ -20,4 +20,6 @@ public interface FoodApiService {
     Object searchProducts(String query);
 
     Object searchIngredients(String query);
+
+    Object searchRecipeById(String id);
 }

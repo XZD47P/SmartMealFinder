@@ -146,4 +146,19 @@ public class FoodApiServiceImpl implements FoodApiService {
             throw new RuntimeException("There was an error while searching for ingredients: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public Object searchRecipeById(String id) {
+        try {
+            String requestUrl = this.baseUrl + "/recipes/" + id + "/information";
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey);
+
+            return this.restTemplate.getForObject(builder.toUriString(), Object.class);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while searching for recipe with id: " + id, e);
+        }
+    }
 }

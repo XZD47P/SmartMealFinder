@@ -37,4 +37,9 @@ public class FoodApiController {
     public ResponseEntity<?> searchIngredients(@RequestParam String query) {
         return ResponseEntity.status(HttpStatus.OK).body(this.foodApiService.searchIngredients(query));
     }
+
+    @GetMapping("/recipe")
+    public ResponseEntity<?> searchRecipeById(@RequestParam String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.foodApiService.searchRecipeById(id));
+    }
 }

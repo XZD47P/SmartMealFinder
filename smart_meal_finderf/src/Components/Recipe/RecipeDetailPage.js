@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import spoonacular from "../../Backend/spoonacular";
 import {motion} from "framer-motion";
 import {ListOrdered, Utensils} from "lucide-react";
+import api from "../../Backend/api";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
@@ -11,7 +11,8 @@ const RecipeDetailPage = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const response = await spoonacular.get(`/recipes/${id}/information`);
+                const response = await api.get("food-api/recipe",
+                    {params: {id: id}});
                 setRecipe(response.data);
             } catch (error) {
                 console.error("Failed to fetch recipe details", error);
