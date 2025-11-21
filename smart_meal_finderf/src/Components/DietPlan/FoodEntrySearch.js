@@ -1,10 +1,10 @@
 import {useState} from "react";
-import spoonacular from "../../Backend/spoonacular";
 import toast from "react-hot-toast";
 import Buttons from "../Utils/Buttons";
 import {saveFoodEntry} from "../../Service/recipeService";
 import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
 import {useMyContext} from "../../Store/ContextApi";
+import api from "../../Backend/api";
 
 const FoodEntrySearch = () => {
     const [query, setQuery] = useState("");
@@ -17,11 +17,11 @@ const FoodEntrySearch = () => {
         setLoading(true);
         try {
             const [productRes, ingredientRes] = await Promise.all([
-                spoonacular.get("/food/products/search", {
-                    params: {query, number: 5}
+                api.get("food-api/products/search", {
+                    params: {query}
                 }),
-                spoonacular.get("/food/ingredients/search", {
-                    params: {query, number: 5}
+                api.get("food-api/food/ingredients/search", {
+                    params: {query}
                 })
             ]);
 

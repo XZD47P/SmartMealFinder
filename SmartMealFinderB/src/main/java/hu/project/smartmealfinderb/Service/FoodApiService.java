@@ -16,4 +16,8 @@ public interface FoodApiService {
     IngredientInfo getIngredientInfo(Long id, double amount, String unit);
 
     RecipeInfo getRecipeInfo(Long id);
+
+    Object searchProducts(String query);
+
+    Object searchIngredients(String query);
 }

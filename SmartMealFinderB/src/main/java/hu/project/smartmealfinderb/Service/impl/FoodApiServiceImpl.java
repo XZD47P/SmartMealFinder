@@ -111,4 +111,39 @@ public class FoodApiServiceImpl implements FoodApiService {
             throw new RuntimeException("There was an error while getting recipe info: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public Object searchProducts(String query) {
+        try {
+            String requestUrl = this.baseUrl + "/food/products/search";
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("query", query)
+                    .queryParam("number", 5);
+
+            return this.restTemplate.getForObject(builder.toUriString(), Object.class);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while searching for products: " + e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public Object searchIngredients(String query) {
+        try {
+            String requestUrl = this.baseUrl + "/food/ingredients/search";
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("query", query)
+                    .queryParam("number", 5);
+
+            return this.restTemplate.getForObject(builder.toUriString(), Object.class);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while searching for ingredients: " + e.getMessage(), e);
+        }
+    }
 }

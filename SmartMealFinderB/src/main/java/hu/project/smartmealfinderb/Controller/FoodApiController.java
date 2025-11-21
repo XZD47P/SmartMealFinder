@@ -27,4 +27,14 @@ public class FoodApiController {
     public ResponseEntity<?> autoCompleteIngredients(@RequestParam String query) {
         return ResponseEntity.status(HttpStatus.OK).body(this.foodApiService.autoCompleteIngredients(query));
     }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<?> searchProducts(@RequestParam String query) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.foodApiService.searchProducts(query));
+    }
+
+    @GetMapping("/food/ingredients/search")
+    public ResponseEntity<?> searchIngredients(@RequestParam String query) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.foodApiService.searchIngredients(query));
+    }
 }
