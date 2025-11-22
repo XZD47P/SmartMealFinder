@@ -50,4 +50,8 @@ public interface UserService {
     void updateAccountVerificationStatus(Long userId, boolean verification);
 
     User getCurrentlyLoggedInUser();
+
+    void updateProfilingStatus(Long userId, boolean profiling);
+
+    void updateProfilingStatusForCurrentUser(boolean checked);
 }

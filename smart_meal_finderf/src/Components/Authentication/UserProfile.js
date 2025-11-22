@@ -14,11 +14,12 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {ClockLoader} from "react-spinners";
 import DietOptionSelect from "../Utils/DietOptionSelect";
 import IntoleranceSelect from "../Utils/IntoleranceSelect";
+import ConfirmModal from "../Utils/ConfirmModal";
 
 
 const UserProfile = () => {
     //Bejelentkezett felhasználó és token megszerzése
-    const {currentUser, token} = useMyContext();
+    const {currentUser, token, fetchUser} = useMyContext();
     const [loginSession, setLoginSession] = useState(null);
 
     const [pageError, setPageError] = useState(null);
@@ -27,6 +28,8 @@ const UserProfile = () => {
     const [openSetting, setOpenSetting] = useState(false);
     const [loading, setLoading] = useState(false);
     const [pageLoader, setPageLoader] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [nextCheckedValue, setNextCheckedValue] = useState(null);
 
     //Diéták mentése
     const [userDiets, setUserDiets] = useState([]);
@@ -100,13 +103,61 @@ const UserProfile = () => {
             setLoading(false);
         }
     };
-    const handleCheckboxChange = async () => {
-        try {
-            toast.error("Yet to be implemented.");
-        } catch (error) {
-            toast.error("Something went wrong, please try again!");
+
+    // const handleCheckboxChange = async (e) => {
+    //     try {
+    //         setLoading(true)
+    //         await api.put("/auth/user/update-profiling-status", {checked: e.target.checked});
+    //         toast.success("Profiling status successfully updated!");
+    //         fetchUser();
+    //         setLoading(false);
+    //     } catch (error) {
+    //         toast.error("Something went wrong, please try again!");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const onCheckboxClick = (e) => {
+        const newValue = e.target.checked;
+
+        // Engedélyezéskor egyből engedjük
+        if (currentUser?.profilingEnabled === false && newValue === true) {
+            confirmProfilingChange(true);
+            return;
+        }
+
+        // Tiltáskor kérdezzünk rá
+        if (currentUser?.profilingEnabled === true && newValue === false) {
+            setNextCheckedValue(false);
+            setConfirmOpen(true);
         }
     };
+
+
+    const confirmProfilingChange = async (value = nextCheckedValue) => {
+        setConfirmOpen(false);
+
+        try {
+            setLoading(true);
+
+            await api.put("/auth/user/update-profiling-status", {checked: value});
+
+            toast.success("Profiling status successfully updated!");
+            fetchUser();
+        } catch (error) {
+            toast.error("Something went wrong, please try again!");
+        } finally {
+            setLoading(false);
+            setNextCheckedValue(null);
+        }
+    };
+
+    const cancelProfilingChange = () => {
+        setConfirmOpen(false);
+        setNextCheckedValue(null);
+    };
+
 
     //A jelenlegi felhasználó adatainak betöltése az input fieldekbe
     useEffect(() => {
@@ -293,9 +344,12 @@ const UserProfile = () => {
                                                         type="checkbox"
                                                         name="profiling"
                                                         checked={currentUser?.profilingEnabled}
-                                                        onChange={(e) =>
-                                                            handleCheckboxChange()
-                                                        }
+                                                        onChange={(e) => onCheckboxClick(e)}
+                                                    />
+                                                    <ConfirmModal
+                                                        open={confirmOpen}
+                                                        onConfirm={confirmProfilingChange}
+                                                        onCancel={cancelProfilingChange}
                                                     />
                                                 </div>
                                             </AccordionDetails>

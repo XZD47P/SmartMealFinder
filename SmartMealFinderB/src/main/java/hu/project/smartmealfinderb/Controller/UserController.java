@@ -10,8 +10,11 @@ import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -77,6 +80,13 @@ public class UserController {
 
         this.userService.verifyUser(token);
         return ResponseEntity.ok(new MessageResponse("User verified successfully"));
+    }
+
+    @PutMapping("/user/update-profiling-status")
+    public ResponseEntity<?> updateProfilingStatus(@RequestBody Map<String, Boolean> request) {
+        boolean checked = request.get("checked");
+        this.userService.updateProfilingStatusForCurrentUser(checked);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status updated successfully"));
     }
 
 }

@@ -19,10 +19,11 @@ public class UserInfoResponse {
     private boolean accountVerified;
     private Instant verificationDeadline;
     private List<String> roles;
+    private boolean profilingEnabled;
 
 
     public UserInfoResponse(Long id, String username, String email, String firstName, String lastName,
-                            boolean accountNonLocked, boolean accountVerified, Instant verificationDeadline, List<String> roles) {
+                            boolean accountNonLocked, boolean accountVerified, Instant verificationDeadline, boolean profilingEnabled, List<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -31,6 +32,7 @@ public class UserInfoResponse {
         this.accountNonLocked = accountNonLocked;
         this.accountVerified = accountVerified;
         this.verificationDeadline = verificationDeadline;
+        this.profilingEnabled = profilingEnabled;
         this.roles = roles;
     }
 }

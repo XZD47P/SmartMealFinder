@@ -78,6 +78,7 @@ export const ContextProvider = ({children}) => {
                 setIsAdmin,
                 refreshProgress,
                 triggerProgressRefresh,
+                fetchUser,
             }}
         >
             {children}

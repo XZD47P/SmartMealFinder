@@ -136,6 +136,7 @@ public class UserServiceImpl implements UserService {
                     user.isAccountNonLocked(),
                     user.isAccountVerified(),
                     user.getVerificationDeadline(),
+                    user.isProfilingEnabled(),
                     roles
             );
 
@@ -429,5 +430,34 @@ public class UserServiceImpl implements UserService {
     public User getCurrentlyLoggedInUser() {
         String username = this.securityHelper.getCurrentUsername();
         return this.findByUsername(username);
+    }
+
+    //TODO: Felhasználó adatainak törlésének kérése a Recombee-től
+    @Override
+    public void updateProfilingStatus(Long userId, boolean profiling) {
+        try {
+            User user = this.userRepository.findById(userId).orElseThrow(
+                    () -> new RuntimeException("User not found")
+            );
+            user.setProfilingEnabled(profiling);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void updateProfilingStatusForCurrentUser(boolean checked) {
+        try {
+            User user = this.getCurrentlyLoggedInUser();
+            user.setProfilingEnabled(checked);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+        }
     }
 }
