@@ -67,12 +67,6 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    /*
-
-    private DietPlan planId;
-
-     */
-
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<UserDietOption> dietOptions = new ArrayList<>();
@@ -80,6 +74,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<UserIntolerance> intolerances = new ArrayList<>();
+
+    @Column(name = "profiling_enabled")
+    private boolean profilingEnabled = false;
 
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {
         this.userName = userName;

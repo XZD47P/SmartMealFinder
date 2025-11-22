@@ -25,10 +25,11 @@ public class UserDetailsImpl implements UserDetails {
 
     private boolean isAccountVerified;
     private boolean isAccountNonLocked;
+    private boolean isProfilingEnabled;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password, boolean isAccountVerified, boolean isAccountNonLocked,
+    public UserDetailsImpl(Long id, String username, String email, String password, boolean isAccountVerified, boolean isAccountNonLocked, boolean isProfilingEnabled,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -36,6 +37,7 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.isAccountVerified = isAccountVerified;
         this.isAccountNonLocked = isAccountNonLocked;
+        this.isProfilingEnabled = isProfilingEnabled;
         this.authorities = authorities;
     }
 
@@ -49,6 +51,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.isAccountVerified(),
                 user.isAccountNonLocked(),
+                user.isProfilingEnabled(),
                 List.of(authority)
         );
 

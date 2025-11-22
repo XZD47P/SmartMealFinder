@@ -139,6 +139,17 @@ const UserDetails = () => {
         } else if (name === "verify") {
             message = "Account verification status successfully updated";
         }
+        switch (name) {
+            case "lock":
+                message = "Account lock status successfully updated";
+                break;
+            case "verify":
+                message = "Account verification status successfully updated";
+                break;
+            case "profiling":
+                message = "Account profiling status successfully updated";
+                break;
+        }
 
         try {
             const formData = {
@@ -184,7 +195,8 @@ const UserDetails = () => {
                 </>
             ) : (
                 <>
-                    <div className="lg:w-[70%] sm:w-[90%] w-full  mx-auto shadow-lg shadow-gray-300 p-8 rounded-md">
+                    <div
+                        className="lg:w-[70%] sm:w-[90%] w-full  mx-auto shadow-lg shadow-gray-300 p-8 rounded-md bg-white">
                         <div>
                             <h1 className="text-slate-800 text-2xl font-bold  pb-4">
                                 Profile Information
@@ -264,7 +276,8 @@ const UserDetails = () => {
                             </form>
                         </div>
                     </div>
-                    <div className="lg:w-[70%] sm:w-[90%] w-full  mx-auto shadow-lg shadow-gray-300 p-8 rounded-md">
+                    <div
+                        className="lg:w-[70%] sm:w-[90%] w-full  mx-auto shadow-lg shadow-gray-300 p-8 rounded-md bg-white">
                         <h1 className="text-slate-800 text-2xl font-bold  pb-4">
                             Admin Actions
                             <hr/>
@@ -328,6 +341,21 @@ const UserDetails = () => {
                                     checked={user?.accountVerified}
                                     onChange={(e) =>
                                         handleCheckboxChange(e, "/admin/update-verification-status")
+                                    }
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <label className="text-slate-600 text-sm font-semibold uppercase">
+                                    {" "}
+                                    Profiling Enabled
+                                </label>
+                                <input
+                                    className="text-14 w-5 h-5"
+                                    type="checkbox"
+                                    name="profiling"
+                                    checked={user?.profilingEnabled}
+                                    onChange={(e) =>
+                                        handleCheckboxChange(e, "/admin/update-profiling-status")
                                     }
                                 />
                             </div>

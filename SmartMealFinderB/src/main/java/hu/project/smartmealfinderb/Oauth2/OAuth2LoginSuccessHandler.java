@@ -56,10 +56,10 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 this.idAttributeKey = "id";
             } else if (oAuth2AuthenticationToken.getAuthorizedClientRegistrationId().equals("google")) {
                 this.username = email.split("@")[0];
-                idAttributeKey = "sub";
+                this.idAttributeKey = "sub";
             } else {
-                username = "";
-                idAttributeKey = "id";
+                this.username = "";
+                this.idAttributeKey = "id";
             }
 
             //Vizsgáljuk, hogy az adott felhasználó létezik-e, ha nem, akkor létrehozzuk
@@ -130,6 +130,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 null,
                 true,
                 true,
+                user.isProfilingEnabled(),
                 authorities
         );
 

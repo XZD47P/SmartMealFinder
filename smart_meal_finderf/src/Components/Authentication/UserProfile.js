@@ -100,6 +100,13 @@ const UserProfile = () => {
             setLoading(false);
         }
     };
+    const handleCheckboxChange = async () => {
+        try {
+            toast.error("Yet to be implemented.");
+        } catch (error) {
+            toast.error("Something went wrong, please try again!");
+        }
+    };
 
     //A jelenlegi felhasználó adatainak betöltése az input fieldekbe
     useEffect(() => {
@@ -276,6 +283,21 @@ const UserProfile = () => {
                                                          type={"button"}
                                                          className={"bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700 transition-colors"}
                                                          onClickhandler={handleIntoleranceChange}>Save</Buttons>
+                                                <div className="flex items-center gap-2 mt-6">
+                                                    <label className="text-slate-600 text-sm font-semibold uppercase">
+                                                        {" "}
+                                                        Profiling Enabled
+                                                    </label>
+                                                    <input
+                                                        className="text-14 w-5 h-5"
+                                                        type="checkbox"
+                                                        name="profiling"
+                                                        checked={currentUser?.profilingEnabled}
+                                                        onChange={(e) =>
+                                                            handleCheckboxChange()
+                                                        }
+                                                    />
+                                                </div>
                                             </AccordionDetails>
                                         </Accordion>
                                     </div>
