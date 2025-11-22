@@ -11,6 +11,7 @@ const FoodEntrySearch = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [open, setOpen] = useState(false);
     const {triggerProgressRefresh} = useMyContext();
 
     const searchProducts = async () => {
@@ -49,6 +50,7 @@ const FoodEntrySearch = () => {
     const handleAdd = async (item) => {
         try {
             await saveFoodEntry(item);
+            setOpen(false);
             setSelectedItem(null);
             setQuery("")
             setResults([]);
@@ -89,7 +91,10 @@ const FoodEntrySearch = () => {
                         <li key={item.id} className="flex justify-between items-center p-2">
                             <span>{item.name}</span>
                             <Buttons type={"button"}
-                                     onClickhandler={() => setSelectedItem(item)}
+                                     onClickhandler={() => {
+                                         setSelectedItem(item);
+                                         setOpen(true)
+                                     }}
                                      className={"bg-green-500 text-white px-2 py-1 rounded"}
                             >
                                 Add
@@ -99,7 +104,7 @@ const FoodEntrySearch = () => {
                 </ul>
             )}
             <FoodEntryQuantityModal
-                open={!!selectedItem}
+                open={open}
                 onClose={() => setSelectedItem(null)}
                 itemName={selectedItem?.name}
                 itemType={selectedItem?.type}
