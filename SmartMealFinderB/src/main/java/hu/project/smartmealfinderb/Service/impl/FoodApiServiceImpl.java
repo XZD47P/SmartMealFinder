@@ -3,7 +3,9 @@ package hu.project.smartmealfinderb.Service.impl;
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
 import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
+import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
 import hu.project.smartmealfinderb.Service.FoodApiService;
+import hu.project.smartmealfinderb.Service.RecombeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.Map;
 public class FoodApiServiceImpl implements FoodApiService {
 
     private final RestTemplate restTemplate;
+    private final RecombeeService recombeeService;
     @Value("${spoonacular.apiKey}")
     private String apikey;
     @Value("${spoonacular.baseUrl}")
@@ -148,7 +151,7 @@ public class FoodApiServiceImpl implements FoodApiService {
     }
 
     @Override
-    public Object searchRecipeById(String id) {
+    public SpoonacularRecipeResp searchRecipeById(String id) {
         try {
             String requestUrl = this.baseUrl + "/recipes/" + id + "/information";
 
@@ -156,7 +159,10 @@ public class FoodApiServiceImpl implements FoodApiService {
                     .fromUriString(requestUrl)
                     .queryParam("apiKey", this.apikey);
 
-            return this.restTemplate.getForObject(builder.toUriString(), Object.class);
+            SpoonacularRecipeResp recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipeResp.class);
+            this.recombeeService.insertOrUpdateRecipe(recipe);
+
+            return recipe;
         } catch (Exception e) {
             throw new RuntimeException("There was an error while searching for recipe with id: " + id, e);
         }
