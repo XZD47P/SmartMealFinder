@@ -1,7 +1,8 @@
 package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
-import hu.project.smartmealfinderb.Service.GorseService;
+import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Service.ProfilingService;
 import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GorseServiceImpl implements GorseService {
+public class ProfilingServiceImpl implements ProfilingService {
 
     private final Gorse gorseClient;
 
@@ -29,12 +30,37 @@ public class GorseServiceImpl implements GorseService {
                     this.buildLabels(recipe),
                     this.buildCategories(recipe),
                     new Date().toString(),
-                    ""
+                    recipe.getTitle()
             );
 
             this.gorseClient.insertItem(item);
         } catch (IOException e) {
             throw new RuntimeException("Error while sending item to gorse", e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendUserToGorse(User user) {
+        try {
+
+            io.gorse.gorse4j.User gorseUser = new io.gorse.gorse4j.User(
+                    user.getUserId().toString(), List.of()
+            );
+
+            this.gorseClient.insertUser(gorseUser);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while sending user to gorse", e);
+        }
+    }
+
+    @Override
+    @Async
+    public void deleteUserFromGorse(User user) {
+        try {
+            this.gorseClient.deleteUser(user.getUserId().toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Error while deleting current user from gorse", e);
         }
     }
 

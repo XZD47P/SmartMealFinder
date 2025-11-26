@@ -11,6 +11,7 @@ import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Security.Service.SecurityHelper;
 import hu.project.smartmealfinderb.Service.EmailService;
+import hu.project.smartmealfinderb.Service.ProfilingService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final SecurityHelper securityHelper;
+    private final ProfilingService profilingService;
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -440,6 +442,13 @@ public class UserServiceImpl implements UserService {
                     () -> new RuntimeException("User not found")
             );
             user.setProfilingEnabled(profiling);
+
+            if (profiling) {
+                this.profilingService.sendUserToGorse(user);
+            } else {
+                this.profilingService.deleteUserFromGorse(user);
+            }
+
             this.userRepository.save(user);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
@@ -453,6 +462,13 @@ public class UserServiceImpl implements UserService {
         try {
             User user = this.getCurrentlyLoggedInUser();
             user.setProfilingEnabled(checked);
+
+            if (checked) {
+                this.profilingService.sendUserToGorse(user);
+            } else {
+                this.profilingService.deleteUserFromGorse(user);
+            }
+
             this.userRepository.save(user);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
