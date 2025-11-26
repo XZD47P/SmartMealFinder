@@ -97,11 +97,6 @@
             <artifactId>spring-dotenv</artifactId>
             <version>3.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.recombee</groupId>
-            <artifactId>api-client</artifactId>
-            <version>6.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>
