@@ -1,0 +1,79 @@
+package hu.project.smartmealfinderb.Service.impl;
+
+import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.Service.GorseService;
+import io.gorse.gorse4j.Gorse;
+import io.gorse.gorse4j.Item;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class GorseServiceImpl implements GorseService {
+
+    private final Gorse gorseClient;
+
+    @Override
+    @Async
+    public void sendItemToGorse(SpoonacularRecipeResp recipe) {
+        try {
+            Item item = new Item(
+                    recipe.getId().toString(),
+                    false,
+                    this.buildLabels(recipe),
+                    this.buildCategories(recipe),
+                    new Date().toString(),
+                    ""
+            );
+
+            this.gorseClient.insertItem(item);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while sending item to gorse", e);
+        }
+    }
+
+    private List<String> buildCategories(SpoonacularRecipeResp recipe) {
+        List<String> categories = new ArrayList<>();
+
+        if (recipe.getDiets() != null) {
+            categories.addAll(recipe.getDiets());
+        }
+        if (recipe.getDishTypes() != null) {
+            categories.addAll(recipe.getDishTypes());
+        }
+        if (recipe.getCuisines() != null) {
+            categories.addAll(recipe.getCuisines());
+        }
+        if (recipe.getOccasions() != null) {
+            categories.addAll(recipe.getOccasions());
+        }
+
+        return categories;
+    }
+
+    private List<String> buildLabels(SpoonacularRecipeResp recipe) {
+        List<String> labels = new ArrayList<>();
+
+        labels.add("healthScore:" + recipe.getHealthScore());
+        labels.add("vegeterian:" + recipe.isVegeterian());
+        labels.add("vegan:" + recipe.isVegan());
+        labels.add("glutenFree:" + recipe.isGlutenFree());
+        labels.add("dairyFree:" + recipe.isDairyFree());
+        labels.add("veryHealthy:" + recipe.isVeryHealthy());
+        labels.add("cheap:" + recipe.isCheap());
+        labels.add("veryPopular:" + recipe.isVeryPopular());
+        labels.add("sustainable:" + recipe.isSustainable());
+        labels.add("lowFodmap:" + recipe.isLowFodmap());
+        for (String ingredient : recipe.getIngredientNames()) {
+            labels.add("ingredient:" + ingredient);
+        }
+
+        return labels;
+    }
+}

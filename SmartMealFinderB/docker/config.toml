@@ -1,0 +1,33 @@
+[master]
+http_port = 8088
+
+[recommend]
+# The cache size for recommended/popular/latest items. The default value is 10.
+cache_size = 100
+# Recommended cache expire time. The default value is 72h.
+cache_expire = "72h"
+
+[recommend.collaborative]
+# The time period for model fitting. The default value is "60m".
+model_fit_period = "60m"
+#Enable HNSW indexing. The default value is true
+enable_index = true
+#Enable "read" interactions. The default value is true
+enable_view = true
+
+[recommend.offline]
+# The time period to check recommendation for users. The default values is 1m.
+check_recommend_period = "1m"
+
+[recommend.data_source]
+# The feedback types for positive events.
+positive_feedback_types = ["like", "favourite", "ate", "addIngredient"]
+# The feedback types for read events.
+read_feedback_types = ["view"]
+
+[recommend.collaborative.feedback_weights]
+"view" = 1.0
+"like" = 4.0
+"addIngredient" = 4.0
+"favourite" = 8.0
+"ate" = 10.0

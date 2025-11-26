@@ -5,6 +5,7 @@ import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
 import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
 import hu.project.smartmealfinderb.Service.FoodApiService;
+import hu.project.smartmealfinderb.Service.GorseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class FoodApiServiceImpl implements FoodApiService {
 
     private final RestTemplate restTemplate;
+    private final GorseService gorseService;
     @Value("${spoonacular.apiKey}")
     private String apikey;
     @Value("${spoonacular.baseUrl}")
@@ -158,8 +160,8 @@ public class FoodApiServiceImpl implements FoodApiService {
                     .queryParam("apiKey", this.apikey);
 
             SpoonacularRecipeResp recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipeResp.class);
-
-
+            this.gorseService.sendItemToGorse(recipe);
+            
             return recipe;
         } catch (Exception e) {
             throw new RuntimeException("There was an error while searching for recipe with id: " + id, e);

@@ -1,0 +1,54 @@
+version: "3"
+services:
+  # --- GORSE MASTER & WORKER (All-in-one) ---
+  gorse:
+    image: zhenghaoz/gorse-in-one:latest
+    container_name: gorse_server
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    environment:
+      # Connection with the databases
+      # Use Redis as cache storage backend.
+      GORSE_CACHE_STORE: redis://gorse_redis:6379
+      # Use MySQL as data storage backend.
+      GORSE_DATA_STORE: mysql://gorse:gorse_pass@tcp(gorse_db:3306)/gorse?parseTime=true
+    volumes:
+      # Configuration file attachment
+      - ./config.toml:/etc/gorse/config.toml
+    command: >
+      -c /etc/gorse/config.toml 
+      --log-path /var/log/gorse/master.log 
+      --cache-path /var/lib/gorse/master_cache.data
+    depends_on:
+      - gorse_db
+      - gorse_redis
+
+  # --- Database (MySQL) ---
+  gorse_db:
+    image: mysql/mysql-server
+    container_name: gorse_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: gorse
+      MYSQL_USER: gorse
+      MYSQL_PASSWORD: gorse_pass
+    volumes:
+      - gorse_db_data:/var/lib/mysql # Data save location
+
+  # --- CACHE (Redis) ---
+  gorse_redis:
+    image: redis
+    container_name: gorse_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - gorse_redis_data:/data
+
+volumes:
+  gorse_db_data:
+  gorse_redis_data:
