@@ -27,6 +27,7 @@ public class SpoonacularRecipeResp {
     private List<String> cuisines;
     private List<String> occasions;
     private List<Ingredient> extendedIngredients;
+    private RecipeNutrition nutrition;
     private String instructions;
 
     public List<String> getIngredientNames() {
@@ -42,4 +43,46 @@ public class SpoonacularRecipeResp {
         private String name;
     }
 
+    @Data
+    public static class RecipeNutrition {
+        private List<RecipeNutrient> nutrients;
+        private WeightPerServing weightPerServing;
+
+        public double getCalories() {
+            return this.getByName("Calories");
+        }
+
+        public double getProtein() {
+            return this.getByName("Protein");
+        }
+
+        public double getCarbs() {
+            return this.getByName("Carbohydrates");
+        }
+
+        public double getFats() {
+            return this.getByName("Fat");
+        }
+
+        private double getByName(String name) {
+            if (nutrients == null) return 0.0;
+            return nutrients.stream()
+                    .filter(n -> n.getName().equalsIgnoreCase(name))
+                    .map(RecipeNutrient::getAmount)
+                    .findFirst()
+                    .orElse(0.0);
+        }
+    }
+
+    @Data
+    public static class RecipeNutrient {
+        private String name;
+        private double amount;
+        private String unit;
+    }
+
+    @Data
+    public static class WeightPerServing {
+        private double amount;
+    }
 }

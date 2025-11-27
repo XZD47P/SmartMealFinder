@@ -2,7 +2,6 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
-import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
 import hu.project.smartmealfinderb.Service.FoodApiService;
 import hu.project.smartmealfinderb.Service.ProfilingService;
@@ -100,22 +99,6 @@ public class FoodApiServiceImpl implements FoodApiService {
     }
 
     @Override
-    public RecipeInfo getRecipeInfo(Long id) {
-        try {
-            String requestUrl = this.baseUrl + "/recipes/" + id + "/information";
-
-            UriComponentsBuilder builder = UriComponentsBuilder
-                    .fromUriString(requestUrl)
-                    .queryParam("apiKey", this.apikey)
-                    .queryParam("includeNutrition", true);
-
-            return this.restTemplate.getForObject(builder.toUriString(), RecipeInfo.class);
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error while getting recipe info: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
     public Object searchProducts(String query) {
         try {
             String requestUrl = this.baseUrl + "/food/products/search";
@@ -157,7 +140,8 @@ public class FoodApiServiceImpl implements FoodApiService {
 
             UriComponentsBuilder builder = UriComponentsBuilder
                     .fromUriString(requestUrl)
-                    .queryParam("apiKey", this.apikey);
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("includeNutrition", true);
 
             SpoonacularRecipeResp recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipeResp.class);
             this.profilingService.sendItemToGorse(recipe);

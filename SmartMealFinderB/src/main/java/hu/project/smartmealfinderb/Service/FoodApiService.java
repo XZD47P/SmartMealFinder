@@ -2,7 +2,6 @@ package hu.project.smartmealfinderb.Service;
 
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
-import hu.project.smartmealfinderb.DTO.Response.RecipeInfo;
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
 
 import java.util.Map;
@@ -15,8 +14,6 @@ public interface FoodApiService {
     ProductInfo getProductInfo(Long id);
 
     IngredientInfo getIngredientInfo(Long id, double amount, String unit);
-
-    RecipeInfo getRecipeInfo(Long id);
 
     Object searchProducts(String query);
 
