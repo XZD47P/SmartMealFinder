@@ -1,8 +1,10 @@
 package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.Model.Interaction;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.ProfilingService;
+import io.gorse.gorse4j.Feedback;
 import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +63,22 @@ public class ProfilingServiceImpl implements ProfilingService {
             this.gorseClient.deleteUser(user.getUserId().toString());
         } catch (IOException e) {
             throw new RuntimeException("Error while deleting current user from gorse", e);
+        }
+    }
+
+    @Override
+    public void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
+        try {
+            Feedback feedback = new Feedback(
+                    interaction.toString(),
+                    user.getUserId().toString(),
+                    recipe.getId().toString(),
+                    new Date().toString()
+            );
+
+            this.gorseClient.insertFeedback(List.of(feedback));
+        } catch (IOException e) {
+            throw new RuntimeException("Error while sending interaction to gorse", e);
         }
     }
 
