@@ -5,10 +5,7 @@ import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
 import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
-import hu.project.smartmealfinderb.Model.DailyProgress;
-import hu.project.smartmealfinderb.Model.DietPlan;
-import hu.project.smartmealfinderb.Model.FoodEntry;
-import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Model.*;
 import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +22,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     private final DietPlanService dietPlanService;
     private final UserService userService;
     private final FoodApiService foodApiService;
+    private final ProfilingService profilingService;
 
     @Override
     public void saveFoodEntry(SaveFoodEntryReq newFoodEntry) {
@@ -45,7 +43,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     macronutrientTotals = this.saveIngredientEntry(newFoodEntry);
                     break;
                 case "recipe":
-                    macronutrientTotals = this.saveRecipeEntry(newFoodEntry);
+                    macronutrientTotals = this.saveRecipeEntry(newFoodEntry, user);
                     break;
                 default:
                     throw new RuntimeException("Invalid food entry category");
@@ -136,8 +134,9 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                 this.roundUp(ingredientInfo.getNutrition().getFats()));
     }
 
-    private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry) {
+    private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry, User user) {
         SpoonacularRecipeResp recipeInfo = this.foodApiService.searchRecipeById(newFoodEntry.getId().toString());
+        this.profilingService.sendInteractionToGorse(Interaction.ATE, user, recipeInfo);
 
         double calories, protein, carbs, fats;
         switch (newFoodEntry.getUnit()) {

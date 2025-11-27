@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,7 +37,7 @@ public class ProfilingServiceImpl implements ProfilingService {
                     false,
                     this.buildLabels(recipe),
                     this.buildCategories(recipe),
-                    new Date().toString(),
+                    Instant.now().toString(),
                     recipe.getTitle()
             );
 
@@ -75,16 +75,21 @@ public class ProfilingServiceImpl implements ProfilingService {
     @Override
     @Async
     public void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
-        try {
-            Feedback feedback = new Feedback(
-                    interaction.toString(),
-                    user.getUserId().toString(),
-                    recipe.getId().toString(),
-                    new Date().toString()
-            );
-            this.gorseClient.insertFeedback(List.of(feedback));
-        } catch (IOException e) {
-            throw new RuntimeException("Error while sending interaction to gorse", e);
+        //Ez nem lesz Async, mivel osztályon belüli hívás (Self-invocation)
+        this.sendItemToGorse(recipe);
+
+        if (user.isProfilingEnabled()) {
+            try {
+                Feedback feedback = new Feedback(
+                        interaction.toString(),
+                        user.getUserId().toString(),
+                        recipe.getId().toString(),
+                        Instant.now().toString()
+                );
+                this.gorseClient.insertFeedback(List.of(feedback));
+            } catch (IOException e) {
+                throw new RuntimeException("Error while sending interaction to gorse", e);
+            }
         }
     }
 
