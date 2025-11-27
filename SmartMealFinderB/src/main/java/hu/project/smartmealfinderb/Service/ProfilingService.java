@@ -13,4 +13,6 @@ public interface ProfilingService {
     void deleteUserFromGorse(User user);
 
     void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe);
+
+    void deleteInteractionFromGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe);
 }

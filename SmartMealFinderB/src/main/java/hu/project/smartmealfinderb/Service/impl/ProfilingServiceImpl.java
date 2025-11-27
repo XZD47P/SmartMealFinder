@@ -8,8 +8,11 @@ import io.gorse.gorse4j.Feedback;
 import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +24,9 @@ import java.util.List;
 public class ProfilingServiceImpl implements ProfilingService {
 
     private final Gorse gorseClient;
+    private final RestTemplate restTemplate;
+    @Value("${gorse.endpoint}")
+    private String gorseEndpoint;
 
     @Override
     @Async
@@ -67,6 +73,7 @@ public class ProfilingServiceImpl implements ProfilingService {
     }
 
     @Override
+    @Async
     public void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
         try {
             Feedback feedback = new Feedback(
@@ -75,10 +82,26 @@ public class ProfilingServiceImpl implements ProfilingService {
                     recipe.getId().toString(),
                     new Date().toString()
             );
-
             this.gorseClient.insertFeedback(List.of(feedback));
         } catch (IOException e) {
             throw new RuntimeException("Error while sending interaction to gorse", e);
+        }
+    }
+
+    @Override
+    @Async
+    public void deleteInteractionFromGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
+        try {
+            String baseUrl = this.gorseEndpoint + "/api/feedback/{feedbackType}/{userId}/{itemId}";
+
+            String requestUrl = UriComponentsBuilder
+                    .fromUriString(baseUrl)
+                    .build(interaction.toString(), user.getUserId().toString(), recipe.getId().toString())
+                    .toString();
+
+            this.restTemplate.delete(requestUrl);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting interaction from gorse", e);
         }
     }
 
