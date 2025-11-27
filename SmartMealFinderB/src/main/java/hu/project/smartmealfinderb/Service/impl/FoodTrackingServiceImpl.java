@@ -101,6 +101,10 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
                     dailyProgress.getFatsConsumed() - foodEntry.getFats());
 
+            if (foodEntry.getCategory().equals("recipe") && user.isProfilingEnabled()) {
+                this.profilingService.deleteInteractionFromGorse(Interaction.ATE, user, foodEntry.getSpoonacularId());
+            }
+
             this.foodEntryService.deleteById(foodEntryId);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while deleting food entry: " + e.getMessage(), e);

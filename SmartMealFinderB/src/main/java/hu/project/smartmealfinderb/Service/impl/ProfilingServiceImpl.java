@@ -9,6 +9,10 @@ import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +31,8 @@ public class ProfilingServiceImpl implements ProfilingService {
     private final RestTemplate restTemplate;
     @Value("${gorse.endpoint}")
     private String gorseEndpoint;
+    @Value("${gorse.apikey}")
+    private String apiKey;
 
     @Override
     @Async
@@ -95,16 +101,27 @@ public class ProfilingServiceImpl implements ProfilingService {
 
     @Override
     @Async
-    public void deleteInteractionFromGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
+    public void deleteInteractionFromGorse(Interaction interaction, User user, Long recipeId) {
         try {
             String baseUrl = this.gorseEndpoint + "/api/feedback/{feedbackType}/{userId}/{itemId}";
 
             String requestUrl = UriComponentsBuilder
                     .fromUriString(baseUrl)
-                    .build(interaction.toString(), user.getUserId().toString(), recipe.getId().toString())
+                    .buildAndExpand(
+                            interaction.toString(),
+                            user.getUserId().toString(),
+                            recipeId.toString())
                     .toString();
 
-            this.restTemplate.delete(requestUrl);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-API-Key", this.apiKey);
+
+            this.restTemplate.exchange(
+                    requestUrl,
+                    HttpMethod.DELETE,
+                    new HttpEntity<>(headers),
+                    String.class);
         } catch (Exception e) {
             throw new RuntimeException("Error while deleting interaction from gorse", e);
         }

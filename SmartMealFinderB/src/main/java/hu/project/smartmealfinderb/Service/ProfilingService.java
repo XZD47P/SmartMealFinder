@@ -14,5 +14,5 @@ public interface ProfilingService {
 
     void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe);
 
-    void deleteInteractionFromGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe);
+    void deleteInteractionFromGorse(Interaction interaction, User user, Long recipeId);
 }

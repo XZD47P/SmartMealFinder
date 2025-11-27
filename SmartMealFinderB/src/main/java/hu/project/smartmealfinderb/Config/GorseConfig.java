@@ -10,7 +10,8 @@ public class GorseConfig {
 
     @Value("${gorse.endpoint}")
     private String endpoint;
-    private String apiKey = "";
+    @Value("${gorse.apikey}")
+    private String apiKey;
 
     @Bean
     public Gorse gorseClient() {
