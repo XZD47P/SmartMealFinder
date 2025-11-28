@@ -69,14 +69,21 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    @ToString.Exclude
     private List<UserDietOption> dietOptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    @ToString.Exclude
     private List<UserIntolerance> intolerances = new ArrayList<>();
 
     @Column(name = "profiling_enabled")
     private boolean profilingEnabled = false;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @ToString.Exclude
+    private List<LikedRecipe> likedRecipes = new ArrayList<>();
 
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {
         this.userName = userName;

@@ -12,7 +12,7 @@ public interface ProfilingService {
 
     void deleteUserFromGorse(User user);
 
-    void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe);
+    void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipeId);
 
     void deleteInteractionFromGorse(Interaction interaction, User user, Long recipeId);
 }

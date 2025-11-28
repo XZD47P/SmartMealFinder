@@ -3,6 +3,8 @@ import {useParams} from "react-router-dom";
 import {motion} from "framer-motion";
 import {ListOrdered, Utensils} from "lucide-react";
 import api from "../../Backend/api";
+import toast from "react-hot-toast";
+import Buttons from "../Utils/Buttons";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
@@ -21,6 +23,16 @@ const RecipeDetailPage = () => {
         fetchDetails();
     }, [id]);
 
+    const handleLike = async () => {
+        try {
+            await api.post("/recipe/like", recipe);
+            toast.success("Recipe liked!");
+        } catch (error) {
+            toast.error("Liking recipe failed");
+            console.error("Failed to like recipe", error);
+        }
+    };
+
     if (!recipe) return <div>Loading...</div>;
 
     return (
@@ -36,6 +48,13 @@ const RecipeDetailPage = () => {
                 <p className="text-gray-500 italic">
                     {recipe.readyInMinutes} minutes • {recipe.servings} servings
                 </p>
+                <Buttons
+                    type="button"
+                    onClickhandler={handleLike}
+                    className="mt-4 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                >
+                    ❤️ Like
+                </Buttons>
             </div>
 
             {/* Image */}

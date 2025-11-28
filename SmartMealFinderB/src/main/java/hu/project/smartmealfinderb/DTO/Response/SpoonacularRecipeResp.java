@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.DTO.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class SpoonacularRecipeResp {
     private RecipeNutrition nutrition;
     private String instructions;
 
+    @JsonIgnore
     public List<String> getIngredientNames() {
         return this.extendedIngredients.stream()
                 .map(Ingredient::getName)
