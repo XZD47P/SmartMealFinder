@@ -4,11 +4,16 @@ import {motion} from "framer-motion";
 import {ListOrdered, Utensils} from "lucide-react";
 import api from "../../Backend/api";
 import toast from "react-hot-toast";
-import Buttons from "../Utils/Buttons";
+import {IconButton} from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import {useMyContext} from "../../Store/ContextApi";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
     const [recipe, setRecipe] = useState(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+    const {currentUser} = useMyContext();
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -16,6 +21,15 @@ const RecipeDetailPage = () => {
                 const response = await api.get("food-api/recipe",
                     {params: {id: id}});
                 setRecipe(response.data);
+
+                if (currentUser) {
+                    const liked = await api.get("/recipe/isLiked", {params: {id}});
+                    setIsLiked(liked.data);
+                }
+
+
+                const count = await api.get("/recipe/likeCount", {params: {id}});
+                setLikeCount(count.data);
             } catch (error) {
                 console.error("Failed to fetch recipe details", error);
             }
@@ -25,8 +39,17 @@ const RecipeDetailPage = () => {
 
     const handleLike = async () => {
         try {
-            await api.post("/recipe/like", recipe);
-            toast.success("Recipe liked!");
+            if (isLiked) {
+                await api.post("/recipe/unlike", recipe);
+                setLikeCount(prev => prev - 1);
+                toast.success("Recipe unliked!");
+            } else {
+                await api.post("/recipe/like", recipe);
+                setLikeCount(prev => prev + 1);
+                toast.success("Recipe liked!");
+            }
+
+            setIsLiked(prev => !prev);
         } catch (error) {
             toast.error("Liking recipe failed");
             console.error("Failed to like recipe", error);
@@ -48,13 +71,25 @@ const RecipeDetailPage = () => {
                 <p className="text-gray-500 italic">
                     {recipe.readyInMinutes} minutes • {recipe.servings} servings
                 </p>
-                <Buttons
-                    type="button"
-                    onClickhandler={handleLike}
-                    className="mt-4 px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
-                >
-                    ❤️ Like
-                </Buttons>
+                <div className="flex justify-center items-center mt-4 gap-2">
+
+                    <motion.div
+                        animate={{scale: isLiked ? 1.3 : 1}}
+                        transition={{duration: 0.2}}
+                    >
+                        <IconButton onClick={handleLike} disabled={!currentUser}>
+                            <FavoriteIcon
+                                style={{
+                                    color: isLiked ? "red" : "grey",
+                                    fontSize: "2rem",
+                                    transition: "color 0.2s"
+                                }}
+                            />
+                        </IconButton>
+                    </motion.div>
+
+                    <span className="text-lg font-semibold">{likeCount}</span>
+                </div>
             </div>
 
             {/* Image */}
