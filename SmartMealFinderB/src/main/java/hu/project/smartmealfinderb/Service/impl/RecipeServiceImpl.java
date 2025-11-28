@@ -36,4 +36,41 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Error while adding like to recipe", e);
         }
     }
+
+    @Override
+    public boolean isRecipeLiked(Long recipeId) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            return this.likedRecipeRepository.existsByUserAndRecipeId(user, recipeId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while checking if recipe is liked by user", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while checking if recipe is liked by user", e);
+        }
+    }
+
+    @Override
+    public int getLikeCount(Long recipeId) {
+        try {
+            return this.likedRecipeRepository.countByRecipeId(recipeId);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while checking like numbers for recipe", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while checking like numbers for recipe", e);
+        }
+    }
+
+    @Override
+    public void removeLikeFromRecipe(SpoonacularRecipeResp recipe) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            LikedRecipe likedRecipe = this.likedRecipeRepository.getLikedRecipeByUserAndRecipeId(user, recipe.getId());
+            this.likedRecipeRepository.delete(likedRecipe);
+            this.profilingService.deleteInteractionFromGorse(Interaction.LIKE, user, recipe.getId());
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while removing like from recipe", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while removing like from recipe", e);
+        }
+    }
 }

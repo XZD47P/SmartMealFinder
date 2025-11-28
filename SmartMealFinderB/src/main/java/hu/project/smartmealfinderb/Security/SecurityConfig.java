@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/diet-option/list").permitAll()
                                 .requestMatchers("/api/intolerance/list").permitAll()
                                 .requestMatchers("/api/food-api/**").permitAll()
+                                .requestMatchers("/api/recipe/likeCount").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> {
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
