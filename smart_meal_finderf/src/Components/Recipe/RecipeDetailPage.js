@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import {IconButton} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import {useMyContext} from "../../Store/ContextApi";
+import StarIcon from "@mui/icons-material/Star";
+import Buttons from "../Utils/Buttons";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
@@ -14,6 +16,7 @@ const RecipeDetailPage = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const {currentUser} = useMyContext();
+    const [isFavourite, setIsFavourite] = useState(false);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -25,6 +28,9 @@ const RecipeDetailPage = () => {
                 if (currentUser) {
                     const liked = await api.get("/recipe/isLiked", {params: {id}});
                     setIsLiked(liked.data);
+
+                    const favourite = await api.get("/recipe/isFavourite", {params: {id}});
+                    setIsFavourite(favourite.data);
                 }
 
 
@@ -56,6 +62,23 @@ const RecipeDetailPage = () => {
         }
     };
 
+    const handleFavourite = async () => {
+        try {
+            if (isFavourite) {
+                await api.delete("/recipe/favourite/remove", {data: recipe});
+                toast.success("Removed from favourites");
+            } else {
+                await api.post("/recipe/favourite/add", recipe);
+                toast.success("Added to favourites");
+            }
+
+            setIsFavourite(prev => !prev);
+
+        } catch (error) {
+            toast.error("Failed to update favourites");
+            console.error("Failed to update favourites", error);
+        }
+    };
     if (!recipe) return <div>Loading...</div>;
 
     return (
@@ -71,24 +94,49 @@ const RecipeDetailPage = () => {
                 <p className="text-gray-500 italic">
                     {recipe.readyInMinutes} minutes • {recipe.servings} servings
                 </p>
-                <div className="flex justify-center items-center mt-4 gap-2">
+                <div className="flex justify-center items-center mt-4 gap-8">
+
+                    <div className="flex items-center gap-2">
+                        <motion.div
+                            animate={{scale: isLiked ? 1.3 : 1}}
+                            transition={{duration: 0.2}}
+                        >
+                            <IconButton onClick={handleLike} disabled={!currentUser}>
+                                <FavoriteIcon
+                                    style={{
+                                        color: isLiked ? "red" : "grey",
+                                        fontSize: "2rem",
+                                        transition: "color 0.2s"
+                                    }}
+                                />
+                            </IconButton>
+                        </motion.div>
+                        <span className="text-lg font-semibold">{likeCount}</span>
+                    </div>
 
                     <motion.div
-                        animate={{scale: isLiked ? 1.3 : 1}}
+                        animate={{scale: isFavourite && currentUser ? 1.3 : 1}}
                         transition={{duration: 0.2}}
                     >
-                        <IconButton onClick={handleLike} disabled={!currentUser}>
-                            <FavoriteIcon
+                        <Buttons
+                            disabled={!currentUser}
+                            onClickhandler={handleFavourite}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition 
+                                ${isFavourite
+                                ? "border-yellow-500 text-yellow-600"
+                                : "border-gray-400 text-gray-600"}
+                                `}
+                        >
+                            <StarIcon
                                 style={{
-                                    color: isLiked ? "red" : "grey",
-                                    fontSize: "2rem",
-                                    transition: "color 0.2s"
+                                    color: isFavourite ? "#f6c000" : "grey",
+                                    width: "20px",
+                                    height: "20px"
                                 }}
                             />
-                        </IconButton>
+                            {isFavourite ? "Favourite" : "Add to favourites"}
+                        </Buttons>
                     </motion.div>
-
-                    <span className="text-lg font-semibold">{likeCount}</span>
                 </div>
             </div>
 
