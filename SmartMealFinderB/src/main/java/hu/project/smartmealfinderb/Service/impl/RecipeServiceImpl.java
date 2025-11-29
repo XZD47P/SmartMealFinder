@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;
 import hu.project.smartmealfinderb.Model.LikedRecipe;
 import hu.project.smartmealfinderb.Model.User;
@@ -21,7 +21,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final ProfilingService profilingService;
 
     @Override
-    public void addLiketoRecipe(SpoonacularRecipeResp recipe) {
+    public void addLiketoRecipe(SpoonacularRecipe recipe) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
             LikedRecipe likedRecipe = new LikedRecipe();
@@ -61,7 +61,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void removeLikeFromRecipe(SpoonacularRecipeResp recipe) {
+    public void removeLikeFromRecipe(SpoonacularRecipe recipe) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
             LikedRecipe likedRecipe = this.likedRecipeRepository.getLikedRecipeByUserAndRecipeId(user, recipe.getId());

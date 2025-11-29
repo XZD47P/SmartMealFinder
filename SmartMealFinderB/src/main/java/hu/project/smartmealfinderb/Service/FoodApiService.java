@@ -2,7 +2,7 @@ package hu.project.smartmealfinderb.Service;
 
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 
 import java.util.Map;
 
@@ -19,5 +19,5 @@ public interface FoodApiService {
 
     Object searchIngredients(String query);
 
-    SpoonacularRecipeResp searchRecipeById(String id);
+    SpoonacularRecipe searchRecipeById(String id);
 }

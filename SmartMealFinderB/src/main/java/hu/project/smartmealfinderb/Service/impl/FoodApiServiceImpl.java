@@ -2,7 +2,7 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Service.FoodApiService;
 import hu.project.smartmealfinderb.Service.ProfilingService;
 import lombok.RequiredArgsConstructor;
@@ -134,7 +134,7 @@ public class FoodApiServiceImpl implements FoodApiService {
     }
 
     @Override
-    public SpoonacularRecipeResp searchRecipeById(String id) {
+    public SpoonacularRecipe searchRecipeById(String id) {
         try {
             String requestUrl = this.baseUrl + "/recipes/" + id + "/information";
 
@@ -143,7 +143,7 @@ public class FoodApiServiceImpl implements FoodApiService {
                     .queryParam("apiKey", this.apikey)
                     .queryParam("includeNutrition", true);
 
-            SpoonacularRecipeResp recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipeResp.class);
+            SpoonacularRecipe recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipe.class);
             this.profilingService.sendItemToGorse(recipe);
 
             return recipe;

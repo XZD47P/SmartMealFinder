@@ -1,4 +1,4 @@
-package hu.project.smartmealfinderb.DTO.Response;
+package hu.project.smartmealfinderb.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SpoonacularRecipeResp {
+public class SpoonacularRecipe {
 
     private Long id;
     private String title;

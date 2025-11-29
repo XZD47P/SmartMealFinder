@@ -1,13 +1,13 @@
 package hu.project.smartmealfinderb.Service;
 
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 
 public interface RecipeService {
-    void addLiketoRecipe(SpoonacularRecipeResp recipe);
+    void addLiketoRecipe(SpoonacularRecipe recipe);
 
     boolean isRecipeLiked(Long recipeId);
 
     int getLikeCount(Long recipeId);
 
-    void removeLikeFromRecipe(SpoonacularRecipeResp recipe);
+    void removeLikeFromRecipe(SpoonacularRecipe recipe);
 }

@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Service.ProfilingService;
@@ -36,7 +36,7 @@ public class ProfilingServiceImpl implements ProfilingService {
 
     @Override
     @Async
-    public void sendItemToGorse(SpoonacularRecipeResp recipe) {
+    public void sendItemToGorse(SpoonacularRecipe recipe) {
         try {
             Item item = new Item(
                     recipe.getId().toString(),
@@ -80,7 +80,7 @@ public class ProfilingServiceImpl implements ProfilingService {
 
     @Override
     @Async
-    public void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipeResp recipe) {
+    public void sendInteractionToGorse(Interaction interaction, User user, SpoonacularRecipe recipe) {
         //Ez nem lesz Async, mivel osztályon belüli hívás (Self-invocation)
         this.sendItemToGorse(recipe);
 
@@ -127,7 +127,7 @@ public class ProfilingServiceImpl implements ProfilingService {
         }
     }
 
-    private List<String> buildCategories(SpoonacularRecipeResp recipe) {
+    private List<String> buildCategories(SpoonacularRecipe recipe) {
         List<String> categories = new ArrayList<>();
 
         if (recipe.getDiets() != null) {
@@ -146,7 +146,7 @@ public class ProfilingServiceImpl implements ProfilingService {
         return categories;
     }
 
-    private List<String> buildLabels(SpoonacularRecipeResp recipe) {
+    private List<String> buildLabels(SpoonacularRecipe recipe) {
         List<String> labels = new ArrayList<>();
 
         labels.add("healthScore:" + recipe.getHealthScore());

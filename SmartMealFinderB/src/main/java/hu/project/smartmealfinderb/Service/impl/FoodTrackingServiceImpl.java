@@ -4,7 +4,7 @@ import hu.project.smartmealfinderb.DTO.MacroTotals;
 import hu.project.smartmealfinderb.DTO.Request.SaveFoodEntryReq;
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
-import hu.project.smartmealfinderb.DTO.Response.SpoonacularRecipeResp;
+import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.*;
 import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
@@ -139,7 +139,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     }
 
     private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry, User user) {
-        SpoonacularRecipeResp recipeInfo = this.foodApiService.searchRecipeById(newFoodEntry.getId().toString());
+        SpoonacularRecipe recipeInfo = this.foodApiService.searchRecipeById(newFoodEntry.getId().toString());
         this.profilingService.sendInteractionToGorse(Interaction.ATE, user, recipeInfo);
 
         double calories, protein, carbs, fats;
