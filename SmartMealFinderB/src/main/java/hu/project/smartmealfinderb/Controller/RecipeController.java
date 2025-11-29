@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/recipe")
 @RequiredArgsConstructor
@@ -37,5 +39,29 @@ public class RecipeController {
     public ResponseEntity<?> getLikeCount(@RequestParam Long id) {
         int count = this.recipeService.getLikeCount(id);
         return ResponseEntity.status(HttpStatus.OK).body(count);
+    }
+
+    @PostMapping("/favourite/add")
+    public ResponseEntity<?> addFavouriteToRecipe(@RequestBody SpoonacularRecipe recipe) {
+        this.recipeService.addFavouriteRecipe(recipe);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Favourite recipe added successfully"));
+    }
+
+    @DeleteMapping("/favourite/remove")
+    public ResponseEntity<?> removeFavouriteFromRecipe(@RequestBody SpoonacularRecipe recipe) {
+        this.recipeService.removeFavouriteRecipe(recipe);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Favourite recipe removed successfully"));
+    }
+
+    @GetMapping("/favourite")
+    public ResponseEntity<?> getFavouriteRecipeIds() {
+        List<Long> favouriteRecipeIds = this.recipeService.getFavouriteRecipeIds();
+        return ResponseEntity.status(HttpStatus.OK).body(favouriteRecipeIds);
+    }
+
+    @GetMapping("/isFavourite")
+    public ResponseEntity<?> isFavouriteRecipeId(@RequestParam Long id) {
+        boolean favouritedRecipe = this.recipeService.isRecipeFavourite(id);
+        return ResponseEntity.status(HttpStatus.OK).body(favouritedRecipe);
     }
 }

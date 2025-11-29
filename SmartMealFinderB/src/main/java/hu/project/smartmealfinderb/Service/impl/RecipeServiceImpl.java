@@ -1,9 +1,11 @@
 package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
+import hu.project.smartmealfinderb.Model.FavouriteRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;
 import hu.project.smartmealfinderb.Model.LikedRecipe;
 import hu.project.smartmealfinderb.Model.User;
+import hu.project.smartmealfinderb.Repository.FavouriteRecipeRepository;
 import hu.project.smartmealfinderb.Repository.LikedRecipeRepository;
 import hu.project.smartmealfinderb.Service.ProfilingService;
 import hu.project.smartmealfinderb.Service.RecipeService;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RecipeServiceImpl implements RecipeService {
@@ -19,6 +23,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final LikedRecipeRepository likedRecipeRepository;
     private final UserService userService;
     private final ProfilingService profilingService;
+    private final FavouriteRecipeRepository favouriteRecipeRepository;
 
     @Override
     public void addLiketoRecipe(SpoonacularRecipe recipe) {
@@ -71,6 +76,59 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Database error while removing like from recipe", e);
         } catch (Exception e) {
             throw new RuntimeException("Error while removing like from recipe", e);
+        }
+    }
+
+    @Override
+    public void addFavouriteRecipe(SpoonacularRecipe recipe) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            FavouriteRecipe favouriteRecipe = new FavouriteRecipe(user, recipe.getId());
+            this.favouriteRecipeRepository.save(favouriteRecipe);
+            this.profilingService.sendInteractionToGorse(Interaction.FAVOURITE, user, recipe);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while adding bookmark to recipe", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while adding bookmark to recipe", e);
+        }
+    }
+
+    @Override
+    public void removeFavouriteRecipe(SpoonacularRecipe recipe) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            FavouriteRecipe favouriteRecipe = this.favouriteRecipeRepository.findByUserAndRecipeId(user, recipe.getId());
+            this.favouriteRecipeRepository.delete(favouriteRecipe);
+            this.profilingService.deleteInteractionFromGorse(Interaction.FAVOURITE, user, recipe.getId());
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while removing bookmark from recipe", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while removing bookmark from recipe", e);
+        }
+    }
+
+    @Override
+    public List<Long> getFavouriteRecipeIds() {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            return this.favouriteRecipeRepository.findAllByUser(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while getting favourite recipes", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while getting favourite recipes", e);
+        }
+    }
+
+    @Override
+    public boolean isRecipeFavourite(Long id) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            return this.favouriteRecipeRepository.existsByUserAndRecipeId(user, id);
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while checking favourite status", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while checking favourite status", e);
         }
     }
 }

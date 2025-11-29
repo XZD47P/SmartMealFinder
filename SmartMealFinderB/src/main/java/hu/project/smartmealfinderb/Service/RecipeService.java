@@ -2,6 +2,8 @@ package hu.project.smartmealfinderb.Service;
 
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 
+import java.util.List;
+
 public interface RecipeService {
     void addLiketoRecipe(SpoonacularRecipe recipe);
 
@@ -10,4 +12,12 @@ public interface RecipeService {
     int getLikeCount(Long recipeId);
 
     void removeLikeFromRecipe(SpoonacularRecipe recipe);
+
+    void addFavouriteRecipe(SpoonacularRecipe recipe);
+
+    void removeFavouriteRecipe(SpoonacularRecipe recipe);
+
+    List<Long> getFavouriteRecipeIds();
+
+    boolean isRecipeFavourite(Long id);
 }

@@ -85,6 +85,11 @@ public class User {
     @ToString.Exclude
     private List<LikedRecipe> likedRecipes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @ToString.Exclude
+    private List<FavouriteRecipe> favouriteRecipes = new ArrayList<>();
+
     public User(String email, String userName, String password, String firstName, String lastName, Instant verificationDeadline) {
         this.userName = userName;
         this.firstName = firstName;
