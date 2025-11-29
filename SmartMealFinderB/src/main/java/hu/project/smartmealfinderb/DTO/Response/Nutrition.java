@@ -54,7 +54,7 @@ public class Nutrition {
     }
 
     @Data
-    public static class Nutrient {
+    private static class Nutrient {
         private String name;
         private double amount;
         private String unit;
