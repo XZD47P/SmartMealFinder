@@ -64,4 +64,16 @@ public class RecipeController {
         boolean favouritedRecipe = this.recipeService.isRecipeFavourite(id);
         return ResponseEntity.status(HttpStatus.OK).body(favouritedRecipe);
     }
+
+    @PostMapping("/seen")
+    public ResponseEntity<?> sendRecipeSeen(@RequestBody SpoonacularRecipe recipe) {
+        this.recipeService.sendSeenInteractionForRecipe(recipe);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recipe status set seen"));
+    }
+
+    @PostMapping("/read")
+    public ResponseEntity<?> sendRecipeRead(@RequestBody SpoonacularRecipe recipe) {
+        this.recipeService.sendReadIntercationForRecipe(recipe);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recipe status set read"));
+    }
 }

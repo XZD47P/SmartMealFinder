@@ -20,4 +20,8 @@ public interface RecipeService {
     List<Long> getFavouriteRecipeIds();
 
     boolean isRecipeFavourite(Long id);
+
+    void sendSeenInteractionForRecipe(SpoonacularRecipe recipe);
+
+    void sendReadIntercationForRecipe(SpoonacularRecipe recipe);
 }

@@ -9,6 +9,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import {useMyContext} from "../../Store/ContextApi";
 import StarIcon from "@mui/icons-material/Star";
 import Buttons from "../Utils/Buttons";
+import useEngagementTracker from "../../Hooks/useEngagementTracker";
 
 const RecipeDetailPage = () => {
     const {id} = useParams();
@@ -17,6 +18,8 @@ const RecipeDetailPage = () => {
     const [likeCount, setLikeCount] = useState(0);
     const {currentUser} = useMyContext();
     const [isFavourite, setIsFavourite] = useState(false);
+
+    useEngagementTracker(recipe, currentUser);
 
     useEffect(() => {
         const fetchDetails = async () => {

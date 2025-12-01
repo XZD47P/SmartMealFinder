@@ -131,4 +131,24 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Error while checking favourite status", e);
         }
     }
+
+    @Override
+    public void sendSeenInteractionForRecipe(SpoonacularRecipe recipe) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            this.profilingService.sendInteractionToGorse(Interaction.SEEN, user, recipe);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while sending seen interaction", e);
+        }
+    }
+
+    @Override
+    public void sendReadIntercationForRecipe(SpoonacularRecipe recipe) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            this.profilingService.sendInteractionToGorse(Interaction.READ, user, recipe);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while sending read interaction", e);
+        }
+    }
 }
