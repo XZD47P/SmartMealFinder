@@ -9,14 +9,9 @@ import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -87,9 +82,10 @@ public class ProfilingServiceImpl implements ProfilingService {
         if (user.isProfilingEnabled()) {
             try {
                 Feedback feedback = new Feedback(
-                        interaction.toString(),
+                        interaction.getType(),
                         user.getUserId().toString(),
                         recipe.getId().toString(),
+                        interaction.getWeight(),
                         Instant.now().toString()
                 );
                 this.gorseClient.insertFeedback(List.of(feedback));
@@ -103,25 +99,10 @@ public class ProfilingServiceImpl implements ProfilingService {
     @Async
     public void deleteInteractionFromGorse(Interaction interaction, User user, Long recipeId) {
         try {
-            String baseUrl = this.gorseEndpoint + "/api/feedback/{feedbackType}/{userId}/{itemId}";
+            if (user.isProfilingEnabled()) {
+                this.gorseClient.deleteFeedback(interaction.getType(), user.getUserId().toString(), recipeId.toString());
+            }
 
-            String requestUrl = UriComponentsBuilder
-                    .fromUriString(baseUrl)
-                    .buildAndExpand(
-                            interaction.toString(),
-                            user.getUserId().toString(),
-                            recipeId.toString())
-                    .toString();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-API-Key", this.apiKey);
-
-            this.restTemplate.exchange(
-                    requestUrl,
-                    HttpMethod.DELETE,
-                    new HttpEntity<>(headers),
-                    String.class);
         } catch (Exception e) {
             throw new RuntimeException("Error while deleting interaction from gorse", e);
         }
@@ -149,20 +130,31 @@ public class ProfilingServiceImpl implements ProfilingService {
     private List<String> buildLabels(SpoonacularRecipe recipe) {
         List<String> labels = new ArrayList<>();
 
-        labels.add("healthScore:" + recipe.getHealthScore());
-        labels.add("vegeterian:" + recipe.isVegeterian());
-        labels.add("vegan:" + recipe.isVegan());
-        labels.add("glutenFree:" + recipe.isGlutenFree());
-        labels.add("dairyFree:" + recipe.isDairyFree());
-        labels.add("veryHealthy:" + recipe.isVeryHealthy());
-        labels.add("cheap:" + recipe.isCheap());
-        labels.add("veryPopular:" + recipe.isVeryPopular());
-        labels.add("sustainable:" + recipe.isSustainable());
-        labels.add("lowFodmap:" + recipe.isLowFodmap());
+        labels.add(this.getHealthBucket(recipe.getHealthScore()));
+        if (recipe.isVegeterian()) labels.add("vegetarian");
+        if (recipe.isVegan()) labels.add("vegan");
+        if (recipe.isGlutenFree()) labels.add("gluten_free");
+        if (recipe.isDairyFree()) labels.add("dairy_free");
+        if (recipe.isCheap()) labels.add("cheap");
+        if (recipe.isVeryPopular()) labels.add("very_popular");
+        if (recipe.isSustainable()) labels.add("sustainable");
+        if (recipe.isLowFodmap()) labels.add("low_fodmap");
         for (String ingredient : recipe.getIngredientNames()) {
             labels.add("ingredient:" + ingredient);
         }
 
         return labels;
+    }
+
+    private String getHealthBucket(double healthScore) {
+        if (healthScore >= 85) {
+            return "healthiness:very_high";
+        } else if (healthScore >= 70) {
+            return "healthiness:high";
+        } else if (healthScore >= 55) {
+            return "healthiness:medium";
+        } else {
+            return "healthiness:unhealthy";
+        }
     }
 }

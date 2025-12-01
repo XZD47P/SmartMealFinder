@@ -2,7 +2,8 @@ version: "3"
 services:
   # --- GORSE MASTER & WORKER (All-in-one) ---
   gorse:
-    image: zhenghaoz/gorse-in-one:latest
+    image:
+      zhenghaoz/gorse-in-one:0.5
     container_name: gorse_server
     restart: unless-stopped
     ports:
