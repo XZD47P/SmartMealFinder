@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Interaction {
     SEEN(0.0),
-    VIEW(1.0),
+    READ(1.0),
     LIKE(4.0),
     FAVOURITE(8.0),
     ATE(10.0);

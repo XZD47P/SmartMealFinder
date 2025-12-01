@@ -114,7 +114,7 @@ positive_feedback_ttl = 0
 item_ttl = 0
 
 [recommend.collaborative.feedback_weights]
-"view" = 1.0
+"read" = 1.0
 "like" = 4.0
 "favourite" = 8.0
 "ate" = 10.0
