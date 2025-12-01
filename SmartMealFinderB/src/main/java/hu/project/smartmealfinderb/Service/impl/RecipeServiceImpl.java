@@ -151,4 +151,15 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Error while sending read interaction", e);
         }
     }
+
+    @Override
+    public List<String> getRecommendationsForUser() {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+
+            return this.profilingService.getRecommendations(user);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while getting recommendations from user", e);
+        }
+    }
 }

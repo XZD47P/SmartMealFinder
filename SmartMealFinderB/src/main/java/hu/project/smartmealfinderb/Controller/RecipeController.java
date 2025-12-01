@@ -76,4 +76,10 @@ public class RecipeController {
         this.recipeService.sendReadIntercationForRecipe(recipe);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recipe status set read"));
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getRecipeRecommendations() {
+        List<String> recommendations = this.recipeService.getRecommendationsForUser();
+        return ResponseEntity.status(HttpStatus.OK).body(recommendations);
+    }
 }

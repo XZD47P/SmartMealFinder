@@ -108,6 +108,19 @@ public class ProfilingServiceImpl implements ProfilingService {
         }
     }
 
+    @Override
+    public List<String> getRecommendations(User user) {
+        try {
+
+            if (!user.isProfilingEnabled()) {
+                throw new RuntimeException("User profiling is disabled");
+            }
+            return this.gorseClient.getRecommend(user.getUserId().toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Error while getting recommendations from gorse: " + e.getMessage(), e);
+        }
+    }
+
     private List<String> buildCategories(SpoonacularRecipe recipe) {
         List<String> categories = new ArrayList<>();
 

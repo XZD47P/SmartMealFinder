@@ -24,4 +24,6 @@ public interface RecipeService {
     void sendSeenInteractionForRecipe(SpoonacularRecipe recipe);
 
     void sendReadIntercationForRecipe(SpoonacularRecipe recipe);
+
+    List<String> getRecommendationsForUser();
 }
