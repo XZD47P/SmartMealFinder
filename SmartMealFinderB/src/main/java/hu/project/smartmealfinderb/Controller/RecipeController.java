@@ -55,9 +55,9 @@ public class RecipeController {
     }
 
     @GetMapping("/favourite")
-    public ResponseEntity<?> getFavouriteRecipeIds() {
-        List<Long> favouriteRecipeIds = this.recipeService.getFavouriteRecipeIds();
-        return ResponseEntity.status(HttpStatus.OK).body(favouriteRecipeIds);
+    public ResponseEntity<?> getFavouriteRecipes() {
+        List<RecipeTileDTO> favouriteRecipes = this.recipeService.getFavouriteRecipes();
+        return ResponseEntity.status(HttpStatus.OK).body(favouriteRecipes);
     }
 
     @GetMapping("/isFavourite")

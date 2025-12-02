@@ -111,10 +111,15 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<Long> getFavouriteRecipeIds() {
+    public List<RecipeTileDTO> getFavouriteRecipes() {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-            return this.favouriteRecipeRepository.findAllByUser(user);
+            List<FavouriteRecipe> recipeIds = this.favouriteRecipeRepository.findAllByUser(user);
+
+            List<String> stringIds = recipeIds.stream()
+                    .map(favouriteRecipe -> String.valueOf(favouriteRecipe.getRecipeId()))
+                    .toList();
+            return this.foodApiService.getBulkRecipeInfos(stringIds);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while getting favourite recipes", e);
         } catch (Exception e) {

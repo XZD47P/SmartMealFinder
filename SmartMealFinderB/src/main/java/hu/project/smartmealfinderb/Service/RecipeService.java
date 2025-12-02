@@ -18,7 +18,7 @@ public interface RecipeService {
 
     void removeFavouriteRecipe(SpoonacularRecipe recipe);
 
-    List<Long> getFavouriteRecipeIds();
+    List<RecipeTileDTO> getFavouriteRecipes();
 
     boolean isRecipeFavourite(Long id);
 
