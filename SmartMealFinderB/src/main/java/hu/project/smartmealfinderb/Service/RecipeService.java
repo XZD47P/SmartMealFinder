@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Service;
 
+import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 
 import java.util.List;
@@ -25,5 +26,5 @@ public interface RecipeService {
 
     void sendReadIntercationForRecipe(SpoonacularRecipe recipe);
 
-    List<String> getRecommendationsForUser();
+    List<RecipeTileDTO> getRecommendationsForUser();
 }

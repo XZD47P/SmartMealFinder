@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.FavouriteRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;
@@ -7,6 +8,7 @@ import hu.project.smartmealfinderb.Model.LikedRecipe;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.FavouriteRecipeRepository;
 import hu.project.smartmealfinderb.Repository.LikedRecipeRepository;
+import hu.project.smartmealfinderb.Service.FoodApiService;
 import hu.project.smartmealfinderb.Service.ProfilingService;
 import hu.project.smartmealfinderb.Service.RecipeService;
 import hu.project.smartmealfinderb.Service.UserService;
@@ -24,6 +26,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final UserService userService;
     private final ProfilingService profilingService;
     private final FavouriteRecipeRepository favouriteRecipeRepository;
+    private final FoodApiService foodApiService;
 
     @Override
     public void addLiketoRecipe(SpoonacularRecipe recipe) {
@@ -153,11 +156,12 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<String> getRecommendationsForUser() {
+    public List<RecipeTileDTO> getRecommendationsForUser() {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
+            List<String> recipeIds = this.profilingService.getRecommendations(user);
+            return this.foodApiService.getBulkRecipeInfos(recipeIds);
 
-            return this.profilingService.getRecommendations(user);
         } catch (Exception e) {
             throw new RuntimeException("Error while getting recommendations from user", e);
         }

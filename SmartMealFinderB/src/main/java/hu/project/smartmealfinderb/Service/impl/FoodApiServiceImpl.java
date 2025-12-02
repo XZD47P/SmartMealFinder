@@ -2,16 +2,20 @@ package hu.project.smartmealfinderb.Service.impl;
 
 import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
+import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Service.FoodApiService;
 import hu.project.smartmealfinderb.Service.ProfilingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -151,4 +155,32 @@ public class FoodApiServiceImpl implements FoodApiService {
             throw new RuntimeException("There was an error while searching for recipe with id: " + id, e);
         }
     }
+
+    @Override
+    public List<RecipeTileDTO> getBulkRecipeInfos(List<String> recipeIds) {
+        try {
+            String requestUrl = this.baseUrl + "/recipes/informationBulk";
+
+            String idString = String.join(",", recipeIds);
+
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromUriString(requestUrl)
+                    .queryParam("ids", idString)
+                    .queryParam("apiKey", this.apikey)
+                    .queryParam("includeNutrition", true);
+
+            return this.restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<RecipeTileDTO>>() {
+                    }
+            ).getBody();
+
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting recipe infos: " + e.getMessage(), e);
+        }
+    }
+
+
 }

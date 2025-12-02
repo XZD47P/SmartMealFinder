@@ -1,5 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
+import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.RecipeService;
@@ -79,7 +80,7 @@ public class RecipeController {
 
     @GetMapping("/recommendations")
     public ResponseEntity<?> getRecipeRecommendations() {
-        List<String> recommendations = this.recipeService.getRecommendationsForUser();
+        List<RecipeTileDTO> recommendations = this.recipeService.getRecommendationsForUser();
         return ResponseEntity.status(HttpStatus.OK).body(recommendations);
     }
 }
