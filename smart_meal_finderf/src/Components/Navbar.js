@@ -47,6 +47,12 @@ const Navbar = () => {
                     {token ? (
                         <>
                             <Link className={`py-2 cursor-pointer hover:text-white ${
+                                pathName === "/favourites" ? "font-semibold " : ""}`}
+                                  to="/favourites"
+                            >
+                                Favourites
+                            </Link>
+                            <Link className={`py-2 cursor-pointer hover:text-white ${
                                 pathName === "/plan" ? "font-semibold " : ""}`}
                                   to="/plan"
                             >

@@ -19,6 +19,7 @@ import VerificationPage from "./Components/Authentication/VerificationPage";
 import Plan from "./Components/DietPlan/Plan";
 import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
 import WhatsInMyFridgePage from "./Components/Recipe/WhatsInMyFridgePage";
+import FavouriteRecipesPage from "./Components/Recipe/FavouriteRecipesPage";
 
 const App = () => {
     return (
@@ -57,6 +58,14 @@ const App = () => {
                     element={
                         <ProtectedRoute adminPage={true}>
                             <Admin/>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/favourites"
+                    element={
+                        <ProtectedRoute>
+                            <FavouriteRecipesPage/>
                         </ProtectedRoute>
                     }
                 />
