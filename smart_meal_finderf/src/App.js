@@ -2,7 +2,7 @@ import './App.css';
 import React from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {Toaster} from "react-hot-toast";
-import Navbar from "./Components/Navbar"
+import Navbar from "./Components/Navbar/Navbar"
 import ContactPage from "./Components/ContactPage";
 import AboutPage from "./Components/AboutPage";
 import LoginPage from "./Components/Authentication/LoginPage";
