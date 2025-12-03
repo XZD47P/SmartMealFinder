@@ -58,6 +58,12 @@ const Navbar = () => {
                             >
                                 My Plan
                             </Link>
+                            <Link className={`py-2 cursor-pointer hover:text-white ${
+                                pathName === "/weekly-meal" ? "font-semibold " : ""}`}
+                                  to="/weekly-meal"
+                            >
+                                Meal Planner
+                            </Link>
                         </>
                     ) : (
                         <></>

@@ -20,6 +20,7 @@ import Plan from "./Components/DietPlan/Plan";
 import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
 import WhatsInMyFridgePage from "./Components/Recipe/WhatsInMyFridgePage";
 import FavouriteRecipesPage from "./Components/Recipe/FavouriteRecipesPage";
+import WeeklyPlannerPage from "./Components/WeeklyPlanner/WeeklyPlannerPage";
 
 const App = () => {
     return (
@@ -66,6 +67,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <FavouriteRecipesPage/>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/weekly-meal"
+                    element={
+                        <ProtectedRoute>
+                            <WeeklyPlannerPage/>
                         </ProtectedRoute>
                     }
                 />

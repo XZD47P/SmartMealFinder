@@ -5,8 +5,9 @@ import toast from "react-hot-toast";
 import {useState} from "react";
 import FoodEntryQuantityModal from "../Utils/FoodEntryQuantityModal";
 import {useMyContext} from "../../Store/ContextApi";
+import {LucideGripVertical} from "lucide-react";
 
-const RecipeTile = ({recipe, button = false}) => {
+const RecipeTile = ({recipe, button = false, showHandle = false, dragHandleProps}) => {
     const nutrients = recipe.nutrition?.nutrients || [];
     const [open, setOpen] = useState(false);
     const {triggerProgressRefresh} = useMyContext();
@@ -58,6 +59,13 @@ const RecipeTile = ({recipe, button = false}) => {
                          className={"bg-green-500 text-white px-3 py-1 mt-2 rounded"}>
                     I ate it!
                 </Buttons>
+            )}
+            {showHandle && dragHandleProps && (
+                <div className="px-3 mt-2 text-center">
+                    <span {...dragHandleProps} className="cursor-grab inline-block">
+                        <LucideGripVertical size={24}/>
+                    </span>
+                </div>
             )}
             <FoodEntryQuantityModal
                 open={open}
