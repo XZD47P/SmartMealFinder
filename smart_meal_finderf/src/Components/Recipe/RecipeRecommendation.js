@@ -40,6 +40,7 @@ const RecipeRecommendation = ({dietPlan}) => {
                     ]);
 
                     setRecipes({breakfast, main_course, snack});
+                    setLoading(false);
                 } catch (err) {
                     toast.error("Error while trying to retrieve recipes.");
                 } finally {
@@ -56,6 +57,7 @@ const RecipeRecommendation = ({dietPlan}) => {
             setLoading(true);
             const response = await api.get("/recommendation/remaining-macros");
             setMacros(response.data);
+            setLoading(false);
         } catch (err) {
             toast.error("Error while fetching data for recommendations.");
         } finally {
