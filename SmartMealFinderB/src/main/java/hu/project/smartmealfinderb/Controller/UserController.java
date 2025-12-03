@@ -89,4 +89,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status updated successfully"));
     }
 
+    @PutMapping("/user/enable-profiling")
+    public ResponseEntity<?> enableProfiling() {
+        this.userService.enableProfilingForCurrentUser();
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status enabled successfully"));
+    }
+
 }

@@ -54,4 +54,6 @@ public interface UserService {
     void updateProfilingStatus(Long userId, boolean profiling);
 
     void updateProfilingStatusForCurrentUser(boolean checked);
+
+    void enableProfilingForCurrentUser();
 }

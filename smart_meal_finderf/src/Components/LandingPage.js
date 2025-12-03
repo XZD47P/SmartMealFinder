@@ -1,11 +1,12 @@
-import {useMyContext} from "../Store/ContextApi";
 import {useState} from "react";
 import {searchRecipes} from "../Service/recipeService";
 import toast from "react-hot-toast";
 import RecipeTile from "./Recipe/RecipeTile";
+import RecommendationSection from "./Recipe/RecommendationSection";
+import {useMyContext} from "../Store/ContextApi";
 
 const LandingPage = () => {
-    const {token} = useMyContext();
+    const {currentUser} = useMyContext()
     const [query, setQuery] = useState("");
     const [recipes, setRecipes] = useState([]);
 
@@ -53,6 +54,15 @@ const LandingPage = () => {
                     </section>
                 )}
             </div>
+            {currentUser && (
+                <div>
+                    <RecommendationSection
+                        profilingEnabled={currentUser?.profilingEnabled}
+                    />
+                </div>
+            )}
+
+
         </div>
     );
 }

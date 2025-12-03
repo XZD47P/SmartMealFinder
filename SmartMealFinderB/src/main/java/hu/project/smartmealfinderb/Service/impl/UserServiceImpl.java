@@ -476,4 +476,18 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public void enableProfilingForCurrentUser() {
+        try {
+            User user = this.getCurrentlyLoggedInUser();
+            user.setProfilingEnabled(true);
+            this.profilingService.sendUserToGorse(user);
+            this.userRepository.save(user);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+        }
+    }
 }
