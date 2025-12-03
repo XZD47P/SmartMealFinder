@@ -42,7 +42,7 @@ const RecommendationSection = ({profilingEnabled}) => {
     }, [profilingEnabled]);
 
     if (!profilingEnabled) {
-        // ⛔ PROFILING DISABLED → Show blurred overlay
+        //If profiling is disabled, show blurred background with button
         return (
             <div className="relative p-4 rounded-xl bg-gray-100 mt-8">
                 <div className="blur-sm opacity-40 pointer-events-none select-none">
