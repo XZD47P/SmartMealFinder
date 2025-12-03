@@ -82,103 +82,110 @@ const RecipeDetailPage = () => {
             console.error("Failed to update favourites", error);
         }
     };
-    if (!recipe) return <div>Loading...</div>;
 
     return (
-        <motion.div
-            className="max-w-4xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-lg"
-            initial={{opacity: 0, y: 30}}
-            animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.4}}
-        >
-            {/* Header */}
-            <div className="text-center">
-                <h1 className="text-3xl md:text-4xl font-bold mb-3">{recipe.title}</h1>
-                <p className="text-gray-500 italic">
-                    {recipe.readyInMinutes} minutes • {recipe.servings} servings
-                </p>
-                <div className="flex justify-center items-center mt-4 gap-8">
+        <>
+            {!recipe ? (
+                <div className="flex justify-center items-center h-screen">
+                    <div>Loading...</div>
+                </div>
+            ) : (
+                <motion.div
+                    className="max-w-4xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-lg"
+                    initial={{opacity: 0, y: 30}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.4}}
+                >
+                    {/* Header */}
+                    <div className="text-center">
+                        <h1 className="text-3xl md:text-4xl font-bold mb-3">{recipe.title}</h1>
+                        <p className="text-gray-500 italic">
+                            {recipe.readyInMinutes} minutes • {recipe.servings} servings
+                        </p>
+                        <div className="flex justify-center items-center mt-4 gap-8">
 
-                    <div className="flex items-center gap-2">
-                        <motion.div
-                            animate={{scale: isLiked ? 1.3 : 1}}
-                            transition={{duration: 0.2}}
-                        >
-                            <IconButton onClick={handleLike} disabled={!currentUser}>
-                                <FavoriteIcon
-                                    style={{
-                                        color: isLiked ? "red" : "grey",
-                                        fontSize: "2rem",
-                                        transition: "color 0.2s"
-                                    }}
-                                />
-                            </IconButton>
-                        </motion.div>
-                        <span className="text-lg font-semibold">{likeCount}</span>
-                    </div>
+                            <div className="flex items-center gap-2">
+                                <motion.div
+                                    animate={{scale: isLiked ? 1.3 : 1}}
+                                    transition={{duration: 0.2}}
+                                >
+                                    <IconButton onClick={handleLike} disabled={!currentUser}>
+                                        <FavoriteIcon
+                                            style={{
+                                                color: isLiked ? "red" : "grey",
+                                                fontSize: "2rem",
+                                                transition: "color 0.2s"
+                                            }}
+                                        />
+                                    </IconButton>
+                                </motion.div>
+                                <span className="text-lg font-semibold">{likeCount}</span>
+                            </div>
 
-                    <motion.div
-                        animate={{scale: isFavourite && currentUser ? 1.3 : 1}}
-                        transition={{duration: 0.2}}
-                    >
-                        <Buttons
-                            disabled={!currentUser}
-                            onClickhandler={handleFavourite}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition 
+                            <motion.div
+                                animate={{scale: isFavourite && currentUser ? 1.3 : 1}}
+                                transition={{duration: 0.2}}
+                            >
+                                <Buttons
+                                    disabled={!currentUser}
+                                    onClickhandler={handleFavourite}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition 
                                 ${isFavourite
-                                ? "border-yellow-500 text-yellow-600"
-                                : "border-gray-400 text-gray-600"}
+                                        ? "border-yellow-500 text-yellow-600"
+                                        : "border-gray-400 text-gray-600"}
                                 `}
-                        >
-                            <StarIcon
-                                style={{
-                                    color: isFavourite ? "#f6c000" : "grey",
-                                    width: "20px",
-                                    height: "20px"
-                                }}
-                            />
-                            {isFavourite ? "Favourite" : "Add to favourites"}
-                        </Buttons>
-                    </motion.div>
-                </div>
-            </div>
-
-            {/* Image */}
-            <div className="flex justify-center mt-6">
-                <img
-                    src={recipe.image}
-                    alt={recipe.title}
-                    className="rounded-2xl shadow-md w-full md:w-3/4 object-cover"
-                />
-            </div>
-
-            {/* Ingredients */}
-            <section className="mt-10">
-                <div className="flex items-center gap-2 mb-3">
-                    <Utensils className="w-5 h-5 text-emerald-600"/>
-                    <h2 className="text-2xl font-semibold">Ingredients</h2>
-                </div>
-                <ul className="bg-emerald-50 p-4 rounded-lg list-disc list-inside space-y-1">
-                    {recipe.extendedIngredients.map((ing) => (
-                        <li key={ing.id}>{ing.original}</li>
-                    ))}
-                </ul>
-            </section>
-
-            {/* Instructions */}
-            {recipe.instructions && (
-                <section className="mt-10">
-                    <div className="flex items-center gap-2 mb-3">
-                        <ListOrdered className="w-5 h-5 text-amber-600"/>
-                        <h2 className="text-2xl font-semibold">Instructions</h2>
+                                >
+                                    <StarIcon
+                                        style={{
+                                            color: isFavourite ? "#f6c000" : "grey",
+                                            width: "20px",
+                                            height: "20px"
+                                        }}
+                                    />
+                                    {isFavourite ? "Favourite" : "Add to favourites"}
+                                </Buttons>
+                            </motion.div>
+                        </div>
                     </div>
-                    <div
-                        className="prose max-w-none prose-emerald"
-                        dangerouslySetInnerHTML={{__html: recipe.instructions}}
-                    />
-                </section>
+
+                    {/* Image */}
+                    <div className="flex justify-center mt-6">
+                        <img
+                            src={recipe.image}
+                            alt={recipe.title}
+                            className="rounded-2xl shadow-md w-full md:w-3/4 object-cover"
+                        />
+                    </div>
+
+                    {/* Ingredients */}
+                    <section className="mt-10">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Utensils className="w-5 h-5 text-emerald-600"/>
+                            <h2 className="text-2xl font-semibold">Ingredients</h2>
+                        </div>
+                        <ul className="bg-emerald-50 p-4 rounded-lg list-disc list-inside space-y-1">
+                            {recipe.extendedIngredients.map((ing) => (
+                                <li key={ing.id}>{ing.original}</li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    {/* Instructions */}
+                    {recipe.instructions && (
+                        <section className="mt-10">
+                            <div className="flex items-center gap-2 mb-3">
+                                <ListOrdered className="w-5 h-5 text-amber-600"/>
+                                <h2 className="text-2xl font-semibold">Instructions</h2>
+                            </div>
+                            <div
+                                className="prose max-w-none prose-emerald"
+                                dangerouslySetInnerHTML={{__html: recipe.instructions}}
+                            />
+                        </section>
+                    )}
+                </motion.div>
             )}
-        </motion.div>
+        </>
     );
 };
 
