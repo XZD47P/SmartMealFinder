@@ -1,9 +1,9 @@
 import DraggableHorizontalSection from "./DraggableHorizontalSection";
 import {useEffect, useState} from "react";
-import {searchRecipes} from "../../Service/recipeService";
+import {searchRecipes} from "../../../Service/recipeService";
 import toast from "react-hot-toast";
-import {useMyContext} from "../../Store/ContextApi";
-import api from "../../Backend/api";
+import {useMyContext} from "../../../Store/ContextApi";
+import api from "../../../Backend/api";
 
 const RecommendationList = () => {
     const [recipes, setRecipes] = useState({soup: [], main_course: [], snack: []});

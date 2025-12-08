@@ -1,6 +1,6 @@
 import {useDraggable} from "@dnd-kit/core";
 import {CSS} from "@dnd-kit/utilities";
-import RecipeTile from "../Recipe/RecipeTile";
+import RecipeTile from "../../Recipe/RecipeTile";
 
 const DraggableRecipeTile = ({recipe}) => {
     const {attributes, listeners, setNodeRef, transform, isDragging} = useDraggable({
