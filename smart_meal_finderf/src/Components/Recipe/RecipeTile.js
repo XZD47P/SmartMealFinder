@@ -41,7 +41,7 @@ const RecipeTile = ({recipe, button = false, showHandle = false, dragHandleProps
     }
     return (
         <div className="border p-4 rounded shadow hover:shadow-lg transition bg-white">
-            <Link to={`/recipes/${recipe.id}`}>
+            <Link to={`/recipes/${recipe.id}`} target={"_blank"}>
                 <img src={recipe.image} alt={recipe.title} className="w-full h-40 object-cover rounded"/>
                 <h3 className="text-lg font-semibold mt-2">{recipe.title}</h3>
 

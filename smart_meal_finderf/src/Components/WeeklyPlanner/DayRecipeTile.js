@@ -11,9 +11,11 @@ const DayRecipeTile = ({recipe, day}) => {
 
     const style = {
         transform: transform ? CSS.Translate.toString(transform) : undefined,
-        opacity: isDragging ? 0.5 : 1
+        opacity: isDragging ? 0 : 1,
+        height: isDragging ? 0 : "auto",
+        width: isDragging ? 0 : "100%",
+        pointerEvents: isDragging ? "none" : "auto", // avoids weird pointer issues
     };
-
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <RecipeTile recipe={recipe} showHandle={true} dragHandleProps={listeners}/>

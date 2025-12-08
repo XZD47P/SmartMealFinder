@@ -12,9 +12,14 @@ const DayColumn = ({day, recipes}) => {
         >
             <h3 className="font-semibold capitalize mb-2">{day}</h3>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2 items-start overflow-hidden">
                 {recipes.map(recipe => (
-                    <DayRecipeTile key={recipe.id} recipe={recipe} day={day}/>
+                    <div
+                        key={recipe.id}
+                        className="flex-1 basis-1/3"
+                    >
+                        <DayRecipeTile recipe={recipe} day={day}/>
+                    </div>
                 ))}
             </div>
         </div>

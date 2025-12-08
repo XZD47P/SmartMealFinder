@@ -10,11 +10,14 @@ const DraggableRecipeTile = ({recipe}) => {
 
     const style = {
         transform: transform ? CSS.Translate.toString(transform) : undefined,
-        opacity: isDragging ? 0.5 : 1
+        opacity: isDragging ? 0 : 1,
+        height: isDragging ? 0 : "auto",      // <-- prevents vertical stretch
+        width: isDragging ? 0 : "100%",       // <-- prevents sideways stretch
+        pointerEvents: isDragging ? "none" : "auto", // avoids weird pointer issues
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <div ref={setNodeRef} style={style} {...attributes}>
             <RecipeTile recipe={recipe} showHandle={true} dragHandleProps={listeners}/>
         </div>
     );
