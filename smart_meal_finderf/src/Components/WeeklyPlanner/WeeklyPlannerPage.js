@@ -1,5 +1,6 @@
 import {useState} from "react";
 import WeeklyPlannerDesktop from "./desktop/WeeklyPlannerDesktop";
+import WeeklyPlannerMobile from "./mobile/WeeklyPlannerMobile";
 
 const WeeklyPlannerPage = () => {
     const [weekPlan, setWeekPlan] = useState({
@@ -18,8 +19,7 @@ const WeeklyPlannerPage = () => {
                 <WeeklyPlannerDesktop weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
             </div>
             <div className="flex md:hidden">
-                {/*<WeeklyPlannerMobile weekplan={weekPlan} setWeekPlan={setWeekPlan}/>*/}
-                <span>Mobile not yet implemented</span>
+                <WeeklyPlannerMobile weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
             </div>
         </>
     )
