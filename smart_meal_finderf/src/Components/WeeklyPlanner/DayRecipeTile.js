@@ -14,7 +14,7 @@ const DayRecipeTile = ({recipe, day}) => {
         opacity: isDragging ? 0 : 1,
         height: isDragging ? 0 : "auto",
         width: isDragging ? 0 : "100%",
-        pointerEvents: isDragging ? "none" : "auto", // avoids weird pointer issues
+        pointerEvents: isDragging ? "none" : "auto", // avoids pointer issues
     };
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>

@@ -12,7 +12,7 @@ const DayColumn = ({day, recipes}) => {
         >
             <h3 className="font-semibold capitalize mb-2">{day}</h3>
 
-            <div className="flex flex-row gap-2 items-start overflow-hidden">
+            <div className="grid grid-cols-3 gap-2 overflow-hidden">
                 {recipes.map(recipe => (
                     <div
                         key={recipe.id}
