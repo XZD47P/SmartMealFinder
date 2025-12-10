@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Service.impl;
 
-import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
+import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.FavouriteRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;

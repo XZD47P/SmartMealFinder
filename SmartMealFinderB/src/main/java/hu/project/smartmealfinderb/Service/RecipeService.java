@@ -1,6 +1,6 @@
 package hu.project.smartmealfinderb.Service;
 
-import hu.project.smartmealfinderb.DTO.Response.RecipeTileDTO;
+import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 
 import java.util.List;

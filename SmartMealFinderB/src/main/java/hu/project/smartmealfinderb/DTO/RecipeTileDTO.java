@@ -1,4 +1,4 @@
-package hu.project.smartmealfinderb.DTO.Response;
+package hu.project.smartmealfinderb.DTO;
 
 import lombok.Data;
 
