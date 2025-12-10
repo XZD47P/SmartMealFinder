@@ -1,18 +1,22 @@
 import MobileSection from "./MobileSection";
+import {useMyContext} from "../../../Store/ContextApi";
 
 const RecommendationListMobile = ({onRecipeSelect, recipes}) => {
+    const {currentUser} = useMyContext();
 
 
     return (
         <div className="pb-10 space-y-2">
             {/* Optional Search Bar here */}
 
-            <MobileSection
-                title={"Recommended based on your activity"}
-                recipes={recipes.personal}
-                onAdd={onRecipeSelect}
-                defaultOpen={false}
-            />
+            {currentUser.profilingEnabled && (
+                <MobileSection
+                    title={"Recommended based on your activity"}
+                    recipes={recipes.personal}
+                    onAdd={onRecipeSelect}
+                    defaultOpen={false}
+                />
+            )}
 
             <MobileSection
                 title={"🍲 Soup recommendations"}

@@ -26,7 +26,7 @@ const DraggableHorizontalSection = ({title, recipes}) => {
     }
 
     return (
-        recipes ? (
+        recipes && (
             <section className="relative">
                 <h2 className="text-xl font-bold mb-4">{title}</h2>
 
@@ -54,11 +54,6 @@ const DraggableHorizontalSection = ({title, recipes}) => {
                         </div>
                     ))}
                 </div>
-            </section>
-        ) : (
-            <section className="relative">
-                <h2 className="text-xl font-bold mb-4">{title}</h2>
-                <div>No recipe found!</div>
             </section>
         )
     );

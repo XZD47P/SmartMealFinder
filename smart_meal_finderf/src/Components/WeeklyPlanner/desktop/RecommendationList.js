@@ -6,7 +6,7 @@ import {useMyContext} from "../../../Store/ContextApi";
 import api from "../../../Backend/api";
 
 const RecommendationList = () => {
-    const [recipes, setRecipes] = useState({soup: [], main_course: [], snack: []});
+    const [recipes, setRecipes] = useState({personal: [], soup: [], main_course: [], snack: []});
     const {currentUser} = useMyContext();
 
     useEffect(() => {
@@ -27,14 +27,21 @@ const RecommendationList = () => {
                 diet: diets?.join(",") || undefined,
                 intolerances: intolerances?.join(",") || undefined,
                 offset: offset,
-            }
-            const [soup, main_course, snack] = await Promise.all([
+            };
+
+            const personalPromise = currentUser?.profilingEnabled
+                ? api.get("/recipe/recommendations")
+                : Promise.resolve({data: []});
+
+            // Fetching all categories
+            const [personalRes, soup, main_course, snack] = await Promise.all([
+                personalPromise,
                 searchRecipes({...filters, type: "soup"}),
                 // searchRecipes({...filters, type: "main course"}),
                 // searchRecipes({...filters, type: "snack"}),
             ]);
 
-            setRecipes({soup, main_course, snack});
+            setRecipes({personal: personalRes?.data, soup, main_course, snack});
         } catch (error) {
             toast.error("Error while trying to retrieve recipes.");
         }
@@ -64,6 +71,10 @@ const RecommendationList = () => {
                 Recommended Recipes
             </h2>
             <div className="grid gap-6 pb-4">
+                {currentUser.profilingEnabled && (
+                    <DraggableHorizontalSection title={"Recommended based on your activity"}
+                                                recipes={recipes.personal}/>
+                )}
                 <DraggableHorizontalSection title={"🍲 Soup recommendations"} recipes={recipes.soup}/>
                 <DraggableHorizontalSection title={"🍽️ Main Course recommendations"} recipes={recipes.main_course}/>
                 <DraggableHorizontalSection title={"🍰 Snack recommendations"} recipes={recipes.snack}/>

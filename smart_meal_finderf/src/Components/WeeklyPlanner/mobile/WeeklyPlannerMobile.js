@@ -12,7 +12,7 @@ import {searchRecipes} from "../../../Service/recipeService";
 const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
     const [activeDay, setActiveDay] = useState(null);
     const {currentUser} = useMyContext();
-    const [recommendations, setRecommendations] = useState({soup: [], main_course: [], snack: [], personal: []});
+    const [recommendations, setRecommendations] = useState({personal: [], soup: [], main_course: [], snack: []});
 
     // Load recommendations
     useEffect(() => {
@@ -60,14 +60,14 @@ const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
                 : Promise.resolve({data: []});
 
             // Fetching all categories
-            const [soup, main_course, snack, personalRes] = await Promise.all([
-                searchRecipes({...filters, type: "soup"}),
-                searchRecipes({...filters, type: "main course"}),
-                searchRecipes({...filters, type: "snack"}),
+            const [personalRes, soup, main_course, snack] = await Promise.all([
                 personalPromise,
+                searchRecipes({...filters, type: "soup"}),
+                // searchRecipes({...filters, type: "main course"}),
+                // searchRecipes({...filters, type: "snack"}),
             ]);
 
-            setRecommendations({soup, main_course, snack, personal: personalRes?.data});
+            setRecommendations({personal: personalRes?.data, soup, main_course, snack});
         } catch (error) {
             toast.error("Error while trying to retrieve recipes.");
             console.error(error);
