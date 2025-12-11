@@ -13,6 +13,7 @@ const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
     const [activeDay, setActiveDay] = useState(null);
     const {currentUser} = useMyContext();
     const [recommendations, setRecommendations] = useState({personal: [], soup: [], main_course: [], snack: []});
+    const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
     // Load recommendations
     useEffect(() => {
@@ -116,36 +117,40 @@ const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
                     <h2 className="text-xl font-bold text-gray-800">Your Week</h2>
                 </div>
 
-                {Object.entries(weekPlan).map(([day, recipes]) => (
-                    <div key={day} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                        {/* Day Header */}
-                        <div className="flex justify-between items-center mb-3">
-                            <h3 className="capitalize font-bold text-lg text-gray-700">{day}</h3>
-                            <button
-                                onClick={() => setActiveDay(day)}
-                                className="text-blue-600 hover:text-blue-800 transition-colors"
-                            >
-                                <AddCircleOutlineIcon fontSize="medium"/>
-                            </button>
-                        </div>
+                {DAYS.map((day) => {
+                    const recipes = weekPlan[day] || [];
 
-                        {/* Planned Meals List */}
-                        <div className="p-3 bg-white flex flex-col gap-3 border-t border-gray-100">
-                            {recipes.length === 0 && (
-                                <p className="text-sm text-gray-400 italic py-1">
-                                    No meals planned
-                                </p>
-                            )}
-                            {recipes.map((recipe) => (
-                                <RecipeTileMobile
-                                    key={recipe.id}
-                                    recipe={recipe}
-                                    onRemove={() => removeRecipe(day, recipe.id)}
-                                />
-                            ))}
+                    return (
+                        <div key={day} className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            {/* Day Header */}
+                            <div className="flex justify-between items-center mb-3">
+                                <h3 className="capitalize font-bold text-lg text-gray-700">{day}</h3>
+                                <button
+                                    onClick={() => setActiveDay(day)}
+                                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                                >
+                                    <AddCircleOutlineIcon fontSize="medium"/>
+                                </button>
+                            </div>
+
+                            {/* Planned Meals List */}
+                            <div className="p-3 bg-white flex flex-col gap-3 border-t border-gray-100">
+                                {recipes.length === 0 && (
+                                    <p className="text-sm text-gray-400 italic py-1">
+                                        No meals planned
+                                    </p>
+                                )}
+                                {recipes.map((recipe) => (
+                                    <RecipeTileMobile
+                                        key={recipe.id}
+                                        recipe={recipe}
+                                        onRemove={() => removeRecipe(day, recipe.id)}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {activeDay && (

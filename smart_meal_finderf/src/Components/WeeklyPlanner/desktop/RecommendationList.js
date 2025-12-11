@@ -71,7 +71,7 @@ const RecommendationList = () => {
                 Recommended Recipes
             </h2>
             <div className="grid gap-6 pb-4">
-                {currentUser.profilingEnabled && (
+                {currentUser?.profilingEnabled && (
                     <DraggableHorizontalSection title={"Recommended based on your activity"}
                                                 recipes={recipes.personal}/>
                 )}
