@@ -12,12 +12,12 @@ public class RecipeTileDTO {
     private Nutrition nutrition;
 
     @Data
-    private static class Nutrition {
+    public static class Nutrition {
         private List<Nutrient> nutrients;
     }
 
     @Data
-    private static class Nutrient {
+    public static class Nutrient {
         private String name;
         private double amount;
         private String unit;
