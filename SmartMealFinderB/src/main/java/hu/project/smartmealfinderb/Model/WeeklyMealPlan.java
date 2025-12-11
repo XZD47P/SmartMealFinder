@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
+@Table(name = "weekly_meal_plan", indexes = {
+        @Index(name = "idx_user_year_week", columnList = "user_id, planningYear, weekNumber")
+})
 public class WeeklyMealPlan {
 
     @Id
