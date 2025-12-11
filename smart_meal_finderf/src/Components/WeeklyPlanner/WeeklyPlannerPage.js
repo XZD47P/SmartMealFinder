@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import WeeklyPlannerDesktop from "./desktop/WeeklyPlannerDesktop";
 import WeeklyPlannerMobile from "./mobile/WeeklyPlannerMobile";
 import toast from "react-hot-toast";
@@ -19,6 +19,23 @@ const WeeklyPlannerPage = () => {
         saturday: [],
         sunday: [],
     });
+
+    useEffect(() => {
+        const loadPlan = async () => {
+            const {year, weekNumber} = getISOWeekInfo(new Date());
+            try {
+                const response = await api.get("/weekly-planner/load",
+                    {params: {year: year, week: weekNumber}})
+
+                if (response.data && response.data.plan) {
+                    setWeekPlan(response.data.plan)
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        loadPlan();
+    }, [])
 
     const sendWeeklyPlan = async () => {
         try {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,62 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
         } catch (Exception e) {
             throw new RuntimeException("Error saving weekly meal plan: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public WeeklyMealPlanDTO getWeeklyMealPlan(int year, int week) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+
+            List<WeeklyMealPlan> meals = this.weeklyMealPlanRepository.findByUserAndPlanningYearAndWeekNumber(user, year, week);
+
+            Map<String, List<RecipeTileDTO>> planMap = new HashMap<>();
+            List<String> days = List.of("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday");
+            days.forEach(day -> planMap.put(day, new ArrayList<>()));
+
+            for (WeeklyMealPlan meal : meals) {
+                RecipeTileDTO dto = new RecipeTileDTO();
+                dto.setId(meal.getRecipeId());
+                dto.setTitle(meal.getTitle());
+                dto.setImage(meal.getImage());
+
+
+                RecipeTileDTO.Nutrition nutrition = new RecipeTileDTO.Nutrition();
+                List<RecipeTileDTO.Nutrient> nutrientList = new ArrayList<>();
+
+                nutrientList.add(createNutrient("Calories", meal.getCalories(), "kcal"));
+                nutrientList.add(createNutrient("Protein", meal.getProtein(), "g"));
+                nutrientList.add(createNutrient("Carbohydrates", meal.getCarbs(), "g"));
+                nutrientList.add(createNutrient("Fat", meal.getFat(), "g"));
+
+                nutrition.setNutrients(nutrientList);
+                dto.setNutrition(nutrition);
+
+
+                String day = meal.getDayOfWeek().toLowerCase();
+                if (planMap.containsKey(day)) {
+                    planMap.get(day).add(dto);
+                }
+
+            }
+
+            WeeklyMealPlanDTO response = new WeeklyMealPlanDTO();
+            response.setYear(year);
+            response.setWeekNumber(week);
+            response.setPlan(planMap);
+
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting weekly meal plan: " + e.getMessage(), e);
+        }
+    }
+
+    private RecipeTileDTO.Nutrient createNutrient(String name, double amount, String unit) {
+        RecipeTileDTO.Nutrient n = new RecipeTileDTO.Nutrient();
+        n.setName(name);
+        n.setAmount(amount);
+        n.setUnit(unit);
+        return n;
     }
 
     private double getNutrientAmount(RecipeTileDTO recipe, String nutrientName) {
