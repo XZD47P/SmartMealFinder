@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface WeeklyMealPlanRepository extends JpaRepository<WeeklyMealPlan, Integer> {
-    void deleteByUserAndPlanningYearAfterAndWeekNumber(User user, int year, int weekNumber);
 
     List<WeeklyMealPlan> findByUserAndPlanningYearAndWeekNumber(User user, int planningYear, int weekNumber);
+
+    void deleteByUserAndPlanningYearAndWeekNumber(User user, int year, int weekNumber);
 }

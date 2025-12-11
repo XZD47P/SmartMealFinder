@@ -29,7 +29,7 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
 
-            this.weeklyMealPlanRepository.deleteByUserAndPlanningYearAfterAndWeekNumber(user,
+            this.weeklyMealPlanRepository.deleteByUserAndPlanningYearAndWeekNumber(user,
                     weeklyMealPlanDTO.getYear(),
                     weeklyMealPlanDTO.getWeekNumber());
 
