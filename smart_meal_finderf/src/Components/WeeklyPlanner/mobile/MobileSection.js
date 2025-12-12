@@ -2,7 +2,7 @@ import {useState} from "react";
 import RecipeTileMobile from "./RecipeTileMobile";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const MobileSection = ({title, recipes, onAdd, defaultOpen = true}) => {
+const MobileSection = ({title, recipes = [], onAdd, defaultOpen = true}) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
     return (
