@@ -120,6 +120,7 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                 dto.setId(meal.getRecipeId());
                 dto.setTitle(meal.getTitle());
                 dto.setImage(meal.getImage());
+                dto.setServings(meal.getServings());
 
 
                 RecipeTileDTO.Nutrition nutrition = new RecipeTileDTO.Nutrition();
@@ -158,6 +159,7 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
             response.setYear(year);
             response.setWeekNumber(week);
             response.setPlan(planMap);
+            response.setShoppingList(this.shoppingListService.getShoppingList(user, year, week));
 
             return response;
         } catch (Exception e) {

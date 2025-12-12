@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
+import hu.project.smartmealfinderb.DTO.Response.ShoppingItemDTO;
 import hu.project.smartmealfinderb.Model.*;
 import hu.project.smartmealfinderb.Repository.ShoppingListRepository;
 import hu.project.smartmealfinderb.Service.ShoppingListService;
@@ -24,6 +25,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final UnitConverterHelper unitConverterHelper;
     private final ObjectMapper objectMapper;
+
 
     @Override
     public void generateShoppingList(User user, int year, int week, List<WeeklyMealPlan> savedPlan) {
@@ -63,6 +65,44 @@ public class ShoppingListServiceImpl implements ShoppingListService {
             }
         } catch (Exception e) {
             throw new RuntimeException("There was an error while generating the shopping list: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<ShoppingItemDTO> getShoppingList(User user, int year, int week) {
+        try {
+            ShoppingList shoppingList = this.shoppingListRepository
+                    .findByUserAndPlanningYearAndWeekNumber(user, year, week)
+                    .orElse(new ShoppingList());
+
+            List<ShoppingItemDTO> itemDTOS = new ArrayList<>();
+            if (shoppingList.getItems() != null) {
+                for (ShoppingListItem item : shoppingList.getItems()) {
+
+                    UnitType type;
+                    try {
+                        type = UnitType.valueOf(item.getUnit());
+                    } catch (IllegalArgumentException e) {
+                        type = UnitType.COUNT;
+                    }
+
+                    double displayAmount = this.unitConverterHelper.getDisplayAmount(type, item.getAmount());
+                    String displayUnit = this.unitConverterHelper.getDisplayUnit(type, item.getAmount());
+
+                    ShoppingItemDTO shoppingItemDTO = new ShoppingItemDTO();
+                    shoppingItemDTO.setId(item.getId());
+                    shoppingItemDTO.setIngredientId(item.getIngredientId());
+                    shoppingItemDTO.setName(item.getName());
+                    shoppingItemDTO.setAmount(displayAmount);
+                    shoppingItemDTO.setUnit(displayUnit);
+                    shoppingItemDTO.setChecked(item.isChecked());
+
+                    itemDTOS.add(shoppingItemDTO);
+                }
+            }
+            return itemDTOS;
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting the shopping list: " + e.getMessage(), e);
         }
     }
 
