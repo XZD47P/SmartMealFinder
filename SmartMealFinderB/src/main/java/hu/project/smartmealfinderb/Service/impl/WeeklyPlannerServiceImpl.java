@@ -1,10 +1,14 @@
 package hu.project.smartmealfinderb.Service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.WeeklyMealPlanDTO;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Model.WeeklyMealPlan;
 import hu.project.smartmealfinderb.Repository.WeeklyMealPlanRepository;
+import hu.project.smartmealfinderb.Service.ShoppingListService;
 import hu.project.smartmealfinderb.Service.UserService;
 import hu.project.smartmealfinderb.Service.WeeklyPlannerService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,8 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
 
     private final WeeklyMealPlanRepository weeklyMealPlanRepository;
     private final UserService userService;
+    private final ShoppingListService shoppingListService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void saveWeeklyMealPlan(WeeklyMealPlanDTO weeklyMealPlanDTO) {
@@ -50,6 +56,16 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                 }
 
                 for (RecipeTileDTO recipe : recipes) {
+
+                    String ingredientJson = null;
+                    if (recipe.getNutrition() != null && recipe.getNutrition().getIngredients() != null) {
+                        try {
+                            ingredientJson = this.objectMapper.writeValueAsString(recipe.getNutrition().getIngredients());
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException("Json Processing error while saving plan: " + e.getMessage(), e);
+                        }
+                    }
+
                     double calories = this.getNutrientAmount(recipe, "Calories");
                     double protein = this.getNutrientAmount(recipe, "Protein");
                     double carbs = this.getNutrientAmount(recipe, "Carbohydrates");
@@ -67,13 +83,21 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                     meal.setProtein(protein);
                     meal.setCarbs(carbs);
                     meal.setFat(fat);
+                    meal.setServings(recipe.getServings() != 0 ? recipe.getServings() : 1);
+
+                    meal.setIngredientsJson(ingredientJson);
 
                     mealsToSave.add(meal);
                 }
             }
 
             if (!mealsToSave.isEmpty()) {
-                this.weeklyMealPlanRepository.saveAll(mealsToSave);
+                List<WeeklyMealPlan> savedMeals = this.weeklyMealPlanRepository.saveAll(mealsToSave);
+
+                this.shoppingListService.generateShoppingList(user,
+                        weeklyMealPlanDTO.getYear(),
+                        weeklyMealPlanDTO.getWeekNumber(),
+                        savedMeals);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error saving weekly meal plan: " + e.getMessage(), e);
@@ -107,6 +131,19 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                 nutrientList.add(createNutrient("Fat", meal.getFat(), "g"));
 
                 nutrition.setNutrients(nutrientList);
+                if (meal.getIngredientsJson() != null) {
+                    try {
+                        List<RecipeTileDTO.Ingredient> ingredients = objectMapper.readValue(
+                                meal.getIngredientsJson(),
+                                new TypeReference<List<RecipeTileDTO.Ingredient>>() {
+                                }
+                        );
+                        nutrition.setIngredients(ingredients);
+
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Json Processing error getting saved plan: " + e.getMessage(), e);
+                    }
+                }
                 dto.setNutrition(nutrition);
 
 

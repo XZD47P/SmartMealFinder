@@ -31,4 +31,7 @@ public class WeeklyMealPlan {
     private Double protein;
     private Double carbs;
     private Double fat;
+    private int servings;
+    @Lob
+    private String ingredientsJson;
 }
