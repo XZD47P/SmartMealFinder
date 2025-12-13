@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
+import hu.project.smartmealfinderb.DTO.Response.ShoppingItemDTO;
 import hu.project.smartmealfinderb.DTO.WeeklyMealPlanDTO;
 import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Model.WeeklyMealPlan;
@@ -92,16 +93,27 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
 
             }
 
-            this.shoppingListService.generateShoppingList(user,
+            //Mentett terv visszaadása bővítve a bevásárlólistával
+            List<ShoppingItemDTO> generatedShoppingList = this.shoppingListService.generateShoppingList(
+                    user,
                     weeklyMealPlanDTO.getYear(),
                     weeklyMealPlanDTO.getWeekNumber(),
-                    savedMeals);
+                    savedMeals
+            );
+
+            WeeklyMealPlanDTO response = new WeeklyMealPlanDTO();
+            response.setYear(weeklyMealPlanDTO.getYear());
+            response.setWeekNumber(weeklyMealPlanDTO.getWeekNumber());
+
+            response.setPlan(weeklyMealPlanDTO.getPlan());
+
+            response.setShoppingList(generatedShoppingList);
+
+            return response;
 
         } catch (Exception e) {
             throw new RuntimeException("Error saving weekly meal plan: " + e.getMessage(), e);
         }
-
-        return this.getWeeklyMealPlan(weeklyMealPlanDTO.getYear(), weeklyMealPlanDTO.getWeekNumber());
     }
 
     @Override

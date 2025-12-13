@@ -28,7 +28,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
 
     @Override
-    public void generateShoppingList(User user, int year, int week, List<WeeklyMealPlan> savedPlan) {
+    public List<ShoppingItemDTO> generateShoppingList(User user, int year, int week, List<WeeklyMealPlan> savedPlan) {
         try {
             this.shoppingListRepository.deleteByUserAndPlanningYearAndWeekNumber(user, year, week);
 
@@ -50,19 +50,21 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Error in generating shopping list json: " + e.getMessage(), e);
                 }
-
-                ShoppingList shoppingList = new ShoppingList();
-                shoppingList.setUser(user);
-                shoppingList.setPlanningYear(year);
-                shoppingList.setWeekNumber(week);
-
-                List<ShoppingListItem> finalListItems = new ArrayList<>(map.values());
-                finalListItems.forEach(shoppingListItem -> shoppingListItem.setShoppingList(shoppingList));
-
-                shoppingList.setItems(finalListItems);
-
-                this.shoppingListRepository.save(shoppingList);
             }
+
+            ShoppingList shoppingList = new ShoppingList();
+            shoppingList.setUser(user);
+            shoppingList.setPlanningYear(year);
+            shoppingList.setWeekNumber(week);
+
+            List<ShoppingListItem> finalListItems = new ArrayList<>(map.values());
+            finalListItems.forEach(shoppingListItem -> shoppingListItem.setShoppingList(shoppingList));
+
+            shoppingList.setItems(finalListItems);
+
+            ShoppingList savedList = this.shoppingListRepository.save(shoppingList);
+            return mapToDTOs(savedList.getItems());
+
         } catch (Exception e) {
             throw new RuntimeException("There was an error while generating the shopping list: " + e.getMessage(), e);
         }
@@ -75,17 +77,26 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                     .findByUserAndPlanningYearAndWeekNumber(user, year, week)
                     .orElse(new ShoppingList());
 
-            List<ShoppingItemDTO> itemDTOS = new ArrayList<>();
-            if (shoppingList.getItems() != null) {
-                for (ShoppingListItem item : shoppingList.getItems()) {
+            return this.mapToDTOs(shoppingList.getItems());
+        } catch (Exception e) {
+            throw new RuntimeException("There was an error while getting the shopping list: " + e.getMessage(), e);
+        }
+    }
 
+    private List<ShoppingItemDTO> mapToDTOs(List<ShoppingListItem> items) {
+        if (items == null) return new ArrayList<>();
+
+        return items.stream()
+                .map(item -> {
+                    // Determine Unit Type
                     UnitType type;
                     try {
                         type = UnitType.valueOf(item.getUnit());
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException | NullPointerException e) {
                         type = UnitType.COUNT;
                     }
 
+                    // Calculate Display Values
                     double displayAmount = this.unitConverterHelper.getDisplayAmount(type, item.getAmount());
                     String displayUnit = this.unitConverterHelper.getDisplayUnit(type, item.getAmount());
 
@@ -97,13 +108,9 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                     shoppingItemDTO.setUnit(displayUnit);
                     shoppingItemDTO.setChecked(item.isChecked());
 
-                    itemDTOS.add(shoppingItemDTO);
-                }
-            }
-            return itemDTOS;
-        } catch (Exception e) {
-            throw new RuntimeException("There was an error while getting the shopping list: " + e.getMessage(), e);
-        }
+                    return shoppingItemDTO;
+                })
+                .toList();
     }
 
     private void processIngredient(Map<Long, ShoppingListItem> map, RecipeTileDTO.Ingredient ingredient,
