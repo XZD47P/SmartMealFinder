@@ -21,6 +21,7 @@ import RecipeDetailPage from "./Components/Recipe/RecipeDetailPage";
 import WhatsInMyFridgePage from "./Components/Recipe/WhatsInMyFridgePage";
 import FavouriteRecipesPage from "./Components/Recipe/FavouriteRecipesPage";
 import WeeklyPlannerPage from "./Components/WeeklyPlanner/WeeklyPlannerPage";
+import ShoppingListPage from "./Components/ShoppingList/ShoppingListPage";
 
 const App = () => {
     return (
@@ -75,6 +76,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <WeeklyPlannerPage/>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingListPage/>
                         </ProtectedRoute>
                     }
                 />

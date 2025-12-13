@@ -88,7 +88,7 @@ const WeeklyPlannerPage = () => {
                 {/* Bevásárlóslista gomb */}
                 {weeklyShoppingList.length > 0 && (
                     <button
-                        onClick={() => navigate("/shopping-list")}
+                        onClick={() => navigate("/shopping-list", {state: {list: weeklyShoppingList}})}
                         className="
                         flex items-center gap-2
                         bg-green-600 hover:bg-green-700 active:scale-95
