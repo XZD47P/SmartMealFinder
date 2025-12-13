@@ -31,7 +31,7 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public void saveWeeklyMealPlan(WeeklyMealPlanDTO weeklyMealPlanDTO) {
+    public WeeklyMealPlanDTO saveWeeklyMealPlan(WeeklyMealPlanDTO weeklyMealPlanDTO) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
 
@@ -40,10 +40,6 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                     weeklyMealPlanDTO.getWeekNumber());
 
             Map<String, List<RecipeTileDTO>> weeklyPlanMap = weeklyMealPlanDTO.getPlan();
-
-            if (weeklyPlanMap == null || weeklyPlanMap.isEmpty()) {
-                return;
-            }
 
             List<WeeklyMealPlan> mealsToSave = new ArrayList<>();
 
@@ -90,18 +86,22 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                     mealsToSave.add(meal);
                 }
             }
-
+            List<WeeklyMealPlan> savedMeals = new ArrayList<>();
             if (!mealsToSave.isEmpty()) {
-                List<WeeklyMealPlan> savedMeals = this.weeklyMealPlanRepository.saveAll(mealsToSave);
+                savedMeals = this.weeklyMealPlanRepository.saveAll(mealsToSave);
 
-                this.shoppingListService.generateShoppingList(user,
-                        weeklyMealPlanDTO.getYear(),
-                        weeklyMealPlanDTO.getWeekNumber(),
-                        savedMeals);
             }
+
+            this.shoppingListService.generateShoppingList(user,
+                    weeklyMealPlanDTO.getYear(),
+                    weeklyMealPlanDTO.getWeekNumber(),
+                    savedMeals);
+
         } catch (Exception e) {
             throw new RuntimeException("Error saving weekly meal plan: " + e.getMessage(), e);
         }
+
+        return this.getWeeklyMealPlan(weeklyMealPlanDTO.getYear(), weeklyMealPlanDTO.getWeekNumber());
     }
 
     @Override

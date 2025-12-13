@@ -1,7 +1,6 @@
 package hu.project.smartmealfinderb.Controller;
 
 import hu.project.smartmealfinderb.DTO.WeeklyMealPlanDTO;
-import hu.project.smartmealfinderb.Security.Response.MessageResponse;
 import hu.project.smartmealfinderb.Service.WeeklyPlannerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +15,9 @@ public class WeeklyPlannerController {
     private final WeeklyPlannerService weeklyPlannerService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> savePlan(@RequestBody WeeklyMealPlanDTO weeklyMealPlanDTO) {
-        this.weeklyPlannerService.saveWeeklyMealPlan(weeklyMealPlanDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Successfully saved meal plan"));
+    public ResponseEntity<WeeklyMealPlanDTO> savePlan(@RequestBody WeeklyMealPlanDTO weeklyMealPlanDTO) {
+        WeeklyMealPlanDTO savedPlan = this.weeklyPlannerService.saveWeeklyMealPlan(weeklyMealPlanDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(savedPlan);
     }
 
     @GetMapping("/load")
