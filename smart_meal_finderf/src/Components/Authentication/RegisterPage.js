@@ -52,7 +52,7 @@ const RegisterPage = () => {
         try {
             setLoading(true);
             const response = await api.post("/auth/public/register", sendData);
-            toast.success("Registration was successful!");
+            toast.success("Registration was successful! Please check your email to complete the registration!");
             reset();
             if (response.data) {
                 navigate("/login");
