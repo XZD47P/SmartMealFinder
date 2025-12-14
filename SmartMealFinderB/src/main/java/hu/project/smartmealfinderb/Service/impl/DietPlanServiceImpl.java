@@ -38,7 +38,7 @@ public class DietPlanServiceImpl implements DietPlanService {
             User user = this.userService.getCurrentlyLoggedInUser();
             double proteinGram, fatGram, carbsGram = 0;
             goalDate = LocalDate.now();
-            if (user != null) {
+            if (user == null) {
                 throw new RuntimeException("User is null");
             }
             if (sex.isBlank() || weight == 0 || height == 0 || age == 0 || activityLevel == 0 || goalType == 0) {
