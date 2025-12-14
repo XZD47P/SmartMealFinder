@@ -7,10 +7,12 @@ import {SaveIcon, ShoppingCart} from "lucide-react";
 import {CircularProgress} from "@mui/material";
 import {getISOWeekInfo} from "../Utils/DateUtils";
 import {useNavigate} from "react-router-dom";
+import WeekNavigator from "../Utils/WeekNavigator";
 
 const WeeklyPlannerPage = () => {
     const [loading, setLoading] = useState(false);
-    const {year, weekNumber} = getISOWeekInfo(new Date());
+    const [referenceDate, setReferenceDate] = useState(new Date());
+    const {year, weekNumber} = getISOWeekInfo(referenceDate);
     const [weeklyShoppingList, setWeeklyShoppingList] = useState([]);
     const navigate = useNavigate();
     const [weekPlan, setWeekPlan] = useState({
@@ -23,9 +25,24 @@ const WeeklyPlannerPage = () => {
         sunday: [],
     });
 
+    const handlePrevWeek = () => {
+        const newDate = new Date(referenceDate);
+        newDate.setDate(newDate.getDate() - 7); // Subtract 7 days
+        setReferenceDate(newDate);
+    };
+
+    const handleNextWeek = () => {
+        const newDate = new Date(referenceDate);
+        newDate.setDate(newDate.getDate() + 7); // Add 7 days
+        setReferenceDate(newDate);
+    };
+
+    const handleJumpToToday = () => {
+        setReferenceDate(new Date());
+    };
+
     useEffect(() => {
         const loadData = async () => {
-            const {year, weekNumber} = getISOWeekInfo(new Date());
             try {
                 const response = await api.get("/weekly-planner/load",
                     {params: {year: year, week: weekNumber}})
@@ -44,7 +61,7 @@ const WeeklyPlannerPage = () => {
             }
         }
         loadData();
-    }, [])
+    }, [year, weekNumber])
 
     const sendWeeklyPlan = async () => {
         try {
@@ -74,12 +91,31 @@ const WeeklyPlannerPage = () => {
     }
 
     return (
-        <div className="relative min-h-screen">
-            <div className="hidden md:flex">
-                <WeeklyPlannerDesktop weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
+        <div className="relative min-h-screen bg-gray-50 flex flex-col">
+            <div className="pt-4 md:pt-6 md:px-6">
+                <WeekNavigator
+                    currentYear={year}
+                    currentWeek={weekNumber}
+                    onPrev={handlePrevWeek}
+                    onNext={handleNextWeek}
+                    onToday={handleJumpToToday}
+                />
             </div>
-            <div className="flex md:hidden">
-                <WeeklyPlannerMobile weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
+
+            <div className="flex-1 relative">
+                {loading && (
+                    <div
+                        className="absolute inset-0 bg-white/50 z-40 flex items-center justify-center backdrop-blur-sm transition-all">
+                        <CircularProgress/>
+                    </div>
+                )}
+
+                <div className="hidden md:block h-full">
+                    <WeeklyPlannerDesktop weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
+                </div>
+                <div className="block md:hidden h-full">
+                    <WeeklyPlannerMobile weekPlan={weekPlan} setWeekPlan={setWeekPlan}/>
+                </div>
             </div>
 
             {/* Lebegő gombtároló */}
