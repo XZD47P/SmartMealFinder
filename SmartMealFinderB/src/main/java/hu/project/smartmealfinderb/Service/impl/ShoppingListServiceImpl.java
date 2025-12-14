@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hu.project.smartmealfinderb.DTO.RecipeTileDTO;
 import hu.project.smartmealfinderb.DTO.Response.ShoppingItemDTO;
 import hu.project.smartmealfinderb.Model.*;
+import hu.project.smartmealfinderb.Repository.ShoppingListItemRepository;
 import hu.project.smartmealfinderb.Repository.ShoppingListRepository;
 import hu.project.smartmealfinderb.Service.ShoppingListService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class ShoppingListServiceImpl implements ShoppingListService {
 
     private final ShoppingListRepository shoppingListRepository;
+    private final ShoppingListItemRepository shoppingListItemRepository;
     private final UnitConverterHelper unitConverterHelper;
     private final ObjectMapper objectMapper;
 
@@ -80,6 +82,25 @@ public class ShoppingListServiceImpl implements ShoppingListService {
             return this.mapToDTOs(shoppingList.getItems());
         } catch (Exception e) {
             throw new RuntimeException("There was an error while getting the shopping list: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void toggleItemBoughtStatus(User user, Long itemId, boolean checked) {
+        try {
+            ShoppingListItem item = shoppingListItemRepository.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Shopping list item not found with id: " + itemId));
+
+            Long ownerId = item.getShoppingList().getUser().getUserId();
+
+            if (!ownerId.equals(user.getUserId())) {
+                throw new SecurityException("Unauthorized access: You do not own this shopping list item.");
+            }
+
+            item.setChecked(checked);
+            this.shoppingListItemRepository.save(item);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

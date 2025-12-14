@@ -179,6 +179,26 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
         }
     }
 
+    @Override
+    public List<ShoppingItemDTO> getWeeklyShoppingList(int year, int week) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            return this.shoppingListService.getShoppingList(user, year, week);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void toggleItemBoughtStatus(Long itemId, boolean checked) {
+        try {
+            User user = this.userService.getCurrentlyLoggedInUser();
+            this.shoppingListService.toggleItemBoughtStatus(user, itemId, checked);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while updating item: " + e.getMessage(), e);
+        }
+    }
+
     private RecipeTileDTO.Nutrient createNutrient(String name, double amount, String unit) {
         RecipeTileDTO.Nutrient n = new RecipeTileDTO.Nutrient();
         n.setName(name);

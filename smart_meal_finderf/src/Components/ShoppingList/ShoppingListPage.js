@@ -25,7 +25,7 @@ const ShoppingListPage = () => {
         const fetchList = async () => {
             try {
                 setLoading(true);
-                const response = await api.get("/shopping-list/load", {
+                const response = await api.get("weekly-planner/shopping-list", {
                     params: {year, week: weekNumber}
                 });
                 if (response.data) {
@@ -52,8 +52,11 @@ const ShoppingListPage = () => {
         );
 
         try {
-            await api.patch(`/shopping-list/item/${itemId}/toggle`, null, {
-                params: {checked: newStatus}
+            await api.put(`weekly-planner/shopping-list/item/toggle`, null, {
+                params: {
+                    itemId,
+                    checked: newStatus
+                }
             });
         } catch (error) {
             toast.error("Failed to update item");
