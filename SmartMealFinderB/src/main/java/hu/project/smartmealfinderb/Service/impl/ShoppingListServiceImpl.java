@@ -34,7 +34,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         try {
             this.shoppingListRepository.deleteByUserAndPlanningYearAndWeekNumber(user, year, week);
 
-            Map<Long, ShoppingListItem> map = new HashMap<>();
+            Map<String, ShoppingListItem> map = new HashMap<>();
 
             for (WeeklyMealPlan meal : savedPlan) {
                 if (meal.getIngredientsJson() == null) continue;
@@ -134,8 +134,12 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 .toList();
     }
 
-    private void processIngredient(Map<Long, ShoppingListItem> map, RecipeTileDTO.Ingredient ingredient,
+    private void processIngredient(Map<String, ShoppingListItem> map, RecipeTileDTO.Ingredient ingredient,
                                    int servings) {
+        if (ingredient.getName().isBlank()) return;
+
+        String key = ingredient.getName().trim().toLowerCase();
+
         //Mértékegység típusának meghatározása
         UnitType type = this.unitConverterHelper.determineType(ingredient.getUnit());
 
@@ -144,20 +148,20 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         //Normalizáció
         double normalizedAmount = this.unitConverterHelper.normalize(totalRawAmount, ingredient.getUnit());
 
-        if (map.containsKey(ingredient.getId())) {
+        if (map.containsKey(key)) {
             //Összeadás, ha már volt ilyen a listában
-            ShoppingListItem existingItem = map.get(ingredient.getId());
+            ShoppingListItem existingItem = map.get(key);
             existingItem.setAmount(existingItem.getAmount() + normalizedAmount);
         } else {
             //Új listaelem
             ShoppingListItem item = new ShoppingListItem();
             item.setIngredientId(ingredient.getId());
-            item.setName(ingredient.getName());
+            item.setName(key);
             item.setAmount(normalizedAmount);
             item.setUnit(type.name());
             item.setChecked(false);
 
-            map.put(ingredient.getId(), item);
+            map.put(key, item);
         }
     }
 }
