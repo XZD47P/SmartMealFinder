@@ -59,10 +59,10 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                 dailyProgress = this.dailyProgressService.findTodayProgress(user);
             } else {
                 this.dailyProgressService.updateTodayProgress(dailyProgress,
-                        dailyProgress.getCaloriesConsumed() + macronutrientTotals.getCalories(),
-                        dailyProgress.getProteinConsumed() + macronutrientTotals.getProtein(),
-                        dailyProgress.getCarbsConsumed() + macronutrientTotals.getCarbs(),
-                        dailyProgress.getFatsConsumed() + macronutrientTotals.getFats());
+                        this.roundUp(dailyProgress.getCaloriesConsumed() + macronutrientTotals.getCalories()),
+                        this.roundUp(dailyProgress.getProteinConsumed() + macronutrientTotals.getProtein()),
+                        this.roundUp(dailyProgress.getCarbsConsumed() + macronutrientTotals.getCarbs()),
+                        this.roundUp(dailyProgress.getFatsConsumed() + macronutrientTotals.getFats()));
             }
 
             this.foodEntryService.addFoodEntry(user,
@@ -96,10 +96,10 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
 
             DailyProgress dailyProgress = this.dailyProgressService.findTodayProgress(user);
             this.dailyProgressService.updateTodayProgress(dailyProgress,
-                    dailyProgress.getCaloriesConsumed() - foodEntry.getCalories(),
-                    dailyProgress.getProteinConsumed() - foodEntry.getProtein(),
-                    dailyProgress.getCarbsConsumed() - foodEntry.getCarbs(),
-                    dailyProgress.getFatsConsumed() - foodEntry.getFats());
+                    this.roundUp(dailyProgress.getCaloriesConsumed() - foodEntry.getCalories()),
+                    this.roundUp(dailyProgress.getProteinConsumed() - foodEntry.getProtein()),
+                    this.roundUp(dailyProgress.getCarbsConsumed() - foodEntry.getCarbs()),
+                    this.roundUp(dailyProgress.getFatsConsumed() - foodEntry.getFats()));
 
             if (foodEntry.getCategory().equals("recipe") && user.isProfilingEnabled()) {
                 this.profilingService.deleteInteractionFromGorse(Interaction.ATE, user, foodEntry.getSpoonacularId());
@@ -173,7 +173,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     }
 
     private double roundUp(double value) {
-        return new BigDecimal(value)
+        return BigDecimal.valueOf(value)
                 .setScale(2, RoundingMode.CEILING)
                 .doubleValue();
     }
