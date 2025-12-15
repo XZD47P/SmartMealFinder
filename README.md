@@ -14,4 +14,5 @@ Célok felkövetése.
 </ul>
 
 > [!IMPORTANT]  <p name="important"></p> 
-> Első futtatáskor a fő mappában található docker compose-t futtasd a "docker-compose up --build" paranccal!
+> Első futtatáskor a fő mappában található docker compose-t futtasd a "docker-compose up --build" paranccsal!
+
