@@ -4,20 +4,16 @@ services:
   # --- BACKEND (New) ---
   spring_app:
     build:
-      # GO UP one level to find the backend source code
       context: ../SmartMealFinderB
-      # Path is relative to the context above
       dockerfile: docker/Dockerfile
     container_name: smart_meal_finder_backend
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
-      # Connects to 'app_db' service defined below
       SPRING_DATASOURCE_URL: jdbc:mysql://app_db:3306/Smart_Meal_Finder?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: app
       SPRING_DATASOURCE_PASSWORD: app_pass@123
-      # CORS Config for your WebConfig class
       FRONTEND_URL: http://localhost:3000
       GORSE_ENDPOINT: http://gorse:8088
       #Secrets
@@ -37,9 +33,7 @@ services:
   # --- FRONTEND (New) ---
   react_app:
     build:
-      # GO UP one level to find the frontend source code
       context: ../smart_meal_finderf
-      # Path is relative to the context above
       dockerfile: docker/Dockerfile
       args:
         REACT_APP_API_URL: http://localhost:8080
@@ -56,7 +50,6 @@ services:
     container_name: smart_meal_finder_db
     restart: unless-stopped
     ports:
-      # Mapped to 3307 on host to avoid conflict with Gorse DB (3306)
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root_pass
@@ -103,7 +96,7 @@ services:
       MYSQL_USER: gorse
       MYSQL_PASSWORD: gorse_pass
     volumes:
-      - gorse_db_data:/var/lib/mysql # Data save location
+      - gorse_db_data:/var/lib/mysql
 
   # --- CACHE (Redis) ---
   gorse_redis:
