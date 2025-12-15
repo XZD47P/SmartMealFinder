@@ -37,8 +37,8 @@ const RecommendationList = () => {
             const [personalRes, soup, main_course, snack] = await Promise.all([
                 personalPromise,
                 searchRecipes({...filters, type: "soup"}),
-                // searchRecipes({...filters, type: "main course"}),
-                // searchRecipes({...filters, type: "snack"}),
+                searchRecipes({...filters, type: "main course"}),
+                searchRecipes({...filters, type: "snack"}),
             ]);
 
             setRecipes({personal: personalRes?.data, soup, main_course, snack});
