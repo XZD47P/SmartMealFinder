@@ -1,5 +1,20 @@
 version: "3"
 services:
+  # --- Application Database ---
+  app_db:
+    image: mysql/mysql-server
+    container_name: smart_meal_finder_db
+    restart: unless-stopped
+    ports:
+      # Mapped to 3307 on host to avoid conflict with Gorse DB (3306)
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: Smart_Meal_Finder
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app_pass@123
+    volumes:
+      - app_db_data:/var/lib/mysql
   # --- GORSE MASTER & WORKER (All-in-one) ---
   gorse:
     image:
@@ -53,3 +68,4 @@ services:
 volumes:
   gorse_db_data:
   gorse_redis_data:
+  app_db_data:
