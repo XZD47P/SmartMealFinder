@@ -105,7 +105,11 @@ const FoodEntrySearch = () => {
             )}
             <FoodEntryQuantityModal
                 open={open}
-                onClose={() => setSelectedItem(null)}
+                onClose={() => {
+                    setSelectedItem(null);
+                    setOpen(false)
+                }
+                }
                 itemName={selectedItem?.name}
                 itemType={selectedItem?.type}
                 onConfirm={({quantity, unit}) => handleAdd({...selectedItem, quantity, unit})}
