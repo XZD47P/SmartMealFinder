@@ -1,5 +1,55 @@
+name: smart-meal-finder
 version: "3"
 services:
+  # --- BACKEND (New) ---
+  spring_app:
+    build:
+      # GO UP one level to find the backend source code
+      context: ../SmartMealFinderB
+      # Path is relative to the context above
+      dockerfile: docker/Dockerfile
+    container_name: smart_meal_finder_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Connects to 'app_db' service defined below
+      SPRING_DATASOURCE_URL: jdbc:mysql://app_db:3306/Smart_Meal_Finder?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: app_pass@123
+      # CORS Config for your WebConfig class
+      FRONTEND_URL: http://localhost:3000
+      GORSE_ENDPOINT: http://gorse:8088
+      #Secrets
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      GITHUB_ID: ${GITHUB_ID}
+      GITHUB_SECRET: ${GITHUB_SECRET}
+      GOOGLE_ID: ${GOOGLE_ID}
+      GOOGLE_SECRET: ${GOOGLE_SECRET}
+      SPOONACULAR_APIKEY: ${SPOONACULAR_APIKEY}
+    depends_on:
+      - app_db
+
+  # --- FRONTEND (New) ---
+  react_app:
+    build:
+      # GO UP one level to find the frontend source code
+      context: ../smart_meal_finderf
+      # Path is relative to the context above
+      dockerfile: docker/Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:8080
+    container_name: smart_meal_finder_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - spring_app
+
   # --- Application Database ---
   app_db:
     image: mysql/mysql-server
