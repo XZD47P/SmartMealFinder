@@ -1,7 +1,7 @@
 name: smart-meal-finder
 version: "3"
 services:
-  # --- BACKEND (New) ---
+  # --- BACKEND ---
   spring_app:
     build:
       context: ../SmartMealFinderB
@@ -30,7 +30,7 @@ services:
     depends_on:
       - app_db
 
-  # --- FRONTEND (New) ---
+  # --- FRONTEND ---
   react_app:
     build:
       context: ../smart_meal_finderf
