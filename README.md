@@ -14,5 +14,7 @@ Célok felkövetése.
 </ul>
 
 > [!IMPORTANT]  <p name="important"></p> 
-> Első futtatáskor a fő mappában található docker compose-t futtasd a "docker-compose up --build" paranccsal!
+> Első futtatáskor a fő mappában található docker compose-t futtasd a "docker-compose up --build" paranccsal!<br>
+> Dokumentáció: [XZD47P_SmartMealFinder_Technical Specification_v5.1.pdf](https://github.com/XZD47P/SmartMealFinder/blob/master/XZD47P_SmartMealFinder_Technical%20Specification_v5.1.pdf)
+
 
