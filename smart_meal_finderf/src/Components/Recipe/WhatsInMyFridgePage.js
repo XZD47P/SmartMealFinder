@@ -79,6 +79,7 @@ const WhatsInMyFridgePage = () => {
                 ignorePantry: true,
                 diet: diets.join(","),
                 intolerances: intolerances.join(","),
+                sort: "min-missing-ingredients",
             });
             setRecipes(data)
         } catch (error) {
