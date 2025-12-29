@@ -18,12 +18,12 @@ const ConfirmModal = ({open, onConfirm, onCancel}) => {
                 }}
             >
                 <Typography variant="h6" gutterBottom>
-                    Disable Profiling?
+                    Disable personal recommendations?
                 </Typography>
 
                 <Typography variant="body2" sx={{mb: 3}}>
-                    Are you sure you want to opt-out of profiling?
-                    You will lose all the recommendation functionality!
+                    Are you sure you want to opt-out of personal recommendations?
+                    You will lose all the personal based recommendation functionality!
                 </Typography>
 
                 <Box sx={{display: "flex", justifyContent: "flex-end", gap: 2}}>

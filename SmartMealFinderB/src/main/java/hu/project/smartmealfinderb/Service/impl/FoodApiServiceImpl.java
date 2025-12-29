@@ -5,7 +5,7 @@ import hu.project.smartmealfinderb.DTO.Response.IngredientInfo;
 import hu.project.smartmealfinderb.DTO.Response.ProductInfo;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Service.FoodApiService;
-import hu.project.smartmealfinderb.Service.ProfilingService;
+import hu.project.smartmealfinderb.Service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class FoodApiServiceImpl implements FoodApiService {
 
     private final RestTemplate restTemplate;
-    private final ProfilingService profilingService;
+    private final RecommendationService recommendationService;
     @Value("${spoonacular.apiKey}")
     private String apikey;
     @Value("${spoonacular.baseUrl}")
@@ -148,7 +148,7 @@ public class FoodApiServiceImpl implements FoodApiService {
                     .queryParam("includeNutrition", true);
 
             SpoonacularRecipe recipe = this.restTemplate.getForObject(builder.toUriString(), SpoonacularRecipe.class);
-            this.profilingService.sendItemToGorse(recipe);
+            this.recommendationService.sendItemToGorse(recipe);
 
             return recipe;
         } catch (Exception e) {

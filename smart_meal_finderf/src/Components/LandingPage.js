@@ -57,7 +57,7 @@ const LandingPage = () => {
             {currentUser && (
                 <div>
                     <RecommendationSection
-                        profilingEnabled={currentUser?.profilingEnabled}
+                        recommendationEnabled={currentUser?.recommendationEnabled}
                     />
                 </div>
             )}

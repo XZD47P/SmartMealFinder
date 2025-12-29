@@ -9,8 +9,8 @@ import hu.project.smartmealfinderb.Model.User;
 import hu.project.smartmealfinderb.Repository.FavouriteRecipeRepository;
 import hu.project.smartmealfinderb.Repository.LikedRecipeRepository;
 import hu.project.smartmealfinderb.Service.FoodApiService;
-import hu.project.smartmealfinderb.Service.ProfilingService;
 import hu.project.smartmealfinderb.Service.RecipeService;
+import hu.project.smartmealfinderb.Service.RecommendationService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -24,7 +24,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     private final LikedRecipeRepository likedRecipeRepository;
     private final UserService userService;
-    private final ProfilingService profilingService;
+    private final RecommendationService recommendationService;
     private final FavouriteRecipeRepository favouriteRecipeRepository;
     private final FoodApiService foodApiService;
 
@@ -37,7 +37,7 @@ public class RecipeServiceImpl implements RecipeService {
             likedRecipe.setRecipeId(recipe.getId());
 
             this.likedRecipeRepository.save(likedRecipe);
-            this.profilingService.sendInteractionToGorse(Interaction.LIKE, user, recipe);
+            this.recommendationService.sendInteractionToGorse(Interaction.LIKE, user, recipe);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while adding like to recipe", e);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class RecipeServiceImpl implements RecipeService {
             User user = this.userService.getCurrentlyLoggedInUser();
             LikedRecipe likedRecipe = this.likedRecipeRepository.getLikedRecipeByUserAndRecipeId(user, recipe.getId());
             this.likedRecipeRepository.delete(likedRecipe);
-            this.profilingService.deleteInteractionFromGorse(Interaction.LIKE, user, recipe.getId());
+            this.recommendationService.deleteInteractionFromGorse(Interaction.LIKE, user, recipe.getId());
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while removing like from recipe", e);
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class RecipeServiceImpl implements RecipeService {
             User user = this.userService.getCurrentlyLoggedInUser();
             FavouriteRecipe favouriteRecipe = new FavouriteRecipe(user, recipe.getId());
             this.favouriteRecipeRepository.save(favouriteRecipe);
-            this.profilingService.sendInteractionToGorse(Interaction.FAVOURITE, user, recipe);
+            this.recommendationService.sendInteractionToGorse(Interaction.FAVOURITE, user, recipe);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while adding bookmark to recipe", e);
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class RecipeServiceImpl implements RecipeService {
             User user = this.userService.getCurrentlyLoggedInUser();
             FavouriteRecipe favouriteRecipe = this.favouriteRecipeRepository.findByUserAndRecipeId(user, recipe.getId());
             this.favouriteRecipeRepository.delete(favouriteRecipe);
-            this.profilingService.deleteInteractionFromGorse(Interaction.FAVOURITE, user, recipe.getId());
+            this.recommendationService.deleteInteractionFromGorse(Interaction.FAVOURITE, user, recipe.getId());
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while removing bookmark from recipe", e);
         } catch (Exception e) {
@@ -144,7 +144,7 @@ public class RecipeServiceImpl implements RecipeService {
     public void sendSeenInteractionForRecipe(SpoonacularRecipe recipe) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-            this.profilingService.sendInteractionToGorse(Interaction.SEEN, user, recipe);
+            this.recommendationService.sendInteractionToGorse(Interaction.SEEN, user, recipe);
         } catch (Exception e) {
             throw new RuntimeException("Error while sending seen interaction", e);
         }
@@ -154,7 +154,7 @@ public class RecipeServiceImpl implements RecipeService {
     public void sendReadIntercationForRecipe(SpoonacularRecipe recipe) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-            this.profilingService.sendInteractionToGorse(Interaction.READ, user, recipe);
+            this.recommendationService.sendInteractionToGorse(Interaction.READ, user, recipe);
         } catch (Exception e) {
             throw new RuntimeException("Error while sending read interaction", e);
         }
@@ -164,7 +164,7 @@ public class RecipeServiceImpl implements RecipeService {
     public List<RecipeTileDTO> getRecommendationsForUser() {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
-            List<String> recipeIds = this.profilingService.getRecommendations(user);
+            List<String> recipeIds = this.recommendationService.getRecommendations(user);
             return this.foodApiService.getBulkRecipeInfos(recipeIds);
 
         } catch (Exception e) {

@@ -3,7 +3,7 @@ package hu.project.smartmealfinderb.Service.impl;
 import hu.project.smartmealfinderb.DTO.SpoonacularRecipe;
 import hu.project.smartmealfinderb.Model.Interaction;
 import hu.project.smartmealfinderb.Model.User;
-import hu.project.smartmealfinderb.Service.ProfilingService;
+import hu.project.smartmealfinderb.Service.RecommendationService;
 import io.gorse.gorse4j.Feedback;
 import io.gorse.gorse4j.Gorse;
 import io.gorse.gorse4j.Item;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProfilingServiceImpl implements ProfilingService {
+public class RecommendationServiceImpl implements RecommendationService {
 
     private final Gorse gorseClient;
     private final RestTemplate restTemplate;
@@ -79,7 +79,7 @@ public class ProfilingServiceImpl implements ProfilingService {
         //Ez nem lesz Async, mivel osztályon belüli hívás (Self-invocation)
         this.sendItemToGorse(recipe);
 
-        if (user.isProfilingEnabled()) {
+        if (user.isRecommendationEnabled()) {
             try {
                 Feedback feedback = new Feedback(
                         interaction.getType(),
@@ -99,7 +99,7 @@ public class ProfilingServiceImpl implements ProfilingService {
     @Async
     public void deleteInteractionFromGorse(Interaction interaction, User user, Long recipeId) {
         try {
-            if (user.isProfilingEnabled()) {
+            if (user.isRecommendationEnabled()) {
                 this.gorseClient.deleteFeedback(interaction.getType(), user.getUserId().toString(), recipeId.toString());
             }
 
@@ -112,8 +112,8 @@ public class ProfilingServiceImpl implements ProfilingService {
     public List<String> getRecommendations(User user) {
         try {
 
-            if (!user.isProfilingEnabled()) {
-                throw new RuntimeException("User profiling is disabled");
+            if (!user.isRecommendationEnabled()) {
+                throw new RuntimeException("User recommendation is disabled");
             }
             return this.gorseClient.getRecommend(user.getUserId().toString());
         } catch (IOException e) {

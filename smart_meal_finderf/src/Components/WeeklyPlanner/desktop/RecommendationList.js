@@ -29,7 +29,7 @@ const RecommendationList = () => {
                 offset: offset,
             };
 
-            const personalPromise = currentUser?.profilingEnabled
+            const personalPromise = currentUser?.recommendationEnabled
                 ? api.get("/recipe/recommendations")
                 : Promise.resolve({data: []});
 
@@ -71,7 +71,7 @@ const RecommendationList = () => {
                 Recommended Recipes
             </h2>
             <div className="grid gap-6 pb-4">
-                {currentUser?.profilingEnabled && (
+                {currentUser?.recommendationEnabled && (
                     <DraggableHorizontalSection title={"Recommended based on your activity"}
                                                 recipes={recipes.personal}/>
                 )}

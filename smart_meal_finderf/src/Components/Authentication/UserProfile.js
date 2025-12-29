@@ -122,28 +122,28 @@ const UserProfile = () => {
         const newValue = e.target.checked;
 
         // Engedélyezéskor egyből engedjük
-        if (currentUser?.profilingEnabled === false && newValue === true) {
-            confirmProfilingChange(true);
+        if (currentUser?.recommendationEnabled === false && newValue === true) {
+            confirmRecommendationChange(true);
             return;
         }
 
         // Tiltáskor kérdezzünk rá
-        if (currentUser?.profilingEnabled === true && newValue === false) {
+        if (currentUser?.recommendationEnabled === true && newValue === false) {
             setNextCheckedValue(false);
             setConfirmOpen(true);
         }
     };
 
 
-    const confirmProfilingChange = async (value = nextCheckedValue) => {
+    const confirmRecommendationChange = async (value = nextCheckedValue) => {
         setConfirmOpen(false);
 
         try {
             setLoading(true);
 
-            await api.put("/auth/user/update-profiling-status", {checked: value});
+            await api.put("/auth/user/update-recommendation-status", {checked: value});
 
-            toast.success("Profiling status successfully updated!");
+            toast.success("Recommendation status successfully updated!");
             fetchUser();
         } catch (error) {
             toast.error("Something went wrong, please try again!");
@@ -153,7 +153,7 @@ const UserProfile = () => {
         }
     };
 
-    const cancelProfilingChange = () => {
+    const cancelRecommendationChange = () => {
         setConfirmOpen(false);
         setNextCheckedValue(null);
     };
@@ -337,19 +337,19 @@ const UserProfile = () => {
                                                 <div className="flex items-center gap-2 mt-6">
                                                     <label className="text-slate-600 text-sm font-semibold uppercase">
                                                         {" "}
-                                                        Profiling Enabled
+                                                        Recommendation Enabled
                                                     </label>
                                                     <input
                                                         className="text-14 w-5 h-5"
                                                         type="checkbox"
-                                                        name="profiling"
-                                                        checked={currentUser?.profilingEnabled}
+                                                        name="recommendation"
+                                                        checked={currentUser?.recommendationEnabled}
                                                         onChange={(e) => onCheckboxClick(e)}
                                                     />
                                                     <ConfirmModal
                                                         open={confirmOpen}
-                                                        onConfirm={confirmProfilingChange}
-                                                        onCancel={cancelProfilingChange}
+                                                        onConfirm={confirmRecommendationChange}
+                                                        onCancel={cancelRecommendationChange}
                                                     />
                                                 </div>
                                             </AccordionDetails>

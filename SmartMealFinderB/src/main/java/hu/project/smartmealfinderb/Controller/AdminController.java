@@ -63,9 +63,9 @@ public class AdminController {
         return ResponseEntity.ok(new MessageResponse("Password updated successfully"));
     }
 
-    @PutMapping("/update-profiling-status")
-    public ResponseEntity<?> updateProfilingStatus(@RequestBody AdminCheckboxReq adminCheckboxReq) {
-        this.userService.updateProfilingStatus(adminCheckboxReq.getUserId(), adminCheckboxReq.isChecked());
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status updated successfully"));
+    @PutMapping("/update-recommendation-status")
+    public ResponseEntity<?> updateRecommendationStatus(@RequestBody AdminCheckboxReq adminCheckboxReq) {
+        this.userService.updateRecommendationStatus(adminCheckboxReq.getUserId(), adminCheckboxReq.isChecked());
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recommendation status updated successfully"));
     }
 }

@@ -6,7 +6,7 @@ import hu.project.smartmealfinderb.Model.User;
 
 import java.util.List;
 
-public interface ProfilingService {
+public interface RecommendationService {
 
     void sendItemToGorse(SpoonacularRecipe recipe);
 

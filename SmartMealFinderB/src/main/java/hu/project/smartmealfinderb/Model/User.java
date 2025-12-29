@@ -77,8 +77,8 @@ public class User {
     @ToString.Exclude
     private List<UserIntolerance> intolerances = new ArrayList<>();
 
-    @Column(name = "profiling_enabled")
-    private boolean profilingEnabled = false;
+    @Column(name = "recommendation_enabled")
+    private boolean recommendationEnabled = false;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore

@@ -146,8 +146,8 @@ const UserDetails = () => {
             case "verify":
                 message = "Account verification status successfully updated";
                 break;
-            case "profiling":
-                message = "Account profiling status successfully updated";
+            case "recommendation":
+                message = "Account recommendation status successfully updated";
                 break;
         }
 
@@ -347,15 +347,15 @@ const UserDetails = () => {
                             <div className="flex items-center gap-2">
                                 <label className="text-slate-600 text-sm font-semibold uppercase">
                                     {" "}
-                                    Profiling Enabled
+                                    Recommendation Enabled
                                 </label>
                                 <input
                                     className="text-14 w-5 h-5"
                                     type="checkbox"
-                                    name="profiling"
-                                    checked={user?.profilingEnabled}
+                                    name="recommendation"
+                                    checked={user?.recommendationEnabled}
                                     onChange={(e) =>
-                                        handleCheckboxChange(e, "/admin/update-profiling-status")
+                                        handleCheckboxChange(e, "/admin/update-recommendation-status")
                                     }
                                 />
                             </div>

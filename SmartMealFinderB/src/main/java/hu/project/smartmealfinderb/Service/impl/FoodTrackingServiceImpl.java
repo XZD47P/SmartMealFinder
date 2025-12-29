@@ -22,7 +22,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
     private final DietPlanService dietPlanService;
     private final UserService userService;
     private final FoodApiService foodApiService;
-    private final ProfilingService profilingService;
+    private final RecommendationService recommendationService;
 
     @Override
     public void saveFoodEntry(SaveFoodEntryReq newFoodEntry) {
@@ -101,8 +101,8 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
                     this.roundUp(dailyProgress.getCarbsConsumed() - foodEntry.getCarbs()),
                     this.roundUp(dailyProgress.getFatsConsumed() - foodEntry.getFats()));
 
-            if (foodEntry.getCategory().equals("recipe") && user.isProfilingEnabled()) {
-                this.profilingService.deleteInteractionFromGorse(Interaction.ATE, user, foodEntry.getSpoonacularId());
+            if (foodEntry.getCategory().equals("recipe") && user.isRecommendationEnabled()) {
+                this.recommendationService.deleteInteractionFromGorse(Interaction.ATE, user, foodEntry.getSpoonacularId());
             }
 
             this.foodEntryService.deleteById(foodEntryId);
@@ -140,7 +140,7 @@ public class FoodTrackingServiceImpl implements FoodTrackingService {
 
     private MacroTotals saveRecipeEntry(SaveFoodEntryReq newFoodEntry, User user) {
         SpoonacularRecipe recipeInfo = this.foodApiService.searchRecipeById(newFoodEntry.getId().toString());
-        this.profilingService.sendInteractionToGorse(Interaction.ATE, user, recipeInfo);
+        this.recommendationService.sendInteractionToGorse(Interaction.ATE, user, recipeInfo);
 
         double calories, protein, carbs, fats;
         switch (newFoodEntry.getUnit()) {

@@ -82,17 +82,17 @@ public class UserController {
         return ResponseEntity.ok(new MessageResponse("User verified successfully"));
     }
 
-    @PutMapping("/user/update-profiling-status")
-    public ResponseEntity<?> updateProfilingStatus(@RequestBody Map<String, Boolean> request) {
+    @PutMapping("/user/update-recommendation-status")
+    public ResponseEntity<?> updateRecommendationStatus(@RequestBody Map<String, Boolean> request) {
         boolean checked = request.get("checked");
-        this.userService.updateProfilingStatusForCurrentUser(checked);
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status updated successfully"));
+        this.userService.updateRecommendationStatusForCurrentUser(checked);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("recommendation status updated successfully"));
     }
 
-    @PutMapping("/user/enable-profiling")
-    public ResponseEntity<?> enableProfiling() {
-        this.userService.enableProfilingForCurrentUser();
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Profiling status enabled successfully"));
+    @PutMapping("/user/enable-recommendation")
+    public ResponseEntity<?> enableRecommendation() {
+        this.userService.enableRecommendationForCurrentUser();
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("recommendation status enabled successfully"));
     }
 
 }

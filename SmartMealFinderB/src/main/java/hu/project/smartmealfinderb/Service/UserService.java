@@ -51,9 +51,9 @@ public interface UserService {
 
     User getCurrentlyLoggedInUser();
 
-    void updateProfilingStatus(Long userId, boolean profiling);
+    void updateRecommendationStatus(Long userId, boolean recommendation);
 
-    void updateProfilingStatusForCurrentUser(boolean checked);
+    void updateRecommendationStatusForCurrentUser(boolean checked);
 
-    void enableProfilingForCurrentUser();
+    void enableRecommendationForCurrentUser();
 }

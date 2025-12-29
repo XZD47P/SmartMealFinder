@@ -56,7 +56,7 @@ const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
                 offset: offset,
             };
 
-            const personalPromise = currentUser?.profilingEnabled
+            const personalPromise = currentUser?.recommendationEnabled
                 ? api.get("/recipe/recommendations")
                 : Promise.resolve({data: []});
 
@@ -64,8 +64,8 @@ const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
             const [personalRes, soup, main_course, snack] = await Promise.all([
                 personalPromise,
                 searchRecipes({...filters, type: "soup"}),
-                // searchRecipes({...filters, type: "main course"}),
-                // searchRecipes({...filters, type: "snack"}),
+                searchRecipes({...filters, type: "main course"}),
+                searchRecipes({...filters, type: "snack"}),
             ]);
 
             setRecommendations({personal: personalRes?.data, soup, main_course, snack});

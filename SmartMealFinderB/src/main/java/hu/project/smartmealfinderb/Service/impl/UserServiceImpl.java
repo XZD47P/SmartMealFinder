@@ -11,7 +11,7 @@ import hu.project.smartmealfinderb.Security.JWT.JwtUtils;
 import hu.project.smartmealfinderb.Security.Response.LoginResponse;
 import hu.project.smartmealfinderb.Security.Service.SecurityHelper;
 import hu.project.smartmealfinderb.Service.EmailService;
-import hu.project.smartmealfinderb.Service.ProfilingService;
+import hu.project.smartmealfinderb.Service.RecommendationService;
 import hu.project.smartmealfinderb.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final SecurityHelper securityHelper;
-    private final ProfilingService profilingService;
+    private final RecommendationService recommendationService;
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
                     user.isAccountNonLocked(),
                     user.isAccountVerified(),
                     user.getVerificationDeadline(),
-                    user.isProfilingEnabled(),
+                    user.isRecommendationEnabled(),
                     roles
             );
 
@@ -255,7 +255,7 @@ public class UserServiceImpl implements UserService {
                 user.getRole(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
-                user.isProfilingEnabled()
+                user.isRecommendationEnabled()
         );
     }
 
@@ -434,60 +434,59 @@ public class UserServiceImpl implements UserService {
         return this.findByUsername(username);
     }
 
-    //TODO: Felhasználó adatainak törlésének kérése a Recombee-től
     @Override
-    public void updateProfilingStatus(Long userId, boolean profiling) {
+    public void updateRecommendationStatus(Long userId, boolean recommendation) {
         try {
             User user = this.userRepository.findById(userId).orElseThrow(
                     () -> new RuntimeException("User not found")
             );
-            user.setProfilingEnabled(profiling);
+            user.setRecommendationEnabled(recommendation);
 
-            if (profiling) {
-                this.profilingService.sendUserToGorse(user);
+            if (recommendation) {
+                this.recommendationService.sendUserToGorse(user);
             } else {
-                this.profilingService.deleteUserFromGorse(user);
+                this.recommendationService.deleteUserFromGorse(user);
             }
 
             this.userRepository.save(user);
         } catch (DataAccessException e) {
-            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("Database error while updating user recommendation status: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("There was an error while updating user recommendation status: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void updateProfilingStatusForCurrentUser(boolean checked) {
+    public void updateRecommendationStatusForCurrentUser(boolean checked) {
         try {
             User user = this.getCurrentlyLoggedInUser();
-            user.setProfilingEnabled(checked);
+            user.setRecommendationEnabled(checked);
 
             if (checked) {
-                this.profilingService.sendUserToGorse(user);
+                this.recommendationService.sendUserToGorse(user);
             } else {
-                this.profilingService.deleteUserFromGorse(user);
+                this.recommendationService.deleteUserFromGorse(user);
             }
 
             this.userRepository.save(user);
         } catch (DataAccessException e) {
-            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("Database error while updating user recommendation status: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("There was an error while updating user recommendation status: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void enableProfilingForCurrentUser() {
+    public void enableRecommendationForCurrentUser() {
         try {
             User user = this.getCurrentlyLoggedInUser();
-            user.setProfilingEnabled(true);
-            this.profilingService.sendUserToGorse(user);
+            user.setRecommendationEnabled(true);
+            this.recommendationService.sendUserToGorse(user);
             this.userRepository.save(user);
         } catch (DataAccessException e) {
-            throw new RuntimeException("Database error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("Database error while updating user recommendation status: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new RuntimeException("There was an error while updating user profiling status: " + e.getMessage(), e);
+            throw new RuntimeException("There was an error while updating user recommendation status: " + e.getMessage(), e);
         }
     }
 }

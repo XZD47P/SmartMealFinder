@@ -25,5 +25,5 @@ public class UserDTO {
     private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private boolean profilingEnabled;
+    private boolean recommendationEnabled;
 }

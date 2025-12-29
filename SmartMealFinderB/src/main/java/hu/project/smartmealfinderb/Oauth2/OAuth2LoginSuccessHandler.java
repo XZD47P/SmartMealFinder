@@ -130,7 +130,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 null,
                 true,
                 true,
-                user.isProfilingEnabled(),
+                user.isRecommendationEnabled(),
                 authorities
         );
 

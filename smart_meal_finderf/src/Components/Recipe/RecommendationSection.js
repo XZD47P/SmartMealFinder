@@ -4,27 +4,27 @@ import api from "../../Backend/api";
 import {useMyContext} from "../../Store/ContextApi";
 import toast from "react-hot-toast";
 
-const RecommendationSection = ({profilingEnabled}) => {
+const RecommendationSection = ({recommendationEnabled}) => {
     const {fetchUser} = useMyContext()
     const [recipes, setRecipes] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const enableProfiling = async () => {
+    const enableRecommendation = async () => {
         try {
             setLoading(true);
-            await api.put("/auth/user/enable-profiling");
+            await api.put("/auth/user/enable-recommendation");
             fetchUser();
             setLoading(false);
-            toast.success("Profiling enabled");
+            toast.success("Recommendation enabled");
         } catch (error) {
-            toast.error("There was an error while enabling profiling");
+            toast.error("There was an error while enabling recommendation");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (!profilingEnabled) return;
+        if (!recommendationEnabled) return;
 
         const loadRecommended = async () => {
             setLoading(true);
@@ -39,10 +39,10 @@ const RecommendationSection = ({profilingEnabled}) => {
         };
 
         loadRecommended();
-    }, [profilingEnabled]);
+    }, [recommendationEnabled]);
 
-    if (!profilingEnabled) {
-        //If profiling is disabled, show blurred background with button
+    if (!recommendationEnabled) {
+        //If recommendation is disabled, show blurred background with button
         return (
             <div className="relative p-4 rounded-xl bg-gray-100 mt-8">
                 <div className="blur-sm opacity-40 pointer-events-none select-none">
@@ -51,13 +51,13 @@ const RecommendationSection = ({profilingEnabled}) => {
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <p className="font-semibold mb-3 text-center">
-                        Enable profiling to see personalized recommendations.
+                        Enable recommendations to see personalized recommendations.
                     </p>
                     <button
-                        onClick={enableProfiling}
+                        onClick={enableRecommendation}
                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                     >
-                        Enable Profiling
+                        Enable Recommendations
                     </button>
                 </div>
             </div>

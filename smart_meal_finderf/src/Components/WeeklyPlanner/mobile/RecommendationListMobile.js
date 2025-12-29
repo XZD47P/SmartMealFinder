@@ -7,9 +7,8 @@ const RecommendationListMobile = ({onRecipeSelect, recipes}) => {
 
     return (
         <div className="pb-10 space-y-2">
-            {/* Optional Search Bar here */}
 
-            {currentUser.profilingEnabled && (
+            {currentUser.recommendationEnabled && (
                 <MobileSection
                     title={"Recommended based on your activity"}
                     recipes={recipes.personal}
