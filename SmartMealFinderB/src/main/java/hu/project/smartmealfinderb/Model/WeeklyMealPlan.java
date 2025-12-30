@@ -2,15 +2,17 @@ package hu.project.smartmealfinderb.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Table(name = "weekly_meal_plan", indexes = {
         @Index(name = "idx_user_year_week", columnList = "user_id, planningYear, weekNumber")
 })
-public class WeeklyMealPlan {
+public class WeeklyMealPlan extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

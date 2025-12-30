@@ -3,20 +3,19 @@ package hu.project.smartmealfinderb.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDate;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Table(
         indexes = {
                 @Index(name = "idx_foodenty_dailyprogress", columnList = "dailyprogress_id")
         }
 )
-public class FoodEntry {
+public class FoodEntry extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +35,6 @@ public class FoodEntry {
     private double protein;
     private double carbs;
     private double fats;
-    @CreationTimestamp
-    private LocalDate createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

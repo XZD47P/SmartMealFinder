@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,7 +59,7 @@ public class FoodEntryServiceImpl implements FoodEntryService {
             if (user == null) {
                 throw new RuntimeException("User is null");
             }
-            LocalDate date = LocalDate.now();
+            LocalDateTime date = LocalDateTime.now();
             return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while fetching all todays food entry by user: " + e.getMessage(), e);

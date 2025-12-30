@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
                 user.getSignUpMethod(),
                 user.getRole(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
+                user.getModifiedAt(),
                 user.isRecommendationEnabled()
         );
     }

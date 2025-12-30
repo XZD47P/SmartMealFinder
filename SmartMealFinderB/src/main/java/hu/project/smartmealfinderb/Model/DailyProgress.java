@@ -3,19 +3,21 @@ package hu.project.smartmealfinderb.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Table(
         indexes = {
                 @Index(name = "idx_dailyprogress_user_date", columnList = "user_id,date")
         }
 )
-public class DailyProgress {
+public class DailyProgress extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
