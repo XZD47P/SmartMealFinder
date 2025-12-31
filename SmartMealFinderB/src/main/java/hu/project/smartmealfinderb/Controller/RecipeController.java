@@ -24,7 +24,7 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recipe like saved successfully"));
     }
 
-    @PostMapping("/unlike")
+    @DeleteMapping("/like")
     public ResponseEntity<?> unlikeRecipe(@RequestBody SpoonacularRecipe recipe) {
         this.recipeService.removeLikeFromRecipe(recipe);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Recipe like removed"));
@@ -42,13 +42,13 @@ public class RecipeController {
         return ResponseEntity.status(HttpStatus.OK).body(count);
     }
 
-    @PostMapping("/favourite/add")
+    @PostMapping("/favourite")
     public ResponseEntity<?> addFavouriteToRecipe(@RequestBody SpoonacularRecipe recipe) {
         this.recipeService.addFavouriteRecipe(recipe);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Favourite recipe added successfully"));
     }
 
-    @DeleteMapping("/favourite/remove")
+    @DeleteMapping("/favourite")
     public ResponseEntity<?> removeFavouriteFromRecipe(@RequestBody SpoonacularRecipe recipe) {
         this.recipeService.removeFavouriteRecipe(recipe);
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Favourite recipe removed successfully"));

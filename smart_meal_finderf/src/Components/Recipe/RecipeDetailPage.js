@@ -49,9 +49,9 @@ const RecipeDetailPage = () => {
     const handleLike = async () => {
         try {
             if (isLiked) {
-                await api.post("/recipe/unlike", recipe);
+                await api.delete("/recipe/like", {data: recipe});
                 setLikeCount(prev => prev - 1);
-                toast.success("Recipe unliked!");
+                toast.success("Recipe like removed!");
             } else {
                 await api.post("/recipe/like", recipe);
                 setLikeCount(prev => prev + 1);
@@ -68,10 +68,10 @@ const RecipeDetailPage = () => {
     const handleFavourite = async () => {
         try {
             if (isFavourite) {
-                await api.delete("/recipe/favourite/remove", {data: recipe});
+                await api.delete("/recipe/favourite", {data: recipe});
                 toast.success("Removed from favourites");
             } else {
-                await api.post("/recipe/favourite/add", recipe);
+                await api.post("/recipe/favourite", recipe);
                 toast.success("Added to favourites");
             }
 
