@@ -1,4 +1,4 @@
-package hu.project.smartmealfinderb.Oauth2;
+package hu.project.smartmealfinderb.Security.Oauth2;
 
 import hu.project.smartmealfinderb.Model.AppRole;
 import hu.project.smartmealfinderb.Model.Role;

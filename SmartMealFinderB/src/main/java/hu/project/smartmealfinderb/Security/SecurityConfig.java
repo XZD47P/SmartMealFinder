@@ -1,9 +1,9 @@
 package hu.project.smartmealfinderb.Security;
 
-import hu.project.smartmealfinderb.Oauth2.OAuth2LoginSuccessHandler;
 import hu.project.smartmealfinderb.Repository.RoleRepository;
 import hu.project.smartmealfinderb.Security.JWT.AuthEntryPointJwt;
 import hu.project.smartmealfinderb.Security.JWT.JwtAuthFilter;
+import hu.project.smartmealfinderb.Security.Oauth2.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
