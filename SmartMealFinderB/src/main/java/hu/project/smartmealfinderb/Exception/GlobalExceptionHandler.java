@@ -76,12 +76,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
         log.error(ex.getMessage(), ex);
-        return buildResponse("Internal Server Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
         log.error(ex.getMessage(), ex);
-        return buildResponse("Unexpected error happened: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

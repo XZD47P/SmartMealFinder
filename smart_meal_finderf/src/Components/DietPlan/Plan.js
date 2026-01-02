@@ -110,7 +110,11 @@ const Plan = () => {
             reset();
             await fetchDietPlan();
         } catch (error) {
-            toast.error("Something went wrong! Please try again!");
+            let errorMessage = "Something went wrong! Please try again!";
+            if (error.response.data.error) {
+                errorMessage = error.response.data.error;
+            }
+            toast.error(errorMessage);
             console.log(error.message);
         } finally {
             setLoading(false);
@@ -173,7 +177,7 @@ const Plan = () => {
                                         ]}
                                     />
                                     <InputField
-                                        label="Weight"
+                                        label="Weight (kg)"
                                         required
                                         id="weight"
                                         type="number"
@@ -183,7 +187,7 @@ const Plan = () => {
                                         errors={errors}
                                     />
                                     <InputField
-                                        label="Height"
+                                        label="Height (cm)"
                                         required
                                         id="height"
                                         type="number"
@@ -225,7 +229,7 @@ const Plan = () => {
                                         options={goalOptions}
                                     />
                                     <InputField
-                                        label="Goal weight"
+                                        label="Goal weight (kg)"
                                         required
                                         id="weightGoal"
                                         type="number"

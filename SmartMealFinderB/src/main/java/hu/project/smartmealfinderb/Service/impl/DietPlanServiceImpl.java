@@ -78,18 +78,19 @@ public class DietPlanServiceImpl implements DietPlanService {
             FitnessGoal fitnessGoal = this.fitnessGoalService.findById(goalType);
 
             switch (fitnessGoal.getGoal().toLowerCase()) {
-                case "lose": //0.5kg vesztése hetente
+                case "lose":
                     loseWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
                     break;
-                case "maintain": //súlyfenntartás
+                case "maintain":
                     break;
-                case "gain": //0.25kg tömegnövelés hetente
+                case "gain":
                     gainWeight(weight, weightGoal, fitnessGoal.getDeltaWeight());
-                    //goalDate = goalDate.plusDays(daysToReachGoal);
                     break;
                 default:
                     throw new RuntimeException("DietGoal is invalid!");
             }
+
+            this.validateHealthLimits(sex, age, height, weight, weightGoal, this.tdee, fitnessGoal.getGoal().toLowerCase());
 
             //Forrás: https://carbonperformance.com/macros-101-how-to-gain-lose-weight-or-maintain/
             proteinGram = this.calculateProteinNeeds(tdee, fitnessGoal.getGoal().toLowerCase());
@@ -116,6 +117,44 @@ public class DietPlanServiceImpl implements DietPlanService {
             throw new RuntimeException("Database error while calculating diet plan: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("There was an error while calculating the diet plan: " + e.getMessage());
+        }
+    }
+
+    private void validateHealthLimits(String sex, int age, double heightCm, double weight, double weightGoal, double calculatedCalories, String goalType) {
+
+        //Helyes adatbevitel ellenőrzése
+        if (heightCm < 100 || heightCm > 250) {
+            throw new RuntimeException("The provided height value is invalid!");
+        }
+        if (weight < 30 || weight > 300) {
+            throw new RuntimeException("The provided weight value is invalid!");
+        }
+        
+        //BMI Ellenőzés
+        double heightM = heightCm / 100.0;
+        double currentBMI = weight / (heightM * heightM);
+        double goalBMI = weightGoal / (heightM * heightM);
+
+        //17 az enyhe soványság, nem engedi a felhasználót tovább fogyni
+        if (goalType.equals("lose") && currentBMI < 17) {
+            throw new RuntimeException("You are below the healthy BMI value (17). Losing weight is not recommended!");
+        }
+
+        // Ha a kitűzött cél veszélyesen alacsony BMI-t eredményezne
+        if (goalBMI < 17) {
+            throw new RuntimeException("Your goal weight is below the healthy BMI value (17)!");
+        }
+
+        //Kalóriaminimum Ellenőrzése
+        double minsafeCalories;
+        if (sex.equalsIgnoreCase("male")) {
+            minsafeCalories = 1500;
+        } else {
+            minsafeCalories = 1200;
+        }
+
+        if (calculatedCalories < minsafeCalories) {
+            throw new RuntimeException("The calculated daily calorie intake is less then safety limit!");
         }
     }
 
