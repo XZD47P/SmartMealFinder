@@ -148,6 +148,7 @@ public class WeeklyPlannerServiceImpl implements WeeklyPlannerService {
                     try {
                         List<RecipeTileDTO.Ingredient> ingredients = objectMapper.readValue(
                                 meal.getIngredientsJson(),
+                                //A TypeReference azért kell, hogy a JVM tudja, milyen típusra generálja a kiolvasott értéket
                                 new TypeReference<List<RecipeTileDTO.Ingredient>>() {
                                 }
                         );

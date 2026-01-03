@@ -42,6 +42,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                 try {
                     List<RecipeTileDTO.Ingredient> ingredients = this.objectMapper.readValue(
                             meal.getIngredientsJson(),
+                            //A TypeReference azért kell, hogy a JVM tudja, milyen típusra generálja a kiolvasott értéket
                             new TypeReference<List<RecipeTileDTO.Ingredient>>() {
                             }
                     );
@@ -109,7 +110,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
         return items.stream()
                 .map(item -> {
-                    // Determine Unit Type
+                    // Mértékegység meghatározása
                     UnitType type;
                     try {
                         type = UnitType.valueOf(item.getUnit());
@@ -117,7 +118,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
                         type = UnitType.COUNT;
                     }
 
-                    // Calculate Display Values
+                    // Olvasható mértékké konvertálás
                     double displayAmount = this.unitConverterHelper.getDisplayAmount(type, item.getAmount());
                     String displayUnit = this.unitConverterHelper.getDisplayUnit(type, item.getAmount());
 
