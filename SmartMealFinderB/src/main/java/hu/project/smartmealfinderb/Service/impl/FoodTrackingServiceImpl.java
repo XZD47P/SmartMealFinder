@@ -9,12 +9,14 @@ import hu.project.smartmealfinderb.Model.*;
 import hu.project.smartmealfinderb.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FoodTrackingServiceImpl implements FoodTrackingService {
 
     private final FoodEntryService foodEntryService;

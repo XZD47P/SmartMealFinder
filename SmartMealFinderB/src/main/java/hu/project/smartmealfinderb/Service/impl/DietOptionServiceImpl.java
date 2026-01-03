@@ -16,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DietOptionServiceImpl implements DietOptionService {
 
     private final DietOptionRepository dietOptionRepository;
@@ -69,7 +70,6 @@ public class DietOptionServiceImpl implements DietOptionService {
     }
 
     @Override
-    @Transactional
     public void modifyDietOptionToUser(List<String> diets) {
         try {
 

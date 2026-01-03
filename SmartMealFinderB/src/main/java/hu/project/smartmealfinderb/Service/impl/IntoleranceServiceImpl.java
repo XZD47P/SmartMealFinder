@@ -16,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class IntoleranceServiceImpl implements IntoleranceService {
 
     private final IntoleranceRepository intoleranceRepository;
@@ -74,7 +75,6 @@ public class IntoleranceServiceImpl implements IntoleranceService {
     }
 
     @Override
-    @Transactional
     public void modifyIntoleranceToUser(List<String> intolerances) {
         try {
             User user = this.userService.getCurrentlyLoggedInUser();
