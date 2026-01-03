@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -58,6 +59,13 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/api/auth/public/**")
                 .ignoringRequestMatchers("/error/**"));
         http.cors(withDefaults());
+
+        http.logout(logout -> logout
+                .logoutUrl("/api/auth/logout")
+                .addLogoutHandler(new SecurityContextLogoutHandler())
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID"));
         return http.build();
     }
 

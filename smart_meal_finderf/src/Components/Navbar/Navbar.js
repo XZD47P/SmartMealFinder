@@ -4,6 +4,7 @@ import {useMyContext} from "../../Store/ContextApi";
 import {RxCross2} from "react-icons/rx";
 import {IoMenu} from "react-icons/io5";
 import NavItem from "./NavItem";
+import api from "../../Backend/api";
 
 
 const Navbar = () => {
@@ -14,15 +15,24 @@ const Navbar = () => {
     const {token, setToken, setCurrentUser, isAdmin, setIsAdmin} = useMyContext();
 
     // Logout
-    const handleLogout = () => {
-        localStorage.removeItem("JWT_TOKEN");
-        localStorage.removeItem("USER");
-        localStorage.removeItem("CSRF_TOKEN");
-        localStorage.removeItem("IS_ADMIN");
-        setToken(null);
-        setCurrentUser(null);
-        setIsAdmin(false);
-        navigate("/login");
+    const handleLogout = async () => {
+        try {
+            await api.post("/auth/logout", null, {
+                withCredentials: true
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            localStorage.removeItem("JWT_TOKEN");
+            localStorage.removeItem("USER");
+            localStorage.removeItem("CSRF_TOKEN");
+            localStorage.removeItem("IS_ADMIN");
+            setToken(null);
+            setCurrentUser(null);
+            setIsAdmin(false);
+            navigate("/login");
+        }
+
     };
 
     useEffect(() => {
