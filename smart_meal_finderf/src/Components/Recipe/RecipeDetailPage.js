@@ -28,15 +28,6 @@ const RecipeDetailPage = () => {
                     {params: {id: id}});
                 setRecipe(response.data);
 
-                if (currentUser) {
-                    const liked = await api.get("/recipe/isLiked", {params: {id}});
-                    setIsLiked(liked.data);
-
-                    const favourite = await api.get("/recipe/isFavourite", {params: {id}});
-                    setIsFavourite(favourite.data);
-                }
-
-
                 const count = await api.get("/recipe/likeCount", {params: {id}});
                 setLikeCount(count.data);
             } catch (error) {
@@ -45,6 +36,24 @@ const RecipeDetailPage = () => {
         };
         fetchDetails();
     }, [id]);
+
+    useEffect(() => {
+        if (!currentUser || !recipe) return;
+
+        const fetchUserState = async () => {
+            try {
+                const liked = await api.get("/recipe/isLiked", {params: {id}});
+                setIsLiked(liked.data);
+
+                const favourite = await api.get("/recipe/isFavourite", {params: {id}});
+                setIsFavourite(favourite.data);
+            } catch (error) {
+                console.error("Failed to fetch user recipe state", error);
+            }
+        };
+
+        fetchUserState();
+    }, [currentUser, recipe, id]);
 
     const handleLike = async () => {
         try {
