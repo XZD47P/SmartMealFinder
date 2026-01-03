@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -20,6 +22,8 @@ public class FoodEntry extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "dailyprogress_id")

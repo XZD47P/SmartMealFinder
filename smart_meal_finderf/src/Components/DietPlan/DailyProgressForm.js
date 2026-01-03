@@ -36,7 +36,6 @@ const DailyProgressForm = () => {
             } else {
                 setDailyProgress(null);
             }
-            await fetchFoodEntries();
         } catch (error) {
             toast.error("Daily progress could not be loaded!");
             setLoading(false);
@@ -48,14 +47,16 @@ const DailyProgressForm = () => {
 
 
     useEffect(() => {
-        if (currentUser) {
-            fetchDailyProgress();
-        }
+        if (!currentUser) return;
+        fetchDailyProgress();
+        fetchFoodEntries();
     }, [currentUser]);
 
     useEffect(() => {
+        if (!currentUser) return;
         fetchDailyProgress();
-    }, [refreshProgress]);
+        fetchFoodEntries();
+    }, [refreshProgress, currentUser]);
 
     useEffect(() => {
         if (dailyProgress) {
@@ -189,7 +190,7 @@ const DailyProgressForm = () => {
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">{entry.createdAt}</span>
+                                <span className="text-xs text-gray-500">{entry.date}</span>
                                 <button
                                     onClick={() => handleDeleteFoodEntry(entry.id)}
                                     className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"

@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,7 +23,9 @@ public class FoodEntryServiceImpl implements FoodEntryService {
     @Override
     public void addFoodEntry(User user, DailyProgress dailyProgress, Long spoonacularId, String name, String category, double quantity, String unit, double calories, double protein, double carbs, double fats) {
         try {
+            LocalDate date = LocalDate.now();
             FoodEntry foodEntry = new FoodEntry();
+            foodEntry.setDate(date);
             foodEntry.setDailyProgress(dailyProgress);
             foodEntry.setSpoonacularId(spoonacularId);
             foodEntry.setName(name);
@@ -59,8 +61,8 @@ public class FoodEntryServiceImpl implements FoodEntryService {
             if (user == null) {
                 throw new RuntimeException("User is null");
             }
-            LocalDateTime date = LocalDateTime.now();
-            return this.foodEntryRepository.findAllByUserAndCreatedAt(user, date);
+            LocalDate date = LocalDate.now();
+            return this.foodEntryRepository.findAllByUserAndDate(user, date);
         } catch (DataAccessException e) {
             throw new RuntimeException("Database error while fetching all todays food entry by user: " + e.getMessage(), e);
         } catch (Exception e) {
