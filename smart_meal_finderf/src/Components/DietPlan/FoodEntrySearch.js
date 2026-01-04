@@ -77,7 +77,7 @@ const FoodEntrySearch = () => {
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search for a product..."
+                    placeholder="Search for a product or ingredient..."
                     className="flex-1 border px-3 py-2 rounded"/>
                 <Buttons disabled={loading} type="button" onClickhandler={searchProducts}
                          className={"bg-blue-500 text-white px-4 py-2 rounded"}>

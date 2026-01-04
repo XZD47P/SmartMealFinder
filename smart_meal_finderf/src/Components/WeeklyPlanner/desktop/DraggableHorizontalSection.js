@@ -27,22 +27,8 @@ const DraggableHorizontalSection = ({title, recipes}) => {
 
     return (
         recipes && (
-            <section className="relative">
+            <section className="relative w-full min-w-0 group">
                 <h2 className="text-xl font-bold mb-4">{title}</h2>
-
-                <button
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
-                    onClick={() => scroll("left")}
-                >
-                    <FaChevronLeft/>
-                </button>
-
-                <button
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
-                    onClick={() => scroll("right")}
-                >
-                    <FaChevronRight/>
-                </button>
 
                 <div
                     ref={scrollRef}
@@ -54,6 +40,20 @@ const DraggableHorizontalSection = ({title, recipes}) => {
                         </div>
                     ))}
                 </div>
+
+                <button
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 z-50 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+                    onClick={() => scroll("left")}
+                >
+                    <FaChevronLeft/>
+                </button>
+
+                <button
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 z-50 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+                    onClick={() => scroll("right")}
+                >
+                    <FaChevronRight/>
+                </button>
             </section>
         )
     );

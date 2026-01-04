@@ -152,7 +152,7 @@ const DailyProgressForm = () => {
                     type="submit"
                     className="bg-green-600 text-white w-full mt-4 py-2 rounded hover:bg-green-700 transition-colors"
                 >
-                    {loading ? "Submitting..." : "Submit Progress"}
+                    {loading ? "Submitting..." : "Log weight"}
                 </Buttons>
             </form>
             {dailyProgress && ( //Azért szükséges ez a forma, mert máskülönben nem tudja a nullokat renderelni a program

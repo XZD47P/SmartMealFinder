@@ -66,11 +66,11 @@ const RecommendationList = () => {
     }
 
     return (
-        <div className="flex flex-col space-y-4 h-full overflow-y-auto overflow-x-hidden pr-2">
+        <div className="flex flex-col space-y-4 h-full w-full max-w-full overflow-y-auto overflow-x-hidden pr-4">
             <h2 className="text-xl font-bold top-0  z-10 py-2">
                 Recommended Recipes
             </h2>
-            <div className="grid gap-6 pb-4">
+            <div className="grid gap-6 pb-4 w-full">
                 {currentUser?.recommendationEnabled && (
                     <DraggableHorizontalSection title={"Recommended based on your activity"}
                                                 recipes={recipes.personal}/>
