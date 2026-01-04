@@ -4,7 +4,7 @@ import RecommendationList from "./RecommendationList";
 import MealPlanner from "./MealPlanner";
 import {useState} from "react";
 
-const WeeklyPlannerDesktop = ({weekPlan, setWeekPlan}) => {
+const WeeklyPlannerDesktop = ({weekPlan, setWeekPlan, recommendations}) => {
 
 
     const [activeRecipe, setActiveRecipe] = useState(null);
@@ -60,7 +60,7 @@ const WeeklyPlannerDesktop = ({weekPlan, setWeekPlan}) => {
                 <div className="h-full overflow-y-auto rounded-lg bg-white/50 shadow-sm p-2">
                     <MealPlanner weekPlan={weekPlan}/>
                 </div>
-                <RecommendationList/>
+                <RecommendationList recipes={recommendations}/>
 
                 <DragOverlay>
                     {activeRecipe ? (

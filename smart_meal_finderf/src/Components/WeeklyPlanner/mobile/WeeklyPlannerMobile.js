@@ -1,79 +1,15 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import RecommendationListMobile from "./RecommendationListMobile";
 import toast from "react-hot-toast";
 import RecipeTileMobile from "./RecipeTileMobile";
-import {useMyContext} from "../../../Store/ContextApi";
-import api from "../../../Backend/api";
-import {searchRecipes} from "../../../Service/recipeService";
 
-const WeeklyPlannerMobile = ({weekPlan, setWeekPlan}) => {
+const WeeklyPlannerMobile = ({weekPlan, setWeekPlan, recommendations}) => {
     const [activeDay, setActiveDay] = useState(null);
-    const {currentUser} = useMyContext();
-    const [recommendations, setRecommendations] = useState({personal: [], soup: [], main_course: [], snack: []});
     const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
-    // Load recommendations
-    useEffect(() => {
-        const load = async () => {
-            if (!currentUser) return; // Guard clause
-            const userDiets = await getUserDiets();
-            const userIntolerances = await getUserIntolerances();
-            await getRecipeRecommendation(userDiets, userIntolerances);
-        };
-        load();
-    }, [currentUser]);
-
-    const getUserDiets = async () => {
-        try {
-            const userDiets = await api.get("/diet-option/load-by-user");
-            return userDiets.data;
-        } catch (error) {
-            toast.error("There was an error getting user diets");
-            console.error(error); // Log error instead of toast on load to be less intrusive
-        }
-    };
-
-    const getUserIntolerances = async () => {
-        try {
-            const userIntolerances = await api.get("/intolerance/load-by-user");
-            return userIntolerances.data;
-        } catch (error) {
-            toast.error("There was an error getting user intolerances");
-            console.error(error);
-        }
-    };
-
-    const getRecipeRecommendation = async (diets, intolerances) => {
-        try {
-            const offset = Math.floor(Math.random() * 5) * 10;
-
-            const filters = {
-                diet: diets?.join(",") || undefined,
-                intolerances: intolerances?.join(",") || undefined,
-                offset: offset,
-            };
-
-            const personalPromise = currentUser?.recommendationEnabled
-                ? api.get("/recipe/recommendations")
-                : Promise.resolve({data: []});
-
-            // Fetching all categories
-            const [personalRes, soup, main_course, snack] = await Promise.all([
-                personalPromise,
-                searchRecipes({...filters, type: "soup"}),
-                searchRecipes({...filters, type: "main course"}),
-                searchRecipes({...filters, type: "snack"}),
-            ]);
-
-            setRecommendations({personal: personalRes?.data, soup, main_course, snack});
-        } catch (error) {
-            toast.error("Error while trying to retrieve recipes.");
-            console.error(error);
-        }
-    };
 
     // 1. Remove recipe
     const removeRecipe = (day, recipeId) => {
