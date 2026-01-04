@@ -174,7 +174,7 @@ const UserDetails = () => {
     if (error) {
         return <Errors message={error}/>
     }
-    // TODO: Megcsinálni a teljes oldalt
+
     return (
         <div className="sm:px-12 px-4 py-10   ">
             {loading ? (
