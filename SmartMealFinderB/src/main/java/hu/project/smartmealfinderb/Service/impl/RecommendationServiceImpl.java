@@ -24,6 +24,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     private final Gorse gorseClient;
     private final RestTemplate restTemplate;
+    private final int numberOfRecommendations = 5;
     @Value("${gorse.endpoint}")
     private String gorseEndpoint;
     @Value("${gorse.apikey}")
@@ -115,7 +116,10 @@ public class RecommendationServiceImpl implements RecommendationService {
             if (!user.isRecommendationEnabled()) {
                 throw new RuntimeException("User recommendation is disabled");
             }
-            return this.gorseClient.getRecommend(user.getUserId().toString());
+            return this.gorseClient.getRecommend(user.getUserId().toString())
+                    .stream()
+                    .limit(this.numberOfRecommendations)
+                    .toList();
         } catch (IOException e) {
             throw new RuntimeException("Error while getting recommendations from gorse: " + e.getMessage(), e);
         }
