@@ -87,7 +87,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                                 newUser.setEmail(email);
                                 newUser.setUserName(username);
                                 newUser.setSignUpMethod(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId());
-
+                                newUser.setAccountVerified(true);
                                 this.userService.registerUser(newUser);
 
                                 //SecurityContext beállítása
