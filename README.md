@@ -15,6 +15,7 @@ Célok felkövetése.
 
 > [!IMPORTANT]  <p name="important"></p> 
 > Első futtatáskor a fő mappában található docker compose-t futtasd a "docker-compose up --build" paranccsal!<br>
+> A futtatáshoz szükséges az alábbi .env file beillesztése a feljebb említett mappába: [Letöltés](https://univpecs-my.sharepoint.com/:u:/g/personal/xzd47p_tr_pte_hu/IQCZHevAfFbIQIncfmmINxklAXKvZ1UlX66-vcLf7yyX8gQ?e=LeXPnt)
 > Dokumentáció: [XZD47P_SmartMealFinder_Technical Specification_v5.1.pdf](https://github.com/XZD47P/SmartMealFinder/blob/master/XZD47P_SmartMealFinder_Technical%20Specification_v5.1.pdf)
 
 
